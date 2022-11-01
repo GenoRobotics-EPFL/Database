@@ -4,11 +4,17 @@ import Head from 'next/head'
 import { AppShell, Navbar, Header, Title, Button, Center } from '@mantine/core'
 import { useState } from 'react'
 
+import Link from 'next/link'
+
+
+
+
 const Home: NextPage = () => {
 
   const [clicked, setClicked] = useState(false)
 
-  
+
+
 
   return (
     <>
@@ -16,7 +22,7 @@ const Home: NextPage = () => {
         <title>Home</title>
         <meta name="description" content="Home page" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+        </Head>
 
       <AppShell
         padding="md"
@@ -25,12 +31,33 @@ const Home: NextPage = () => {
             <Title order={3}>
               Menus
             </Title>
+
+            <Button 
+              type = "button"
+              variant="light" color="violet" size="xs" compact            
+              disabled={clicked}
+              onClick={() => setClicked(true)}
+              sx={{ width: 200 }}
+              ><Link href="/posts/new_method">Add a new method</Link>
+            </Button><br />
+
+            <Button 
+              type = "button"
+              variant="light" color="violet" size="xs" compact            
+              disabled={clicked}
+              onClick={() => setClicked(true)}
+              sx={{ width: 200 }}
+              ><Link href="/posts/new_sample">Add a new sample</Link>
+            </Button>
+
+
           </Navbar>
         }
+
         header={
           <Header height={60} p="xs">
             <Title order={1}>
-              GenoRobotics
+              GenoRobotics 
             </Title>
           </Header>
         }
@@ -39,46 +66,28 @@ const Home: NextPage = () => {
         })}
       >
 
-      <body>
-
-         <main id="main-holder">
-          <h2>Login Page</h2>
-          
-            <form id="login" method="get" action="login.php">
-              <label><b>Name</b></label><br />
-              <input type="text" name="Name" id="Name" className="login-form-field" placeholder="Name "></input><br /><br />
-              <label><b>Person ID</b></label><br />
-              <input type="text" name="ID" id="ID" className="login-form-field" placeholder="Person ID "></input><br /><br />
-              <input type="submit" value="Login" id="login-form-submit"></input>
-            </form>  
-         
-
-        </main> 
-        
-      </body>
 
 
-      
-{/* <a id="login-button" ms-hide-element="true" href="" className="button logout login w-button">Login</a>
 
-<Button
-              type="submit"
-              onClick={() => setClicked(true)}
-              >
-              Login</Button> */}
+    
 
-              {/* <Center sx={{ height: "100%" }}>
-          <Button
+  
+
+          {/* <Center sx={{ height: "100%" }}>
+            <Button
             disabled={clicked}
             onClick={() => setClicked(true)}
             sx={{ width: 100 }}
-          >
+            >
             {clicked ?
               "Nice" :
               "Login"
             }
-          </Button>
-        </Center> */}
+            </Button>
+          
+          </Center> */}
+
+
             </AppShell>
             </>
             )
