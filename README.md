@@ -1,20 +1,27 @@
 # Database
 
-## Tâches à faire
+## API
 
-### Hardware
+### Getting started
 
-- Connection interface-NAS pour le stockage/extraction des données
+> Recommandé:
+> Setup un environnements virtuel ([doc](https://docs.python.org/3.10/library/venv.html))
 
-- Connection d'un ordi tier aux bases de données/utilisation de l'interface hors EPFL
+> Installer les dépendances
+> ```
+> pip3 install -r requirements.txt
+> ```
 
-### Software
+### Run
 
-- Design du structure de la base de données
+> Lancer l'API
+> ```
+> uvicorn src.app:app
+> ```
 
-- Interface (jsp?)
-
-- Script de MySQL et connection avec interface
+> **Note**  
+> Une fois lancé, de la documentation est auto-générée et accessible
+> à [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## Interface
 
