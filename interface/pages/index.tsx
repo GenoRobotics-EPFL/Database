@@ -4,9 +4,17 @@ import Head from 'next/head'
 import { AppShell, Navbar, Header, Title, Button, Center } from '@mantine/core'
 import { useState } from 'react'
 
+import Link from 'next/link'
+
+
+
+
 const Home: NextPage = () => {
 
   const [clicked, setClicked] = useState(false)
+
+
+
 
   return (
     <>
@@ -14,7 +22,7 @@ const Home: NextPage = () => {
         <title>Home</title>
         <meta name="description" content="Home page" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+        </Head>
 
       <AppShell
         padding="md"
@@ -23,12 +31,33 @@ const Home: NextPage = () => {
             <Title order={3}>
               Menus
             </Title>
+
+            <Button 
+              type = "button"
+              variant="light" color="violet" size="xs" compact            
+              disabled={clicked}
+              onClick={() => setClicked(true)}
+              sx={{ width: 200 }}
+              ><Link href="/posts/new_method">Add a new method</Link>
+            </Button><br />
+
+            <Button 
+              type = "button"
+              variant="light" color="violet" size="xs" compact            
+              disabled={clicked}
+              onClick={() => setClicked(true)}
+              sx={{ width: 200 }}
+              ><Link href="/posts/new_sample">Add a new sample</Link>
+            </Button>
+
+
           </Navbar>
         }
+
         header={
           <Header height={60} p="xs">
             <Title order={1}>
-              GenoRobotics
+              GenoRobotics 
             </Title>
           </Header>
         }
@@ -36,21 +65,32 @@ const Home: NextPage = () => {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
       >
-        <Center sx={{ height: "100%" }}>
-          <Button
+
+
+
+
+    
+
+  
+
+          {/* <Center sx={{ height: "100%" }}>
+            <Button
             disabled={clicked}
             onClick={() => setClicked(true)}
             sx={{ width: 100 }}
-          >
+            >
             {clicked ?
               "Nice" :
-              "Click me"
+              "Login"
             }
-          </Button>
-        </Center>
-      </AppShell>
-    </>
-  )
+            </Button>
+          
+          </Center> */}
+
+
+            </AppShell>
+            </>
+            )
 }
 
 export default Home
