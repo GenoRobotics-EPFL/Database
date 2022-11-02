@@ -48,7 +48,16 @@ const Home: NextPage = () => {
               onClick={() => setClicked(true)}
               sx={{ width: 200 }}
               ><Link href="/posts/new_sample">Add a new sample</Link>
-            </Button>
+            </Button><br />
+
+            <Button 
+              type = "button"
+              variant="light" color="violet" size="xs" compact            
+              disabled={clicked}
+              onClick={() => setClicked(true)}
+              sx={{ width: 200 }}
+              ><Link href="/posts/new_specimen">Add a new specimen</Link>
+            </Button><br />
 
 
           </Navbar>
@@ -73,19 +82,6 @@ const Home: NextPage = () => {
 
   
 
-          {/* <Center sx={{ height: "100%" }}>
-            <Button
-            disabled={clicked}
-            onClick={() => setClicked(true)}
-            sx={{ width: 100 }}
-            >
-            {clicked ?
-              "Nice" :
-              "Login"
-            }
-            </Button>
-          
-          </Center> */}
 
 
             </AppShell>
