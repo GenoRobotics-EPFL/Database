@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
+
 import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text } from '@mantine/core'
+
 
 import { useState } from 'react'
 
 import Link from 'next/link'
 import { kMaxLength } from 'buffer'
-
 
 
 const Home: NextPage = () => {
@@ -29,6 +30,7 @@ const Home: NextPage = () => {
         navbar={
 
           <Navbar width={{ base: 300 }} p="xs">
+
 
             <Title order={2}>
               Menu
@@ -65,6 +67,7 @@ const Home: NextPage = () => {
 
         header={
 
+
           <Header height={80} p="xs">
             <Title order={1}>
               <img
@@ -77,6 +80,7 @@ const Home: NextPage = () => {
             </Title>
           </Header>
 
+
         }
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
@@ -84,7 +88,6 @@ const Home: NextPage = () => {
       >
 
       </AppShell>
-
 
 
     </>

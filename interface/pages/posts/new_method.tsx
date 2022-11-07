@@ -6,7 +6,7 @@ export default function NewMethod() {
 
   return (
     <>
-      
+
 
       <AppShell
         padding="md"
