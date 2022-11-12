@@ -2,8 +2,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 
 
-import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text } from '@mantine/core'
+import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text, Footer, MediaQuery, Aside } from '@mantine/core'
 
+import { useForm } from '@mantine/form'
 
 import { useState } from 'react'
 
@@ -13,7 +14,7 @@ import { kMaxLength } from 'buffer'
 
 const Home: NextPage = () => {
 
-  const [clicked, setClicked] = useState(false)
+  // const [clicked, setClicked] = useState(false)
 
 
   return (
@@ -27,19 +28,20 @@ const Home: NextPage = () => {
 
       <AppShell
         padding="md"
+        styles={(theme) => ({
+          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+        })}
+
         navbar={
-
           <Navbar width={{ base: 300 }} p="xs">
-
 
             <Title order={2}>
               Menu
             </Title><br />
 
             <Button
-              component="a"
+              component="a" sx={{ width: 200 }}
               href="/posts/new_method"
-              sx={{ width: 200 }}
               color="teal"
             >Add a new method
             </Button><br />
@@ -58,16 +60,26 @@ const Home: NextPage = () => {
             >Add a new specimen
             </Button><br />
 
+            <Button
+              component="a" sx={{ width: 200 }}
+              href="/posts/new_person"
+              color="teal"
+            >Add a new person
+            </Button><br />
+
+            <Button
+              component="a" sx={{ width: 200 }}
+              href="/posts/see_tables"
+              color="teal"
+            >See tables
+            </Button><br />
+
 
           </Navbar>
 
         }
 
-
-
         header={
-
-
           <Header height={80} p="xs">
             <Title order={1}>
               <img
@@ -80,14 +92,27 @@ const Home: NextPage = () => {
             </Title>
           </Header>
 
-
         }
-        styles={(theme) => ({
-          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-        })}
+
+        footer={
+          <Footer height={110} p="xs">
+            <Center>
+              <img
+                width="200"
+                height="100"
+                src="https://www.genorobotics.org/wp-content/uploads/2020/04/Genorobotics-logo-52.png"
+                alt="Genorobotics logo-52" ></img>
+              Copyright © 2022 GenoRobotics
+            </Center>
+          </Footer>
+        }
+
       >
 
+       
+
       </AppShell>
+
 
 
     </>
