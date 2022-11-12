@@ -1,30 +1,32 @@
-import { AppShell, Navbar, Header, Title, Button, Center, Checkbox, TextInput, Select, Footer, Group } from '@mantine/core'
+import { AppShell, Navbar, Header, Title, Button, Center, Checkbox, TextInput, Select, NumberInput, Textarea, Text, Footer } from '@mantine/core'
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'
 
-
-export default function NewMethod() {
+export default function NewPerson() {
 
   const form = useForm({
     initialValues: {
-      methodname: '',
-      description: '',
-      methodtype: ''
+      name: '',
+      email: '',
+      id: ''
     },
     validate: {
-      methodname: (value) => (value ? null : 'Invalid method name'),
-      description: (value) => (value ? null : 'Invalid description'),
-      methodtype: (value) => (value ? null : 'Pick method type')
+      name: (value) => (value ? null : 'Invalid name'),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      id: (value) => (value ? null : 'Invalid ID')
     },
 
   });
 
   return (
     <>
-
       <AppShell
         padding="md"
+        styles={(theme) => ({
+          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+        })}
+
         header={
           <Header height={80} p="xs">
             <Title order={1}>
@@ -61,7 +63,7 @@ export default function NewMethod() {
             </Title><br />
 
             <Button
-              component="a" sx={{ width: 200 }} disabled
+              component="a" sx={{ width: 200 }}
               href="/posts/new_method"
               color="teal"
             >Add a new method
@@ -82,7 +84,7 @@ export default function NewMethod() {
             </Button><br />
 
             <Button
-              component="a" sx={{ width: 200 }}
+              component="a" sx={{ width: 200 }} disabled
               href="/posts/new_person"
               color="teal"
             >Add a new person
@@ -97,61 +99,55 @@ export default function NewMethod() {
 
 
           </Navbar>
-
         }
+
       >
-        <Title order={2}>
-          Add a new method
+        <Title order={2} >
+          Add a new person
         </Title><br />
 
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <TextInput
-            placeholder="Name"
-            label="Method name"
-            sx={{ width: 200 }}
+            placeholder="Name Surname"
+            label="Full Name"
             withAsterisk
-            {...form.getInputProps('methodname')}
+            sx={{ width: 200 }}
+            {...form.getInputProps('name')}
+
           /><br />
           <TextInput
-            placeholder="Description"
-            label="Method description"
-            sx={{ width: 200 }}
+            placeholder="Enter email"
+            label="Email"
             withAsterisk
-            {...form.getInputProps('description')}
+            sx={{ width: 200 }}
+            {...form.getInputProps('email')}
+          /><br />
+          <TextInput
+            placeholder="Enter ID"
+            label="Person ID"
+            withAsterisk
+            sx={{ width: 200 }}
+            {...form.getInputProps('id')}
           /><br />
 
-          <Select
-            label="Method type"
-            placeholder="Pick one"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('methodtype')}
-            data={[
-              { value: 'amplif', label: 'Amplification' },
-              { value: 'extract', label: 'Extraction' },
-              { value: 'sequ', label: 'Sequencing' },
-              { value: 'tax', label: 'Taxonomic' },
-              { value: 'collec', label: 'Collection' },
-            ]}
-          /><br />
- 
-          
           <Button type="submit">Submit</Button>
 
-
         </form>
+
+
 
         <h4>
           <Link href="/">Back</Link>
         </h4>
 
+
+
+
+
+
       </AppShell>
 
 
-
-
-
-
     </>
-  );
+  )
 }
