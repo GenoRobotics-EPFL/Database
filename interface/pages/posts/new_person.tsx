@@ -31,9 +31,9 @@ export default function NewPerson() {
 
   });
 
-  const postUser = async (data: Omit<API.Person, "person_id">) => {
+  const postPerson = async (data: Omit<API.Person, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/person/",
+      "http://localhost:8000/persons/",
       {
         method: 'POST',
         headers: {
@@ -42,8 +42,12 @@ export default function NewPerson() {
         body: JSON.stringify(data),
       }
     )
-    if (response.status != 200) {
-      console.log("POST /person failed.")
+    const person = await response.json()
+    if (response.status == 200) {
+      console.log("POST /persons")
+      console.dir(person)
+    } else {
+      console.log("POST /persons failed.")
     }
   }
 
@@ -124,8 +128,6 @@ export default function NewPerson() {
               color="teal"
             >See tables
             </Button><br />
-
-
           </Navbar>
         }
 
@@ -134,7 +136,14 @@ export default function NewPerson() {
           Add a new person
         </Title><br />
 
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form
+          onSubmit={form.onSubmit(
+            async (values) => await postPerson({
+              name: values.name,
+              email: values.email,
+            })
+          )}
+        >
           <TextInput
             placeholder="Name Surname"
             label="Full Name"
@@ -162,20 +171,10 @@ export default function NewPerson() {
 
         </form>
 
-
-
         <h4>
           <Link href="/">Back</Link>
         </h4>
-
-
-
-
-
-
       </AppShell>
-
-
     </>
   )
 }

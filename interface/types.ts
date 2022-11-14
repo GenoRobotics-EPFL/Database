@@ -1,6 +1,6 @@
 export namespace API {
   export type Person = {
-    person_id: string
+    id: number
     name: string
     email: string
   }
