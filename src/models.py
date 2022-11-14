@@ -21,11 +21,18 @@ class Person(BaseModel):
     email: str
 
 
+class Location(BaseModel):
+    id: int
+    collection_area: str
+    gps: str
+    elevation: int
+
+
 class Sample(BaseModel):
     id: int
     person_id: int
+    location_id: int
     timestamp: datetime
-    location: str
 
 
 class AmplificationMethod(BaseModel):
@@ -53,9 +60,13 @@ class Sequencing(BaseModel):
     amplification_id: int
     sequencing_method_id: int
     timestamp: datetime
+    base_calling_file: str
+    """
+    Store the location of the file
+    """
     primer_code: str
     sequence_length: str
-    marker: str
+    barcode: str
     primer_desc: str
 
 
@@ -66,9 +77,9 @@ class PlantIdentification(BaseModel):
     taxonomy_id: int
     timestamp: datetime
     identification_method: str
-    sex: str
-    lifestage: str
-    reproduction: str
+    sex: str | None
+    lifestage: str | None
+    reproduction: str | None
     image_url: str
     image_timestamp: datetime
     image_desc: str
