@@ -1,7 +1,19 @@
-import { AppShell, Navbar, Header, Title, Button, Center, Checkbox, TextInput, Select, NumberInput, Textarea, Text, Footer } from '@mantine/core'
+import { useState, useEffect } from 'react'
+
+import {
+  AppShell,
+  Navbar,
+  Header,
+  Title,
+  Button,
+  Center,
+  TextInput,
+  Footer,
+} from '@mantine/core'
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'
+import { API } from '../../types';
 
 export default function NewPerson() {
 
@@ -18,6 +30,26 @@ export default function NewPerson() {
     },
 
   });
+
+  const postPerson = async (data: Omit<API.Person, "id">) => {
+    const response = await fetch(
+      "http://localhost:8000/persons/",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    const person = await response.json()
+    if (response.status == 200) {
+      console.log("POST /persons")
+      console.dir(person)
+    } else {
+      console.log("POST /persons failed.")
+    }
+  }
 
   return (
     <>
@@ -96,8 +128,6 @@ export default function NewPerson() {
               color="teal"
             >See tables
             </Button><br />
-
-
           </Navbar>
         }
 
@@ -106,7 +136,14 @@ export default function NewPerson() {
           Add a new person
         </Title><br />
 
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form
+          onSubmit={form.onSubmit(
+            async (values) => await postPerson({
+              name: values.name,
+              email: values.email,
+            })
+          )}
+        >
           <TextInput
             placeholder="Name Surname"
             label="Full Name"
@@ -134,20 +171,10 @@ export default function NewPerson() {
 
         </form>
 
-
-
         <h4>
           <Link href="/">Back</Link>
         </h4>
-
-
-
-
-
-
       </AppShell>
-
-
     </>
   )
 }
