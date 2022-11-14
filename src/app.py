@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .models import (
     Person,
+    Location,
     Sequencing,
     SequencingMethod,
     Sample,
@@ -35,9 +36,10 @@ sequencing = Sequencing(
     amplification_id=1,
     sequencing_method_id=1,
     timestamp=datetime.now(),
+    base_calling_file="",
     primer_code="",
     sequence_length=10,
-    marker="",
+    barcode="",
     primer_desc="",
 )
 seq_method = SequencingMethod(
@@ -49,8 +51,11 @@ seq_method = SequencingMethod(
 sample = Sample(
     id=1,
     person_id=1,
+    location_id=1,
     timestamp=datetime.now(),
-    location="",
+    image_url="",
+    image_timestamp=datetime.now(),
+    image_desc="",
 )
 amplification = Amplification(
     id=1,
@@ -63,14 +68,11 @@ plant_identification = PlantIdentification(
     sample_id=1,
     sequencing_id=1,
     taxonomy_id=1,
+    identification_method_id=1,
     timestamp=datetime.now(),
-    identification_method="",
     sex="",
     lifestage="",
     reproduction="",
-    image_url="",
-    image_timestamp=datetime.now(),
-    image_desc="",
 )
 
 
