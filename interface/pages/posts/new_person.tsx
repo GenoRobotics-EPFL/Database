@@ -1,7 +1,19 @@
-import { AppShell, Navbar, Header, Title, Button, Center, Checkbox, TextInput, Select, NumberInput, Textarea, Text, Footer } from '@mantine/core'
+import { useState, useEffect } from 'react'
+
+import {
+  AppShell,
+  Navbar,
+  Header,
+  Title,
+  Button,
+  Center,
+  TextInput,
+  Footer,
+} from '@mantine/core'
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'
+import { API } from '../../types';
 
 export default function NewPerson() {
 
@@ -18,6 +30,22 @@ export default function NewPerson() {
     },
 
   });
+
+  const postUser = async (data: Omit<API.Person, "person_id">) => {
+    const response = await fetch(
+      "http://localhost:8000/person/",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    if (response.status != 200) {
+      console.log("POST /person failed.")
+    }
+  }
 
   return (
     <>
