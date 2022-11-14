@@ -33,6 +33,9 @@ class Sample(BaseModel):
     person_id: int
     location_id: int
     timestamp: datetime
+    image_url: str
+    image_timestamp: datetime
+    image_desc: str
 
 
 class AmplificationMethod(BaseModel):
@@ -75,14 +78,19 @@ class PlantIdentification(BaseModel):
     sample_id: int
     sequencing_id: int
     taxonomy_id: int
+    identification_method_id: int
     timestamp: datetime
-    identification_method: str
     sex: str | None
     lifestage: str | None
     reproduction: str | None
-    image_url: str
-    image_timestamp: datetime
-    image_desc: str
+
+
+class IdentificationMethod(BaseModel):
+    id: int
+    name: str
+    description: str
+    type: str
+    version: int
 
 
 class Taxonomy(BaseModel):
