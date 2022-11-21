@@ -101,3 +101,4 @@ class Taxonomy(BaseModel):
     class_: str
     family: str
     species: str
+    

@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
-
+from typing import List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +12,9 @@ from .models import (
     Sample,
     Amplification,
     PlantIdentification,
+    AmplificationMethod,
+    IdentificationMethod,
+    Taxonomy,
     without_id,
 )
 
@@ -63,6 +66,12 @@ amplification = Amplification(
     amplification_method_id=1,
     timestamp=datetime.now(),
 )
+
+amp_method = AmplificationMethod(
+    id=1,
+    name="",
+)
+
 plant_identification = PlantIdentification(
     id=1,
     sample_id=1,
@@ -74,9 +83,25 @@ plant_identification = PlantIdentification(
     lifestage="",
     reproduction="",
 )
+id_method = IdentificationMethod(
+    id=1,
+    name="",
+    description="",
+    type="",
+    version=1,
+)
 
+taxonomy= Taxonomy(
+    id=1,
+    domain="",
+    kingdom="",
+    phylum="",
+    class_="",
+    family="",
+    species="",
+)
 
-@app.get("/persons", response_model=list[Person])
+@app.get("/persons", response_model=List[Person])
 def persons():
     return [person.dict()]
 
@@ -107,7 +132,7 @@ def persons(id: int):
     return person.dict()
 
 
-@app.get("/sequencing_methods", response_model=list[SequencingMethod])
+@app.get("/sequencing_methods", response_model=List[SequencingMethod])
 def sequencing_methods():
     return [seq_method.dict()]
 
@@ -138,7 +163,7 @@ def sequencing_methods(id: int):
     return seq_method.dict()
 
 
-@app.get("/samples", response_model=list[Sample])
+@app.get("/samples", response_model=List[Sample])
 def samples():
     return [sample.dict()]
 
@@ -169,7 +194,7 @@ def samples(id: int):
     return sample.dict()
 
 
-@app.get("/amplifications", response_model=list[Amplification])
+@app.get("/amplifications", response_model=List[Amplification])
 def amplifications():
     return [amplification.dict()]
 
@@ -200,7 +225,7 @@ def amplifications(id: int):
     return amplification.dict()
 
 
-@app.get("/sequencings", response_model=list[Sequencing])
+@app.get("/sequencings", response_model=List[Sequencing])
 def sequencings():
     return [sequencing.dict()]
 
@@ -231,7 +256,7 @@ def sequencings(id: int):
     return sequencing.dict()
 
 
-@app.get("/plant_identifications", response_model=list[PlantIdentification])
+@app.get("/plant_identifications", response_model=List[PlantIdentification])
 def plant_identifications():
     return [plant_identification.dict()]
 
