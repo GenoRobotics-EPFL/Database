@@ -1,9 +1,11 @@
 from datetime import datetime
 from uuid import uuid4
 from typing import List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
+from . import schemes
 from .models import (
     Person,
     Location,
@@ -17,8 +19,20 @@ from .models import (
     Taxonomy,
     without_id,
 )
+from .database import Base, engine, SessionLocal
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -91,7 +105,7 @@ id_method = IdentificationMethod(
     version=1,
 )
 
-taxonomy= Taxonomy(
+taxonomy = Taxonomy(
     id=1,
     domain="",
     kingdom="",
@@ -101,9 +115,10 @@ taxonomy= Taxonomy(
     species="",
 )
 
+
 @app.get("/persons", response_model=List[Person])
-def persons():
-    return [person.dict()]
+def persons(db: Session = Depends(get_db)):
+    return db.query(schemes.Person).all()
 
 
 @app.get("/persons/{id}", response_model=Person)
@@ -122,9 +137,12 @@ def persons(body: Person):
 
 
 @app.post("/persons", response_model=Person)
-def persons(body: without_id(Person)):
-    body.id = uuid4().int
-    return body.dict()
+def persons(body: without_id(Person), db: Session = Depends(get_db)):
+    new_person = schemes.Person(name=body.name, email=body.email)
+    db.add(new_person)
+    db.commit()
+    db.refresh(new_person)
+    return new_person
 
 
 @app.delete("/persons/{id}", response_model=Person)

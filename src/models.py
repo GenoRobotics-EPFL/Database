@@ -20,6 +20,9 @@ class Person(BaseModel):
     name: str
     email: str
 
+    class Config:
+        orm_mode = True
+
 
 class Location(BaseModel):
     id: int
@@ -68,7 +71,7 @@ class Sequencing(BaseModel):
     Store the location of the file
     """
     primer_code: str
-    sequence_length: str
+    sequence_length: int
     barcode: str
     primer_desc: str
 
@@ -101,4 +104,3 @@ class Taxonomy(BaseModel):
     class_: str
     family: str
     species: str
-    
