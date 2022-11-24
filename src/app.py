@@ -1,6 +1,5 @@
 from datetime import datetime
 from uuid import uuid4
-from typing import List
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -116,7 +115,7 @@ taxonomy = Taxonomy(
 )
 
 
-@app.get("/persons", response_model=List[Person])
+@app.get("/persons", response_model=list[Person])
 def persons(db: Session = Depends(get_db)):
     return db.query(schemes.Person).all()
 
@@ -150,7 +149,7 @@ def persons(id: int):
     return person.dict()
 
 
-@app.get("/sequencing_methods", response_model=List[SequencingMethod])
+@app.get("/sequencing_methods", response_model=list[SequencingMethod])
 def sequencing_methods():
     return [seq_method.dict()]
 
@@ -181,7 +180,7 @@ def sequencing_methods(id: int):
     return seq_method.dict()
 
 
-@app.get("/samples", response_model=List[Sample])
+@app.get("/samples", response_model=list[Sample])
 def samples():
     return [sample.dict()]
 
@@ -212,7 +211,7 @@ def samples(id: int):
     return sample.dict()
 
 
-@app.get("/amplifications", response_model=List[Amplification])
+@app.get("/amplifications", response_model=list[Amplification])
 def amplifications():
     return [amplification.dict()]
 
@@ -243,7 +242,7 @@ def amplifications(id: int):
     return amplification.dict()
 
 
-@app.get("/sequencings", response_model=List[Sequencing])
+@app.get("/sequencings", response_model=list[Sequencing])
 def sequencings():
     return [sequencing.dict()]
 
@@ -274,7 +273,7 @@ def sequencings(id: int):
     return sequencing.dict()
 
 
-@app.get("/plant_identifications", response_model=List[PlantIdentification])
+@app.get("/plant_identifications", response_model=list[PlantIdentification])
 def plant_identifications():
     return [plant_identification.dict()]
 
