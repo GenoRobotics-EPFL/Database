@@ -138,8 +138,11 @@ def persons(id: int):
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(body: Person):
-    return body.dict()
+def persons(person_id: int, body: Person, q: str | None = None):
+    result = {"id": person_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/persons", response_model=Person)
@@ -153,7 +156,13 @@ def persons(body: without_id(Person), db: Session = Depends(get_db)):
 
 @app.delete("/persons/{id}", response_model=Person)
 def persons(id: int):
-    return person.dict()
+    with Session(engine) as session:
+        person = session.get(Person, id)
+        if not person:
+            raise HTTPException(status_code=404, detail="Person not found")
+        session.delete(person)
+        session.commit()
+        return {"ok":True}
 
 
 @app.get("/sequencing_methods", response_model=list[SequencingMethod])
@@ -172,8 +181,11 @@ def sequencing_methods(id: int):
 
 
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(body: SequencingMethod):
-    return body.dict()
+def sequencing_methods(sequencing_method_id: int, body: SequencingMethod, q: str | None = None):
+    result = {"id": sequencing_method_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
@@ -187,7 +199,13 @@ def sequencing_methods(body: without_id(SequencingMethod), db: Session = Depends
 
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(id: int):
-    return seq_method.dict()
+    with Session(engine) as session:
+        sequencing_method = session.get(SequencingMethod, id)
+        if not sequencing_method:
+            raise HTTPException(status_code=404, detail="Sequencing method not found")
+        session.delete(sequencing_method)
+        session.commit()
+        return {"ok":True}
 
 
 @app.get("/samples", response_model=list[Sample])
@@ -206,8 +224,11 @@ def samples(id: int):
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(body: Sample):
-    return body.dict()
+def samples(sample_id: int, body: Sample, q: str | None = None):
+    result = {"id": sample_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/samples", response_model=Sample)
@@ -223,7 +244,13 @@ def samples(body: without_id(Sample), db: Session = Depends(get_db)):
 
 @app.delete("/samples/{id}", response_model=Sample)
 def samples(id: int):
-    return sample.dict()
+    with Session(engine) as session:
+        sample = session.get(Sample, id)
+        if not sample:
+            raise HTTPException(status_code=404, detail="Sample not found")
+        session.delete(sample)
+        session.commit()
+        return {"ok":True}
 
 
 @app.get("/amplifications", response_model=list[Amplification])
@@ -242,8 +269,11 @@ def amplifications(id: int):
 
 
 @app.put("/amplifications/{id}", response_model=Amplification)
-def amplifications(body: Amplification):
-    return body.dict()
+def amplifications(amplification_id: int, body: Amplification, q: str | None = None):
+    result = {"id": amplification_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/amplifications", response_model=Amplification)
@@ -258,7 +288,13 @@ def amplifications(body: without_id(Amplification),db: Session = Depends(get_db)
 
 @app.delete("/amplifications/{id}", response_model=Amplification)
 def amplifications(id: int):
-    return amplification.dict()
+    with Session(engine) as session:
+        amplification = session.get(Amplification, id)
+        if not amplification:
+            raise HTTPException(status_code=404, detail="Amplification not found")
+        session.delete(amplification)
+        session.commit()
+        return {"ok":True}
 
 
 @app.get("/sequencings", response_model=list[Sequencing])
@@ -277,8 +313,11 @@ def sequencings(id: int):
 
 
 @app.put("/sequencings/{id}", response_model=Sequencing)
-def sequencings(body: Sequencing):
-    return body.dict()
+def sequencings(sequencing_id: int, body: Sequencing, q: str | None = None):
+    result = {"id": sequencing_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/sequencings", response_model=Sequencing)
@@ -295,7 +334,13 @@ def sequencings(body: without_id(Sequencing), db: Session = Depends(get_db)):
 
 @app.delete("/sequencings/{id}", response_model=Sequencing)
 def sequencings(id: int):
-    return sequencing.dict()
+    with Session(engine) as session:
+        sequencing = session.get(Sequencing, id)
+        if not sequencing:
+            raise HTTPException(status_code=404, detail="Sequencing not found")
+        session.delete(sequencing)
+        session.commit()
+        return {"ok":True}
 
 
 @app.get("/plant_identifications", response_model=list[PlantIdentification])
@@ -314,8 +359,11 @@ def plant_identifications(id: int):
 
 
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(body: PlantIdentification):
-    return body.dict()
+def plant_identifications(plant_identification_id: int, body: PlantIdentification, q: str | None = None):
+    result = {"id": plant_identification_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
@@ -331,7 +379,13 @@ def plant_identifications(body: without_id(PlantIdentification),db: Session = De
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(id: int):
-    return plant_identification.dict()
+    with Session(engine) as session:
+        plant_identification = session.get(PlantIdentification, id)
+        if not plant_identification:
+            raise HTTPException(status_code=404, detail="Plant identification not found")
+        session.delete(plant_identification)
+        session.commit()
+        return {"ok":True}
 
 
 
@@ -352,8 +406,11 @@ def amplification_methods(id: int):
 
 
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(body: AmplificationMethod):
-    return body.dict()
+def amplification_methods(amplification_method_id: int, body: AmplificationMethod, q: str | None = None):
+    result = {"id": amplification_method_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
@@ -367,7 +424,13 @@ def amplification_methods(body: without_id(AmplificationMethod), db: Session = D
 
 @app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(id: int):
-    return amp_method.dict()
+    with Session(engine) as session:
+        amplification_method = session.get(AmplificationMethod, id)
+        if not amplification_method:
+            raise HTTPException(status_code=404, detail="Amplification method not found")
+        session.delete(amplification_method)
+        session.commit()
+        return {"ok":True}
 
 
 
@@ -388,8 +451,11 @@ def identification_methods(id: int):
 
 
 @app.put("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(body: IdentificationMethod):
-    return body.dict()
+def identification_methods(identification_method_id: int, body: IdentificationMethod, q: str | None = None):
+    result = {"id": identification_method_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/identification_methods", response_model=IdentificationMethod)
@@ -403,7 +469,13 @@ def identification_methods(body: without_id(IdentificationMethod), db: Session =
 
 @app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_methods(id: int):
-    return id_method.dict()
+    with Session(engine) as session:
+        identification_method = session.get(IdentificationMethod, id)
+        if not identification_method:
+            raise HTTPException(status_code=404, detail="Identification method not found")
+        session.delete(identification_method)
+        session.commit()
+        return {"ok":True}
 
 
 
@@ -423,8 +495,11 @@ def locations(id: int):
 
 
 @app.put("/locations/{id}", response_model=Location)
-def locations(body: Location):
-    return body.dict()
+def locations(location_id: int, body: Location, q: str | None = None):
+    result = {"id": location_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("locations", response_model=Location)
@@ -438,7 +513,13 @@ def locations(body: without_id(Location), db: Session = Depends(get_db)):
 
 @app.delete("/locations/{id}", response_model=Location)
 def locations(id: int):
-    return location.dict()
+    with Session(engine) as session:
+        location = session.get(Location, id)
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        session.delete(location)
+        session.commit()
+        return {"ok":True}
 
 
 
@@ -458,8 +539,11 @@ def taxonomies(id: int):
 
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(body: Taxonomy):
-    return body.dict()
+def taxonomies(taxonomy_id: int, body: Taxonomy, q: str | None = None):
+    result = {"id": taxonomy_id, **body.dict()}
+    if q:
+        result.update({"q":q})
+    return result
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
@@ -473,4 +557,10 @@ def taxonomies(body: without_id(Taxonomy), db: Session = Depends(get_db)):
 
 @app.delete("/taxonomies/{id}", response_model=Taxonomy)
 def taxonomies(id: int):
-    return taxonomy.dict()
+    with Session(engine) as session:
+        taxonomy = session.get(Taxonomy, id)
+        if not taxonomy:
+            raise HTTPException(status_code=404, detail="Taxonomy not found")
+        session.delete(taxonomy)
+        session.commit()
+        return {"ok":True}
