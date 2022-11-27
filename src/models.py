@@ -80,9 +80,9 @@ class PlantIdentification(BaseModel):
     taxonomy_id: int
     identification_method_id: int
     timestamp: datetime
-    sex: str | None
-    lifestage: str | None
-    reproduction: str | None
+    sex: str or None
+    lifestage: str or None
+    reproduction: str or None
 
 
 class IdentificationMethod(BaseModel):

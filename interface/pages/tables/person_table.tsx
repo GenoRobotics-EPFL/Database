@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 
 import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+
+import { MyHeader, MyFooter, MyNavbar } from '../graphics'
+
 import Link from 'next/link'
 import { API } from '../../types'
 
@@ -30,32 +33,8 @@ export default function PersonTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={
-          <Header height={80} p="xs">
-            <Title order={1}>
-              <img
-                width="65"
-                height="45"
-                src="https://www.genorobotics.org/wp-content/uploads/2020/11/Genorobotics-logo-12-fond-transp-90x64.png"
-                alt="GenoRobotics"
-                sizes="(max-width: 90px) 100vw, 90px" />
-              GenoRobotics
-            </Title>
-          </Header>
-        }
-
-        footer={
-          <Footer height={110} p="xs">
-            <Center>
-              <img
-                width="200"
-                height="100"
-                src="https://www.genorobotics.org/wp-content/uploads/2020/04/Genorobotics-logo-52.png"
-                alt="Genorobotics logo-52" ></img>
-              Copyright © 2022 GenoRobotics
-            </Center>
-          </Footer>
-        }
+        header={ MyHeader() }
+        footer={ MyFooter() }
       >
 
         <Title order={2}>
