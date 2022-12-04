@@ -134,13 +134,12 @@ def persons(id: int):
 
 @app.put("/persons/{id}", response_model=Person)
 def persons(id: int, body: Person, db: Session = Depends(get_db)):
-    result = {"id": id, **body.dict()}
-    if body:
-        res = db.query(schemes.Person).filter_by(id=id).first()
-        res.name = body.name
-        res.email = body.email
-        db.commit()
-    return res
+    person = db.query(schemes.Person).filter_by(id=id)
+    if not person.first():
+        raise HTTPException(status_code=404, detail="Person not found")
+    person.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/persons", response_model=Person)
@@ -178,13 +177,13 @@ def sequencing_methods(id: int):
 
 
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(
-    sequencing_method_id: int, body: SequencingMethod, q: str | None = None
-):
-    result = {"id": sequencing_method_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def sequencing_methods(id: int, body: SequencingMethod, db: Session = Depends(get_db)):
+    seq_method = db.query(schemes.SequencingMethod).filter_by(id=id)
+    if not seq_method.first():
+        raise HTTPException(status_code=404, detail="Sequencing method not found")
+    seq_method.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
@@ -226,11 +225,13 @@ def samples(id: int):
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(sample_id: int, body: Sample, q: str | None = None):
-    result = {"id": sample_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def samples(id: int, body: Sample, db: Session = Depends(get_db)):
+    sample = db.query(schemes.Sample).filter_by(id=id)
+    if not sample.first():
+        raise HTTPException(status_code=404, detail="Sample not found")
+    sample.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/samples", response_model=Sample)
@@ -275,11 +276,13 @@ def amplifications(id: int):
 
 
 @app.put("/amplifications/{id}", response_model=Amplification)
-def amplifications(amplification_id: int, body: Amplification, q: str | None = None):
-    result = {"id": amplification_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def amplifications(id: int, body: Amplification, db: Session = Depends(get_db)):
+    amplification = db.query(schemes.Amplification).filter_by(id=id)
+    if not amplification.first():
+        raise HTTPException(status_code=404, detail="Amplification not found")
+    amplification.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/amplifications", response_model=Amplification)
@@ -321,11 +324,13 @@ def sequencings(id: int):
 
 
 @app.put("/sequencings/{id}", response_model=Sequencing)
-def sequencings(sequencing_id: int, body: Sequencing, q: str | None = None):
-    result = {"id": sequencing_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def sequencings(id: int, body: Sequencing, db: Session = Depends(get_db)):
+    sequencing = db.query(schemes.Sequencing).filter_by(id=id)
+    if not sequencing.first():
+        raise HTTPException(status_code=404, detail="Sequencing not found")
+    sequencing.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/sequencings", response_model=Sequencing)
@@ -374,12 +379,14 @@ def plant_identifications(id: int):
 
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(
-    plant_identification_id: int, body: PlantIdentification, q: str | None = None
+    id: int, body: PlantIdentification, db: Session = Depends(get_db)
 ):
-    result = {"id": plant_identification_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+    plant_id = db.query(schemes.PlantIdentification).filter_by(id=id)
+    if not plant_id.first():
+        raise HTTPException(status_code=404, detail="Plant identification not found")
+    plant_id.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
@@ -429,12 +436,14 @@ def amplification_methods(id: int):
 
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(
-    amplification_method_id: int, body: AmplificationMethod, q: str | None = None
+    id: int, body: AmplificationMethod, db: Session = Depends(get_db)
 ):
-    result = {"id": amplification_method_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+    amp_method = db.query(schemes.AmplificationMethod).filter_by(id=id)
+    if not amp_method.first():
+        raise HTTPException(status_code=404, detail="Amplification method not found")
+    amp_method.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
@@ -475,12 +484,14 @@ def identification_methods(id: int):
 
 @app.put("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_methods(
-    identification_method_id: int, body: IdentificationMethod, q: str | None = None
+    id: int, body: IdentificationMethod, db: Session = Depends(get_db)
 ):
-    result = {"id": identification_method_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+    id_method = db.query(schemes.IdentificationMethod).filter_by(id=id)
+    if not id_method.first():
+        raise HTTPException(status_code=404, detail="Identification method not found")
+    id_method.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/identification_methods", response_model=IdentificationMethod)
@@ -525,11 +536,13 @@ def locations(id: int):
 
 
 @app.put("/locations/{id}", response_model=Location)
-def locations(location_id: int, body: Location, q: str | None = None):
-    result = {"id": location_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def locations(id: int, body: Location, db: Session = Depends(get_db)):
+    location = db.query(schemes.Location).filter_by(id=id)
+    if not location.first():
+        raise HTTPException(status_code=404, detail="Location not found")
+    location.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("locations", response_model=Location)
@@ -571,11 +584,13 @@ def taxonomies(id: int):
 
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(taxonomy_id: int, body: Taxonomy, q: str | None = None):
-    result = {"id": taxonomy_id, **body.dict()}
-    if q:
-        result.update({"q": q})
-    return result
+def taxonomies(id: int, body: Taxonomy, db: Session = Depends(get_db)):
+    taxonomy = db.query(schemes.Taxonomy).filter_by(id=id)
+    if not taxonomy.first():
+        raise HTTPException(status_code=404, detail="Taxonomy not found")
+    taxonomy.update(body.__dict__, synchronize_session=False)
+    db.commit()
+    return body.dict()
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
