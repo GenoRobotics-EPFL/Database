@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 
 import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
 
-import { MyHeader, MyFooter, MyNavbar } from '../graphics'
-
+import { MyHeader } from '../components/header'
+import { MyFooter } from '../components/footer'
+import { MyNavbar } from '../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
+import React from 'react'
+
 
 export default function AmplificationTable() {
   const [amplifications, setAmplifications] = useState<API.Amplification[]>([])

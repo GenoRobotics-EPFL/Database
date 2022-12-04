@@ -1,15 +1,29 @@
 import { AppShell, Textarea, Header, Title, Button, Center, Checkbox, TextInput, Select, Footer, Tabs, NumberInput } from '@mantine/core'
-import { MyHeader, MyFooter, MyNavbar } from '../graphics'
+import { MyHeader } from '../components/header'
+import { MyFooter } from '../components/footer'
+import { MyNavbar } from '../components/navbar';
 
 
 import { useForm } from '@mantine/form';
 import Link from 'next/link'
 import { API } from '../../types';
+import React from 'react';
 
 
-export default function NewMethod() {
+export default function NewAmplificationMethod() {
 
-  const form = useForm({
+  const amplification_form = useForm({
+    initialValues: {
+      methodname: '',
+      id: 0,
+    },
+    validate: {
+      methodname: (value) => (value ? null : 'Invalid method name')
+    },
+
+  });
+
+  const identification_form = useForm({
     initialValues: {
       methodname: '',
       id: 0,
@@ -19,13 +33,28 @@ export default function NewMethod() {
     },
     validate: {
       methodname: (value) => (value ? null : 'Invalid method name'),
-      id: (value) => (value ? null : 'Invalid ID'),
       methodtype: (value) => (value ? null : 'Select method type'),
       description: (value) => (value ? null : 'Invalid description'),
       version: (value) => (value ? null : 'Enter version'),
     },
 
   });
+
+  const sequencing_form = useForm({
+    initialValues: {
+      methodname: '',
+      id: 0,
+      methodtype: '',
+      description: '',
+    },
+    validate: {
+      methodname: (value) => (value ? null : 'Invalid method name'),
+      methodtype: (value) => (value ? null : 'Select method type'),
+      description: (value) => (value ? null : 'Invalid description'),
+    },
+
+  });
+
 
   const postAmplificationMethod = async (data: Omit<API.AmplificationMethod, "id">) => {
     const response = await fetch(
@@ -92,6 +121,10 @@ export default function NewMethod() {
 
       <AppShell
         padding="md"
+        styles={(theme) => ({
+          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+        })}
+        
         navbar={MyNavbar()}
         header={MyHeader()}
         footer={MyFooter()}
@@ -111,25 +144,18 @@ export default function NewMethod() {
 
           <Tabs.Panel value="amplification" pt="xs">
             <form
-              onSubmit={form.onSubmit(
+              onSubmit={amplification_form.onSubmit(
                 async (values) => await postAmplificationMethod({
                   name: values.methodname,
                 })
               )}
             >
-              < TextInput
+              <TextInput
                 placeholder="Name"
                 label="Method name"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('methodname')}
-              /><br />
-              <TextInput
-                placeholder="Method ID"
-                label="Method ID"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('id')}
+                {...amplification_form.getInputProps('methodname')}
               /><br />
 
               <Button type="submit">Submit</Button>
@@ -138,7 +164,7 @@ export default function NewMethod() {
 
           <Tabs.Panel value="identification" pt="xs">
             <form
-              onSubmit={form.onSubmit(
+              onSubmit={identification_form.onSubmit(
                 async (values) => await postIdentificationMethod({
                   name: values.methodname,
                   description: values.description,
@@ -152,28 +178,22 @@ export default function NewMethod() {
                 label="Method name"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('methodname')}
+                {...identification_form.getInputProps('methodname')}
               /><br />
-              <TextInput
-                placeholder="Method ID"
-                label="Method ID"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('id')}
-              /><br />
+
               <Textarea
                 placeholder="Description"
                 label="Method description"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('description')}
+                {...identification_form.getInputProps('description')}
               /><br />
               <Select
                 label="Method type"
                 placeholder="Method type"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('methodtype')}
+                {...identification_form.getInputProps('methodtype')}
                 data={[
                   { value: 'sequ', label: 'Sequencing' },
                   { value: 'tax', label: 'Taxonomic' },
@@ -185,7 +205,7 @@ export default function NewMethod() {
                 label="Version"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('version')}
+                {...identification_form.getInputProps('version')}
               /><br />
               <Button type="submit">Submit</Button>
             </form>
@@ -193,7 +213,7 @@ export default function NewMethod() {
 
           <Tabs.Panel value="sequencing" pt="xs">
             <form
-              onSubmit={form.onSubmit(
+              onSubmit={sequencing_form.onSubmit(
                 async (values) => await postSequencingMethod({
                   name: values.methodname,
                   description: values.description,
@@ -206,24 +226,26 @@ export default function NewMethod() {
                 label="Method name"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('methodname')}
+                {...sequencing_form.getInputProps('methodname')}
               /><br />
-              <TextInput
-                placeholder="Method ID"
-                label="Method ID"
+
+              <Textarea
+                placeholder="Description"
+                label="Method description"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('id')}
+                {...sequencing_form.getInputProps('description')}
               /><br />
+
               <Select
                 label="Method type"
                 placeholder="Method type"
                 sx={{ width: 200 }}
                 withAsterisk
-                {...form.getInputProps('methodtype')}
                 data={[
                   { value: 'dna', label: 'DNA sequencing' },
                 ]}
+                {...sequencing_form.getInputProps('methodtype')}
               /><br />
               <Button type="submit">Submit</Button>
             </form>
@@ -241,3 +263,5 @@ export default function NewMethod() {
     </>
   );
 }
+
+

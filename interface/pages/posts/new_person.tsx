@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
-import { MyHeader, MyFooter, MyNavbar } from '../graphics'
-
+import { MyHeader } from '../components/header'
+import { MyFooter } from '../components/footer'
+import { MyNavbar } from '../components/navbar';
 import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text, Footer, MediaQuery, Aside, TextInput } from '@mantine/core'
 
 
 import { useForm } from '@mantine/form';
 import Link from 'next/link'
 import { API } from '../../types';
+import React from 'react';
 
 export default function NewPerson() {
 
@@ -19,7 +21,7 @@ export default function NewPerson() {
     validate: {
       name: (value) => (value ? null : 'Invalid name'),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      id: (value) => (value ? null : 'Invalid ID')
+
     },
 
   });
@@ -84,13 +86,7 @@ export default function NewPerson() {
             sx={{ width: 200 }}
             {...form.getInputProps('email')}
           /><br />
-          <TextInput
-            placeholder="Enter ID"
-            label="Person ID"
-            withAsterisk
-            sx={{ width: 200 }}
-            {...form.getInputProps('id')}
-          /><br />
+
 
           <Button type="submit">Submit</Button>
 

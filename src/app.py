@@ -9,9 +9,12 @@ from .models import (
     Location,
     Sequencing,
     SequencingMethod,
+    AmplificationMethod,
+    IdentificationMethod,
     Sample,
     Amplification,
     PlantIdentification,
+    Taxonomy,
     without_id,
 )
 
@@ -48,6 +51,17 @@ seq_method = SequencingMethod(
     description="",
     type="",
 )
+amp_method = AmplificationMethod(
+    id=1,
+    name="",
+)
+id_method = IdentificationMethod(
+    id=1,
+    name="",
+    description="",
+    type="",
+    version=1,
+)
 sample = Sample(
     id=1,
     person_id=1,
@@ -74,7 +88,21 @@ plant_identification = PlantIdentification(
     lifestage="",
     reproduction="",
 )
-
+location = Location(
+    id=1,
+    collection_area="",
+    gps="",
+    elevation=100,
+)
+taxonomy = Taxonomy(
+    id=1,
+    domain="",
+    kingdom="",
+    phylum="",
+    class_="",
+    family="",
+    species="",
+)
 
 @app.get("/persons", response_model=list[Person])
 def persons():
@@ -136,6 +164,68 @@ def sequencing_methods(body: without_id(SequencingMethod)):
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(id: int):
     return seq_method.dict()
+
+
+@app.get("/amplification_methods", response_model=list[AmplificationMethod])
+def amplification_methods():
+    return [amp_method.dict()]
+
+
+@app.get("/amplification_methods/{id}", response_model=AmplificationMethod)
+def amplification_methods(id: int):
+    if id != amp_method.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID.",
+        )
+    return amp_method.dict()
+
+
+@app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
+def amplification_methods(body: AmplificationMethod):
+    return body.dict()
+
+
+@app.post("/amplification_methods", response_model=AmplificationMethod)
+def amplification_methods(body: without_id(AmplificationMethod)):
+    body.id = uuid4().int
+    return body.dict()
+
+
+@app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
+def amplification_methods(id: int):
+    return amp_method.dict()
+
+
+@app.get("/identification_methods", response_model=list[IdentificationMethod])
+def identification_methods():
+    return [id_method.dict()]
+
+
+@app.get("/identification_methods/{id}", response_model=IdentificationMethod)
+def identification_methods(id: int):
+    if id != id_method.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID.",
+        )
+    return seq_method.dict()
+
+
+@app.put("/identification_methods/{id}", response_model=IdentificationMethod)
+def identification_methods(body: IdentificationMethod):
+    return body.dict()
+
+
+@app.post("/identification_methods", response_model=IdentificationMethod)
+def identification_methods(body: without_id(IdentificationMethod)):
+    body.id = uuid4().int
+    return body.dict()
+
+
+@app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
+def identification_methods(id: int):
+    return id_method.dict()
 
 
 @app.get("/samples", response_model=list[Sample])
@@ -260,3 +350,65 @@ def plant_identifications(body: without_id(PlantIdentification)):
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(id: int):
     return plant_identification.dict()
+
+
+@app.get("/locations", response_model=list[Location])
+def identification_methods():
+    return [location.dict()]
+
+
+@app.get("/locations/{id}", response_model=Location)
+def identification_methods(id: int):
+    if id != id_method.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID.",
+        )
+    return location.dict()
+
+
+@app.put("/locations/{id}", response_model=Location)
+def locations(body: Location):
+    return body.dict()
+
+
+@app.post("/locations", response_model=Location)
+def locations(body: without_id(Location)):
+    body.id = uuid4().int
+    return body.dict()
+
+
+@app.delete("/locations/{id}", response_model=Location)
+def locations(id: int):
+    return location.dict()
+
+
+@app.get("/taxonomy", response_model=list[Taxonomy])
+def identification_methods():
+    return [taxonomy.dict()]
+
+
+@app.get("/taxonomy/{id}", response_model=Taxonomy)
+def identification_methods(id: int):
+    if id != id_method.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID.",
+        )
+    return taxonomy.dict()
+
+
+@app.put("/taxonomy/{id}", response_model=Taxonomy)
+def taxonomy(body: Location):
+    return body.dict()
+
+
+@app.post("/taxonomy", response_model=Taxonomy)
+def taxonomy(body: without_id(Taxonomy)):
+    body.id = uuid4().int
+    return body.dict()
+
+
+@app.delete("/taxonomy/{id}", response_model=Taxonomy)
+def locations(id: int):
+    return taxonomy.dict()
