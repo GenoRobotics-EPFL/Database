@@ -46,12 +46,7 @@ person = Person(
     name="Bob",
     email="bob@epfl.ch",
 )
-location = Location(
-    id=1,
-    collection_area="",
-    gps="",
-    elevation=1
-)
+location = Location(id=1, collection_area="", gps="", elevation=1)
 
 sequencing = Sequencing(
     id=1,
@@ -138,11 +133,14 @@ def persons(id: int):
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(person_id: int, body: Person, q: str | None = None):
-    result = {"id": person_id, **body.dict()}
-    if q:
-        result.update({"q":q})
-    return result
+def persons(id: int, body: Person, db: Session = Depends(get_db)):
+    result = {"id": id, **body.dict()}
+    if body:
+        res = db.query(schemes.Person).filter_by(id=id).first()
+        res.name = body.name
+        res.email = body.email
+        db.commit()
+    return res
 
 
 @app.post("/persons", response_model=Person)
@@ -155,14 +153,13 @@ def persons(body: without_id(Person), db: Session = Depends(get_db)):
 
 
 @app.delete("/persons/{id}", response_model=Person)
-def persons(id: int):
-    with Session(engine) as session:
-        person = session.get(Person, id)
-        if not person:
-            raise HTTPException(status_code=404, detail="Person not found")
-        session.delete(person)
-        session.commit()
-        return {"ok":True}
+def persons(id: int, db: Session = Depends(get_db)):
+    person = db.query(schemes.Person).filter_by(id=id).first()
+    if not person:
+        raise HTTPException(status_code=404, detail="Person not found")
+    db.delete(person)
+    db.commit()
+    return person
 
 
 @app.get("/sequencing_methods", response_model=list[SequencingMethod])
@@ -181,16 +178,22 @@ def sequencing_methods(id: int):
 
 
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(sequencing_method_id: int, body: SequencingMethod, q: str | None = None):
+def sequencing_methods(
+    sequencing_method_id: int, body: SequencingMethod, q: str | None = None
+):
     result = {"id": sequencing_method_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
-def sequencing_methods(body: without_id(SequencingMethod), db: Session = Depends(get_db)):
-    new_seq_method = schemes.SequencingMethod(name=seq_method.name, description=seq_method.description,type=seq_method.type)
+def sequencing_methods(
+    body: without_id(SequencingMethod), db: Session = Depends(get_db)
+):
+    new_seq_method = schemes.SequencingMethod(
+        name=seq_method.name, description=seq_method.description, type=seq_method.type
+    )
     db.add(new_seq_method)
     db.commit()
     db.refresh(new_seq_method)
@@ -198,14 +201,13 @@ def sequencing_methods(body: without_id(SequencingMethod), db: Session = Depends
 
 
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(id: int):
-    with Session(engine) as session:
-        sequencing_method = session.get(SequencingMethod, id)
-        if not sequencing_method:
-            raise HTTPException(status_code=404, detail="Sequencing method not found")
-        session.delete(sequencing_method)
-        session.commit()
-        return {"ok":True}
+def sequencing_methods(id: int, db: Session = Depends(get_db)):
+    seq_method = db.query(schemes.SequencingMethod).filter_by(id=id).first()
+    if not seq_method:
+        raise HTTPException(status_code=404, detail="Sequencing method not found")
+    db.delete(seq_method)
+    db.commit()
+    return seq_method
 
 
 @app.get("/samples", response_model=list[Sample])
@@ -227,15 +229,20 @@ def samples(id: int):
 def samples(sample_id: int, body: Sample, q: str | None = None):
     result = {"id": sample_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/samples", response_model=Sample)
 def samples(body: without_id(Sample), db: Session = Depends(get_db)):
-    new_sample=schemes.Sample(person_id=sample.person_id, location_id=sample.location_id,
-         timestamp=sample.timestamp, image_url=sample.image_url, image_timestamp=sample.image_timestamp,
-          image_desc=sample.image_desc)
+    new_sample = schemes.Sample(
+        person_id=sample.person_id,
+        location_id=sample.location_id,
+        timestamp=sample.timestamp,
+        image_url=sample.image_url,
+        image_timestamp=sample.image_timestamp,
+        image_desc=sample.image_desc,
+    )
     db.add(new_sample)
     db.commit()
     db.refresh(new_sample)
@@ -243,14 +250,13 @@ def samples(body: without_id(Sample), db: Session = Depends(get_db)):
 
 
 @app.delete("/samples/{id}", response_model=Sample)
-def samples(id: int):
-    with Session(engine) as session:
-        sample = session.get(Sample, id)
-        if not sample:
-            raise HTTPException(status_code=404, detail="Sample not found")
-        session.delete(sample)
-        session.commit()
-        return {"ok":True}
+def samples(id: int, db: Session = Depends(get_db)):
+    sample = db.query(schemes.Sample).filter_by(id=id).first()
+    if not sample:
+        raise HTTPException(status_code=404, detail="Sample not found")
+    db.delete(sample)
+    db.commit()
+    return sample
 
 
 @app.get("/amplifications", response_model=list[Amplification])
@@ -272,14 +278,17 @@ def amplifications(id: int):
 def amplifications(amplification_id: int, body: Amplification, q: str | None = None):
     result = {"id": amplification_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/amplifications", response_model=Amplification)
-def amplifications(body: without_id(Amplification),db: Session = Depends(get_db)):
-    new_amplification=schemes.Amplification(sample_id=amplification.sample_id, amplification_method_id=amplification.amplification_method_id,
-        timestamp=amplification.timestamp)
+def amplifications(body: without_id(Amplification), db: Session = Depends(get_db)):
+    new_amplification = schemes.Amplification(
+        sample_id=amplification.sample_id,
+        amplification_method_id=amplification.amplification_method_id,
+        timestamp=amplification.timestamp,
+    )
     db.add(new_amplification)
     db.commit()
     db.refresh(new_amplification)
@@ -287,14 +296,13 @@ def amplifications(body: without_id(Amplification),db: Session = Depends(get_db)
 
 
 @app.delete("/amplifications/{id}", response_model=Amplification)
-def amplifications(id: int):
-    with Session(engine) as session:
-        amplification = session.get(Amplification, id)
-        if not amplification:
-            raise HTTPException(status_code=404, detail="Amplification not found")
-        session.delete(amplification)
-        session.commit()
-        return {"ok":True}
+def amplifications(id: int, db: Session = Depends(get_db)):
+    amplification = db.query(schemes.Amplification).filter_by(id=id).first()
+    if not amplification:
+        raise HTTPException(status_code=404, detail="Amplification not found")
+    db.delete(amplification)
+    db.commit()
+    return amplification
 
 
 @app.get("/sequencings", response_model=list[Sequencing])
@@ -316,16 +324,23 @@ def sequencings(id: int):
 def sequencings(sequencing_id: int, body: Sequencing, q: str | None = None):
     result = {"id": sequencing_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/sequencings", response_model=Sequencing)
 def sequencings(body: without_id(Sequencing), db: Session = Depends(get_db)):
-    new_sequencing=schemes.Sequencing(sample_id=sequencing.sample_id, amplification_id=sequencing.amplification_id,
-        sequencing_method_id=sequencing.sequencing_method_id, timestamp=sequencing.timestamp,
-        base_calling_file=sequencing.base_calling_file,primer_code=sequencing.primer_code,
-        sequence_length=sequencing.sequence_length,barcode=sequencing.barcode,primer_desc=sequencing.primer_code)
+    new_sequencing = schemes.Sequencing(
+        sample_id=sequencing.sample_id,
+        amplification_id=sequencing.amplification_id,
+        sequencing_method_id=sequencing.sequencing_method_id,
+        timestamp=sequencing.timestamp,
+        base_calling_file=sequencing.base_calling_file,
+        primer_code=sequencing.primer_code,
+        sequence_length=sequencing.sequence_length,
+        barcode=sequencing.barcode,
+        primer_desc=sequencing.primer_code,
+    )
     db.add(new_sequencing)
     db.commit()
     db.refresh(new_sequencing)
@@ -333,14 +348,13 @@ def sequencings(body: without_id(Sequencing), db: Session = Depends(get_db)):
 
 
 @app.delete("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int):
-    with Session(engine) as session:
-        sequencing = session.get(Sequencing, id)
-        if not sequencing:
-            raise HTTPException(status_code=404, detail="Sequencing not found")
-        session.delete(sequencing)
-        session.commit()
-        return {"ok":True}
+def sequencings(id: int, db: Session = Depends(get_db)):
+    sequencing = db.query(schemes.Sequencing).filter_by(id=id).first()
+    if not sequencing:
+        raise HTTPException(status_code=404, detail="Sequencing not found")
+    db.delete(sequencing)
+    db.commit()
+    return sequencing
 
 
 @app.get("/plant_identifications", response_model=list[PlantIdentification])
@@ -359,18 +373,29 @@ def plant_identifications(id: int):
 
 
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(plant_identification_id: int, body: PlantIdentification, q: str | None = None):
+def plant_identifications(
+    plant_identification_id: int, body: PlantIdentification, q: str | None = None
+):
     result = {"id": plant_identification_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
-def plant_identifications(body: without_id(PlantIdentification),db: Session = Depends(get_db)):
-    new_plant_identification=schemes.PlantIdentification(sample_id=plant_identification.sample_id, sequencing_id=plant_identification.sequencing_id,
-        taxonomy_id=plant_identification.taxonomy_id, identification_method_id=plant_identification.identification_method_id, timestamp=plant_identification.timestamp,
-        sex=plant_identification.sex,lifestage=plant_identification.lifestage,reproduction=plant_identification.reproduction)
+def plant_identifications(
+    body: without_id(PlantIdentification), db: Session = Depends(get_db)
+):
+    new_plant_identification = schemes.PlantIdentification(
+        sample_id=plant_identification.sample_id,
+        sequencing_id=plant_identification.sequencing_id,
+        taxonomy_id=plant_identification.taxonomy_id,
+        identification_method_id=plant_identification.identification_method_id,
+        timestamp=plant_identification.timestamp,
+        sex=plant_identification.sex,
+        lifestage=plant_identification.lifestage,
+        reproduction=plant_identification.reproduction,
+    )
     db.add(new_plant_identification)
     db.commit()
     db.refresh(new_plant_identification)
@@ -378,16 +403,13 @@ def plant_identifications(body: without_id(PlantIdentification),db: Session = De
 
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(id: int):
-    with Session(engine) as session:
-        plant_identification = session.get(PlantIdentification, id)
-        if not plant_identification:
-            raise HTTPException(status_code=404, detail="Plant identification not found")
-        session.delete(plant_identification)
-        session.commit()
-        return {"ok":True}
-
-
+def plant_identifications(id: int, db: Session = Depends(get_db)):
+    plant_id = db.query(schemes.PlantIdentification).filter_by(id=id).first()
+    if not plant_id:
+        raise HTTPException(status_code=404, detail="Plant identification not found")
+    db.delete(plant_id)
+    db.commit()
+    return plant_id
 
 
 @app.get("/amplification_methods", response_model=list[AmplificationMethod])
@@ -406,16 +428,20 @@ def amplification_methods(id: int):
 
 
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(amplification_method_id: int, body: AmplificationMethod, q: str | None = None):
+def amplification_methods(
+    amplification_method_id: int, body: AmplificationMethod, q: str | None = None
+):
     result = {"id": amplification_method_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
-def amplification_methods(body: without_id(AmplificationMethod), db: Session = Depends(get_db)):
-    new_amplification_method=schemes.AmplificationMethod(name=amp_method.name)
+def amplification_methods(
+    body: without_id(AmplificationMethod), db: Session = Depends(get_db)
+):
+    new_amplification_method = schemes.AmplificationMethod(name=amp_method.name)
     db.add(new_amplification_method)
     db.commit()
     db.refresh(new_amplification_method)
@@ -423,16 +449,13 @@ def amplification_methods(body: without_id(AmplificationMethod), db: Session = D
 
 
 @app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(id: int):
-    with Session(engine) as session:
-        amplification_method = session.get(AmplificationMethod, id)
-        if not amplification_method:
-            raise HTTPException(status_code=404, detail="Amplification method not found")
-        session.delete(amplification_method)
-        session.commit()
-        return {"ok":True}
-
-
+def amplification_methods(id: int, db: Session = Depends(get_db)):
+    amp_method = db.query(schemes.AmplificationMethod).filter_by(id=id).first()
+    if not amp_method:
+        raise HTTPException(status_code=404, detail="Amplification method not found")
+    db.delete(amp_method)
+    db.commit()
+    return amp_method
 
 
 @app.get("/identification_methods", response_model=list[IdentificationMethod])
@@ -451,16 +474,25 @@ def identification_methods(id: int):
 
 
 @app.put("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(identification_method_id: int, body: IdentificationMethod, q: str | None = None):
+def identification_methods(
+    identification_method_id: int, body: IdentificationMethod, q: str | None = None
+):
     result = {"id": identification_method_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/identification_methods", response_model=IdentificationMethod)
-def identification_methods(body: without_id(IdentificationMethod), db: Session = Depends(get_db)):
-    new_identification_method=schemes.IdentificationMethod(name=id_method.name,description=id_method.description,type=id_method.type,version=id_method.version)
+def identification_methods(
+    body: without_id(IdentificationMethod), db: Session = Depends(get_db)
+):
+    new_identification_method = schemes.IdentificationMethod(
+        name=id_method.name,
+        description=id_method.description,
+        type=id_method.type,
+        version=id_method.version,
+    )
     db.add(new_identification_method)
     db.commit()
     db.refresh(new_identification_method)
@@ -468,15 +500,13 @@ def identification_methods(body: without_id(IdentificationMethod), db: Session =
 
 
 @app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(id: int):
-    with Session(engine) as session:
-        identification_method = session.get(IdentificationMethod, id)
-        if not identification_method:
-            raise HTTPException(status_code=404, detail="Identification method not found")
-        session.delete(identification_method)
-        session.commit()
-        return {"ok":True}
-
+def identification_methods(id: int, db: Session = Depends(get_db)):
+    id_method = db.query(schemes.IdentificationMethod).filter_by(id=id).first()
+    if not id_method:
+        raise HTTPException(status_code=404, detail="Identification method not found")
+    db.delete(id_method)
+    db.commit()
+    return id_method
 
 
 @app.get("/locations", response_model=list[Location])
@@ -498,13 +528,17 @@ def locations(id: int):
 def locations(location_id: int, body: Location, q: str | None = None):
     result = {"id": location_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("locations", response_model=Location)
 def locations(body: without_id(Location), db: Session = Depends(get_db)):
-    new_location=schemes.Location(collection_area=location.collection_area,gps=location.gps,elevation=location.elevation)
+    new_location = schemes.Location(
+        collection_area=location.collection_area,
+        gps=location.gps,
+        elevation=location.elevation,
+    )
     db.add(new_location)
     db.commit()
     db.refresh(new_location)
@@ -512,15 +546,13 @@ def locations(body: without_id(Location), db: Session = Depends(get_db)):
 
 
 @app.delete("/locations/{id}", response_model=Location)
-def locations(id: int):
-    with Session(engine) as session:
-        location = session.get(Location, id)
-        if not location:
-            raise HTTPException(status_code=404, detail="Location not found")
-        session.delete(location)
-        session.commit()
-        return {"ok":True}
-
+def locations(id: int, db: Session = Depends(get_db)):
+    location = db.query(schemes.Location).filter_by(id=id).first()
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    db.delete(location)
+    db.commit()
+    return location
 
 
 @app.get("/taxonomies", response_model=list[Taxonomy])
@@ -542,13 +574,20 @@ def taxonomies(id: int):
 def taxonomies(taxonomy_id: int, body: Taxonomy, q: str | None = None):
     result = {"id": taxonomy_id, **body.dict()}
     if q:
-        result.update({"q":q})
+        result.update({"q": q})
     return result
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
 def taxonomies(body: without_id(Taxonomy), db: Session = Depends(get_db)):
-    new_taxonomy=schemes.Taxonomy(domain=taxonomy.domain,kingdom=taxonomy.kingdom,phylum=taxonomy.phylum,class_=taxonomy.class_,family=taxonomy.family,species=taxonomy.species)
+    new_taxonomy = schemes.Taxonomy(
+        domain=taxonomy.domain,
+        kingdom=taxonomy.kingdom,
+        phylum=taxonomy.phylum,
+        class_=taxonomy.class_,
+        family=taxonomy.family,
+        species=taxonomy.species,
+    )
     db.add(new_taxonomy)
     db.commit()
     db.refresh(new_taxonomy)
@@ -556,11 +595,10 @@ def taxonomies(body: without_id(Taxonomy), db: Session = Depends(get_db)):
 
 
 @app.delete("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int):
-    with Session(engine) as session:
-        taxonomy = session.get(Taxonomy, id)
-        if not taxonomy:
-            raise HTTPException(status_code=404, detail="Taxonomy not found")
-        session.delete(taxonomy)
-        session.commit()
-        return {"ok":True}
+def taxonomies(id: int, db: Session = Depends(get_db)):
+    taxonomy = db.query(schemes.Taxonomy).filter_by(id=id).first()
+    if not taxonomy:
+        raise HTTPException(status_code=404, detail="Taxonomy not found")
+    db.delete(taxonomy)
+    db.commit()
+    return taxonomy
