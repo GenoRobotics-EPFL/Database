@@ -12,12 +12,16 @@
     "@emotion/react": "^11.10.4",
     "@emotion/server": "^11.10.0",
     "@mantine/core": "^5.6.1",
+    "@mantine/dates": "^5.9.1",
     "@mantine/form": "^5.7.2",
     "@mantine/hooks": "^5.6.1",
     "@mantine/next": "^5.6.1",
+    "@tabler/icons": "^1.114.0",
     "next": "12.3.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-icons": "^4.2.0",
+    "tabler-icons-react": "^1.55.0"
   },
   "devDependencies": {
     "@types/node": "18.11.4",
