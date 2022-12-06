@@ -1,4 +1,5 @@
 {
+    "editor.formatOnSave": true,
     "python.formatting.provider": "black",
     "[typescriptreact]": {
         "editor.tabSize": 2,
