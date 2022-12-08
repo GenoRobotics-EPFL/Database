@@ -1,10 +1,13 @@
-from datetime import datetime
-from uuid import uuid4
+import os
+from typing import Type
+
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from dotenv import load_dotenv
 
-from . import schemes
+
 from .models import (
     Person,
     Location,
@@ -18,20 +21,34 @@ from .models import (
     Taxonomy,
     without_id,
 )
-from .database import Base, engine, SessionLocal
 
-Base.metadata.create_all(bind=engine)
+from .crud.base import BaseCRUD
+from .crud.file import FileCRUD
+
+load_dotenv()
+
+
+DB_TYPE = os.environ.get("DB_TYPE", "sql")
+assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"
+
+# only imports SQL CRUD if it is going to be used:
+# that way a mysql setup is not required to test the api
+if DB_TYPE == "sql":
+    from .crud.sql import SQLCRUD
+
+    CRUD = SQLCRUD
+else:
+    CRUD = FileCRUD
+
+
+def get_crud(model: Type[BaseModel]) -> BaseCRUD:
+    def inner():
+        yield from CRUD.as_dependency(model)
+
+    return inner
+
 
 app = FastAPI()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,468 +60,442 @@ app.add_middleware(
 
 
 @app.get("/persons", response_model=list[Person])
-def persons(db: Session = Depends(get_db)):
-    return db.query(schemes.Person).all()
+def persons(crud: BaseCRUD = Depends(get_crud(Person))):
+    return crud.query()
 
 
 @app.get("/persons/{id}", response_model=Person)
-def persons(id: int, db: Session = Depends(get_db)):
-    person = db.get(schemes.Person, id)
-    if person is None:
+def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return person
+    return item
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(id: int, body: without_id(Person), db: Session = Depends(get_db)):
+def persons(
+    id: int, body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))
+):
     body.id = id
-    count = db.query(schemes.Person).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Person not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/persons", response_model=Person)
-def persons(body: without_id(Person), db: Session = Depends(get_db)):
-    new_person = schemes.Person(**body.dict())
-    db.add(new_person)
-    db.commit()
-    db.refresh(new_person)
-    return new_person
+def persons(body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))):
+    return crud.create(body)
 
 
 @app.delete("/persons/{id}", response_model=Person)
-def persons(id: int, db: Session = Depends(get_db)):
-    person = db.get(schemes.Person, id)
-    if person is None:
-        raise HTTPException(status_code=404, detail="Person not found")
-    db.delete(person)
-    db.commit()
-    return person
+def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/sequencing_methods", response_model=list[SequencingMethod])
-def sequencing_methods(db: Session = Depends(get_db)):
-    return db.query(schemes.SequencingMethod).all()
+def sequencing_methods(crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+    return crud.query()
 
 
 @app.get("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(id: int, db: Session = Depends(get_db)):
-    sequencing_method = db.get(schemes.SequencingMethod, id)
-    if sequencing_method is None:
+def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return sequencing_method
+    return item
 
 
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(
-    id: int, body: without_id(SequencingMethod), db: Session = Depends(get_db)
+    id: int,
+    body: without_id(SequencingMethod),
+    crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
     body.id = id
-    count = db.query(schemes.SequencingMethod).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Sequencing method not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
 def sequencing_methods(
-    body: without_id(SequencingMethod), db: Session = Depends(get_db)
+    body: without_id(SequencingMethod),
+    crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
-    new_sequencing_method = schemes.SequencingMethod(**body.dict())
-    db.add(new_sequencing_method)
-    db.commit()
-    db.refresh(new_sequencing_method)
-    return new_sequencing_method
+    return crud.create(body)
 
 
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(id: int, db: Session = Depends(get_db)):
-    sequencing_method = db.get(schemes.SequencingMethod, id)
-    if sequencing_method is None:
-        raise HTTPException(status_code=404, detail="Sequencing method not found")
-    db.delete(sequencing_method)
-    db.commit()
-    return sequencing_method
+def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/samples", response_model=list[Sample])
-def samples(db: Session = Depends(get_db)):
-    return db.query(schemes.Sample).all()
+def samples(crud: BaseCRUD = Depends(get_crud(Sample))):
+    return crud.query()
 
 
 @app.get("/samples/{id}", response_model=Sample)
-def samples(id: int, db: Session = Depends(get_db)):
-    sample = db.get(schemes.Sample, id)
-    if sample is None:
+def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return sample
+    return item
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(id: int, body: without_id(Sample), db: Session = Depends(get_db)):
+def samples(
+    id: int, body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))
+):
     body.id = id
-    count = db.query(schemes.Sample).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Sample not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/samples", response_model=Sample)
-def samples(body: without_id(Sample), db: Session = Depends(get_db)):
-    new_sample = schemes.Sample(**body.dict())
-    db.add(new_sample)
-    db.commit()
-    db.refresh(new_sample)
-    return new_sample
+def samples(body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))):
+    return crud.create(body)
 
 
 @app.delete("/samples/{id}", response_model=Sample)
-def samples(id: int, db: Session = Depends(get_db)):
-    sample = db.get(schemes.Sample, id)
-    if sample is None:
-        raise HTTPException(status_code=404, detail="Sample not found")
-    db.delete(sample)
-    db.commit()
-    return sample
+def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/amplifications", response_model=list[Amplification])
-def amplifications(db: Session = Depends(get_db)):
-    return db.query(schemes.Amplification).all()
+def amplifications(crud: BaseCRUD = Depends(get_crud(Amplification))):
+    return crud.query()
 
 
 @app.get("/amplifications/{id}", response_model=Amplification)
-def amplifications(id: int, db: Session = Depends(get_db)):
-    amplification = db.get(schemes.Amplification, id)
-    if amplification is None:
+def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return amplification
+    return item
 
 
 @app.put("/amplifications/{id}", response_model=Amplification)
 def amplifications(
-    id: int, body: without_id(Amplification), db: Session = Depends(get_db)
+    id: int,
+    body: without_id(Amplification),
+    crud: BaseCRUD = Depends(get_crud(Amplification)),
 ):
     body.id = id
-    count = db.query(schemes.Amplification).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Amplification not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/amplifications", response_model=Amplification)
-def amplifications(body: without_id(Amplification), db: Session = Depends(get_db)):
-    new_amplification = schemes.Amplification(**body.dict())
-    db.add(new_amplification)
-    db.commit()
-    db.refresh(new_amplification)
-    return new_amplification
+def amplifications(
+    body: without_id(Amplification), crud: BaseCRUD = Depends(get_crud(Amplification))
+):
+    return crud.create(body)
 
 
 @app.delete("/amplifications/{id}", response_model=Amplification)
-def amplifications(id: int, db: Session = Depends(get_db)):
-    amplification = db.get(schemes.Amplification, id)
-    if amplification is None:
-        raise HTTPException(status_code=404, detail="Amplification not found")
-    db.delete(amplification)
-    db.commit()
-    return amplification
+def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/sequencings", response_model=list[Sequencing])
-def sequencings(db: Session = Depends(get_db)):
-    return db.query(schemes.Sequencing).all()
+def sequencings(crud: BaseCRUD = Depends(get_crud(Sequencing))):
+    return crud.query()
 
 
 @app.get("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int, db: Session = Depends(get_db)):
-    sequencing = db.get(schemes.Sequencing, id)
-    if sequencing is None:
+def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return sequencing
+    return item
 
 
 @app.put("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int, body: without_id(Sequencing), db: Session = Depends(get_db)):
+def sequencings(
+    id: int,
+    body: without_id(Sequencing),
+    crud: BaseCRUD = Depends(get_crud(Sequencing)),
+):
     body.id = id
-    count = db.query(schemes.Sequencing).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Sequencing not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/sequencings", response_model=Sequencing)
-def sequencings(body: without_id(Sequencing), db: Session = Depends(get_db)):
-    new_sequencing = schemes.Sequencing(**body.dict())
-    db.add(new_sequencing)
-    db.commit()
-    db.refresh(new_sequencing)
-    return new_sequencing
+def sequencings(
+    body: without_id(Sequencing), crud: BaseCRUD = Depends(get_crud(Sequencing))
+):
+    return crud.create(body)
 
 
 @app.delete("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int, db: Session = Depends(get_db)):
-    sequencing = db.get(schemes.Sequencing, id)
-    if sequencing is None:
-        raise HTTPException(status_code=404, detail="Sequencing not found")
-    db.delete(sequencing)
-    db.commit()
-    return sequencing
+def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/plant_identifications", response_model=list[PlantIdentification])
-def plant_identifications(db: Session = Depends(get_db)):
-    return db.query(schemes.PlantIdentification).all()
+def plant_identifications(crud: BaseCRUD = Depends(get_crud(PlantIdentification))):
+    return crud.query()
 
 
 @app.get("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(id: int, db: Session = Depends(get_db)):
-    plant_identification = db.get(schemes.PlantIdentification, id)
-    if plant_identification is None:
+def plant_identifications(
+    id: int, crud: BaseCRUD = Depends(get_crud(PlantIdentification))
+):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return plant_identification
+    return item
 
 
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(
-    id: int, body: without_id(PlantIdentification), db: Session = Depends(get_db)
+    id: int,
+    body: without_id(PlantIdentification),
+    crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
     body.id = id
-    count = db.query(schemes.PlantIdentification).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="PlantIdentification not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
 def plant_identifications(
-    body: without_id(PlantIdentification), db: Session = Depends(get_db)
+    body: without_id(PlantIdentification),
+    crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
-    new_plant_identification = schemes.PlantIdentification(**body.dict())
-    db.add(new_plant_identification)
-    db.commit()
-    db.refresh(new_plant_identification)
-    return new_plant_identification
+    return crud.create(body)
 
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(id: int, db: Session = Depends(get_db)):
-    plant_identification = db.get(schemes.PlantIdentification, id)
-    if plant_identification is None:
-        raise HTTPException(status_code=404, detail="PlantIdentification not found")
-    db.delete(plant_identification)
-    db.commit()
-    return plant_identification
+def plant_identifications(
+    id: int, crud: BaseCRUD = Depends(get_crud(PlantIdentification))
+):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/amplification_methods", response_model=list[AmplificationMethod])
-def amplification_methods(db: Session = Depends(get_db)):
-    return db.query(schemes.AmplificationMethod).all()
+def amplification_methods(crud: BaseCRUD = Depends(get_crud(AmplificationMethod))):
+    return crud.query()
 
 
 @app.get("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(id: int, db: Session = Depends(get_db)):
-    amplification_method = db.get(schemes.AmplificationMethod, id)
-    if amplification_method is None:
+def amplification_methods(
+    id: int, crud: BaseCRUD = Depends(get_crud(AmplificationMethod))
+):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return amplification_method
+    return item
 
 
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(
-    id: int, body: without_id(AmplificationMethod), db: Session = Depends(get_db)
+    id: int,
+    body: without_id(AmplificationMethod),
+    crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
     body.id = id
-    count = db.query(schemes.AmplificationMethod).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="AmplificationMethod not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
 def amplification_methods(
-    body: without_id(AmplificationMethod), db: Session = Depends(get_db)
+    body: without_id(AmplificationMethod),
+    crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
-    new_amplification_method = schemes.AmplificationMethod(**body.dict())
-    db.add(new_amplification_method)
-    db.commit()
-    db.refresh(new_amplification_method)
-    return new_amplification_method
+    return crud.create(body)
 
 
 @app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(id: int, db: Session = Depends(get_db)):
-    amplification_method = db.get(schemes.AmplificationMethod, id)
-    if amplification_method is None:
-        raise HTTPException(status_code=404, detail="AmplificationMethod not found")
-    db.delete(amplification_method)
-    db.commit()
-    return amplification_method
+def amplification_methods(
+    id: int, crud: BaseCRUD = Depends(get_crud(AmplificationMethod))
+):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
-@app.get("/identification_methods", response_model=list[IdentificationMethod])
-def identification_methods(db: Session = Depends(get_db)):
-    return db.query(schemes.IdentificationMethod).all()
+@app.get("/identification_method", response_model=list[IdentificationMethod])
+def identification_method(crud: BaseCRUD = Depends(get_crud(IdentificationMethod))):
+    return crud.query()
 
 
-@app.get("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(id: int, db: Session = Depends(get_db)):
-    identification_method = db.get(schemes.IdentificationMethod, id)
-    if identification_method is None:
+@app.get("/identification_method/{id}", response_model=IdentificationMethod)
+def identification_method(
+    id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
+):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return identification_method
+    return item
 
 
-@app.put("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(
-    id: int, body: without_id(IdentificationMethod), db: Session = Depends(get_db)
+@app.put("/identification_method/{id}", response_model=IdentificationMethod)
+def identification_method(
+    id: int,
+    body: without_id(IdentificationMethod),
+    crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
     body.id = id
-    count = db.query(schemes.IdentificationMethod).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="IdentificationMethod not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
-@app.post("/identification_methods", response_model=IdentificationMethod)
-def identification_methods(
-    body: without_id(IdentificationMethod), db: Session = Depends(get_db)
+@app.post("/identification_method", response_model=IdentificationMethod)
+def identification_method(
+    body: without_id(IdentificationMethod),
+    crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
-    new_identification_method = schemes.IdentificationMethod(**body.dict())
-    db.add(new_identification_method)
-    db.commit()
-    db.refresh(new_identification_method)
-    return new_identification_method
+    return crud.create(body)
 
 
-@app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(id: int, db: Session = Depends(get_db)):
-    identification_method = db.get(schemes.IdentificationMethod, id)
-    if identification_method is None:
-        raise HTTPException(status_code=404, detail="IdentificationMethod not found")
-    db.delete(identification_method)
-    db.commit()
-    return identification_method
+@app.delete("/identification_method/{id}", response_model=IdentificationMethod)
+def identification_method(
+    id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
+):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/locations", response_model=list[Location])
-def locations(db: Session = Depends(get_db)):
-    return db.query(schemes.Location).all()
+def locations(crud: BaseCRUD = Depends(get_crud(Location))):
+    return crud.query()
 
 
 @app.get("/locations/{id}", response_model=Location)
-def locations(id: int, db: Session = Depends(get_db)):
-    location = db.get(schemes.Location, id)
-    if location is None:
+def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return location
+    return item
 
 
 @app.put("/locations/{id}", response_model=Location)
-def locations(id: int, body: without_id(Location), db: Session = Depends(get_db)):
+def locations(
+    id: int, body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))
+):
     body.id = id
-    count = db.query(schemes.Location).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Location not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/locations", response_model=Location)
-def locations(body: without_id(Location), db: Session = Depends(get_db)):
-    new_location = schemes.Location(**body.dict())
-    db.add(new_location)
-    db.commit()
-    db.refresh(new_location)
-    return new_location
+def locations(body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))):
+    return crud.create(body)
 
 
 @app.delete("/locations/{id}", response_model=Location)
-def locations(id: int, db: Session = Depends(get_db)):
-    location = db.get(schemes.Location, id)
-    if location is None:
-        raise HTTPException(status_code=404, detail="Location not found")
-    db.delete(location)
-    db.commit()
-    return location
+def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
 
 
 @app.get("/taxonomies", response_model=list[Taxonomy])
-def taxonomies(db: Session = Depends(get_db)):
-    return db.query(schemes.Taxonomy).all()
+def taxonomies(crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+    return crud.query()
 
 
 @app.get("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int, db: Session = Depends(get_db)):
-    taxonomy = db.get(schemes.Taxonomy, id)
-    if taxonomy is None:
+def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+    item = crud.get(id)
+    if item is None:
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-    return taxonomy
+    return item
 
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int, body: without_id(Taxonomy), db: Session = Depends(get_db)):
+def taxonomies(
+    id: int, body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
+):
     body.id = id
-    count = db.query(schemes.Taxonomy).filter_by(id=id).update(body.dict())
-    if count == 0:
-        raise HTTPException(status_code=404, detail="Taxonomy not found")
-    db.commit()
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
     return body
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
-def taxonomies(body: without_id(Taxonomy), db: Session = Depends(get_db)):
-    new_taxonomy = schemes.Taxonomy(**body.dict())
-    db.add(new_taxonomy)
-    db.commit()
-    db.refresh(new_taxonomy)
-    return new_taxonomy
+def taxonomies(
+    body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
+):
+    return crud.create(body)
 
 
 @app.delete("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int, db: Session = Depends(get_db)):
-    taxonomy = db.get(schemes.Taxonomy, id)
-    if taxonomy is None:
-        raise HTTPException(status_code=404, detail="Taxonomy not found")
-    db.delete(taxonomy)
-    db.commit()
-    return taxonomy
+def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
