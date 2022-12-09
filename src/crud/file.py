@@ -21,19 +21,24 @@ class FileCRUD(BaseCRUD):
         filepath = os.path.join(FOLDER, FILENAME)
         if not os.path.exists(filepath):
             os.makedirs(FOLDER, exist_ok=True)
-            data = {}
+            db = {}
         else:
             with open(filepath, "r") as file:
-                data = json.load(file)
-                # cast keys as json only store string keys
-                data = {int(k): v for k, v in data.items()}
+                db = json.load(file)
+
+        if not model.__name__ in db:
+            db[model.__name__] = {}
+
+        # cast keys as json only store string keys
+        data = {int(k): v for k, v in db[model.__name__].items()}
 
         crud = cls(data)
         try:
             yield crud
         finally:
+            db[model.__name__] = crud._data
             with open(filepath, "w") as file:
-                json.dump(crud._data, file, indent=2)
+                json.dump(db, file, indent=2)
 
     def get(self, id: int) -> Any | None:
         return self._data.get(id)
