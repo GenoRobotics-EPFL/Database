@@ -15,20 +15,25 @@ def without_id(model: Type[BaseModel]) -> Type[BaseModel]:
     )
 
 
-class Person(BaseModel):
+class ParentModel(BaseModel):
+    class Config:
+        orm_mode = True
+
+
+class Person(ParentModel):
     id: int
     name: str
     email: str
 
 
-class Location(BaseModel):
+class Location(ParentModel):
     id: int
     collection_area: str
     gps: str
     elevation: int
 
 
-class Sample(BaseModel):
+class Sample(ParentModel):
     id: int
     person_id: int
     location_id: int
@@ -38,26 +43,29 @@ class Sample(BaseModel):
     image_desc: str
 
 
-class AmplificationMethod(BaseModel):
+class AmplificationMethod(ParentModel):
     id: int
     name: str
 
+    class Config:
+        orm_mode = True
 
-class Amplification(BaseModel):
+
+class Amplification(ParentModel):
     id: int
     sample_id: int
     amplification_method_id: int
     timestamp: datetime
 
 
-class SequencingMethod(BaseModel):
+class SequencingMethod(ParentModel):
     id: int
     name: str
     description: str
     type: str
 
 
-class Sequencing(BaseModel):
+class Sequencing(ParentModel):
     id: int
     sample_id: int
     amplification_id: int
@@ -68,12 +76,12 @@ class Sequencing(BaseModel):
     Store the location of the file
     """
     primer_code: str
-    sequence_length: str
+    sequence_length: int
     barcode: str
     primer_desc: str
 
 
-class PlantIdentification(BaseModel):
+class PlantIdentification(ParentModel):
     id: int
     sample_id: int
     sequencing_id: int
@@ -85,7 +93,7 @@ class PlantIdentification(BaseModel):
     reproduction: str or None
 
 
-class IdentificationMethod(BaseModel):
+class IdentificationMethod(ParentModel):
     id: int
     name: str
     description: str
@@ -93,7 +101,7 @@ class IdentificationMethod(BaseModel):
     version: int
 
 
-class Taxonomy(BaseModel):
+class Taxonomy(ParentModel):
     id: int
     domain: str
     kingdom: str

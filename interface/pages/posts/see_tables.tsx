@@ -5,10 +5,8 @@ import Head from 'next/head'
 import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text, Footer, MediaQuery, Grid, NavLink } from '@mantine/core'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';import {
-  IconMap, IconLayoutGridAdd, IconChevronRight, IconUserPlus, IconTestPipe, IconLocation,
-  IconPlant, IconTournament, IconPlant2, IconColumns, IconHome2
-} from '@tabler/icons';
+import { IconMap, IconLayoutGridAdd, IconChevronRight, IconUserPlus, IconTestPipe, IconLocation,
+  IconPlant, IconTournament, IconPlant2, IconColumns, IconHome } from '@tabler/icons';
 
 
 import Link from 'next/link'
@@ -72,7 +70,7 @@ export default function SeeTables() {
               label="Location tables"
               onClick={() => open("/tables/location_table", "_self")}
               rightSection={<IconChevronRight size={20} stroke={1.5} />}
-              icon={<IconColumns size={20} stroke={1.5} color={"green"} />} /><br />
+              icon={<IconLocation size={20} stroke={1.5} color={"green"} />} /><br />
             <NavLink 
             icon={<IconHome2 size={20} stroke={1.5} color={"green"}/>} 
             label="Back to home page" 
