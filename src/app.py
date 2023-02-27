@@ -6,23 +6,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from dotenv import load_dotenv
-
+from dotenv import find_dotenv
 
 from .models import (
     Person,
     Location,
     Sequencing,
     SequencingMethod,
-    AmplificationMethod,
-    IdentificationMethod,
     Sample,
     Amplification,
     PlantIdentification,
-<<<<<<< HEAD
-=======
     AmplificationMethod,
     IdentificationMethod,
->>>>>>> 471eebeb3f98b9f886319495a9f7dc74d17322ea
     Taxonomy,
     without_id,
 )
@@ -30,7 +25,7 @@ from .models import (
 from .crud.base import BaseCRUD
 from .crud.file import FileCRUD
 
-load_dotenv()
+load_dotenv(find_dotenv(raise_error_if_not_found=True))
 
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
@@ -63,84 +58,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-<<<<<<< HEAD
-person = Person(
-    id=1,
-    name="Bob",
-    email="bob@epfl.ch",
-)
-sequencing = Sequencing(
-    id=1,
-    sample_id=1,
-    amplification_id=1,
-    sequencing_method_id=1,
-    timestamp=datetime.now(),
-    base_calling_file="",
-    primer_code="",
-    sequence_length=10,
-    barcode="",
-    primer_desc="",
-)
-seq_method = SequencingMethod(
-    id=1,
-    name="",
-    description="",
-    type="",
-)
-amp_method = AmplificationMethod(
-    id=1,
-    name="",
-)
-id_method = IdentificationMethod(
-    id=1,
-    name="",
-    description="",
-    type="",
-    version=1,
-)
-sample = Sample(
-    id=1,
-    person_id=1,
-    location_id=1,
-    timestamp=datetime.now(),
-    image_url="",
-    image_timestamp=datetime.now(),
-    image_desc="",
-)
-amplification = Amplification(
-    id=1,
-    sample_id=1,
-    amplification_method_id=1,
-    timestamp=datetime.now(),
-)
-plant_identification = PlantIdentification(
-    id=1,
-    sample_id=1,
-    sequencing_id=1,
-    taxonomy_id=1,
-    identification_method_id=1,
-    timestamp=datetime.now(),
-    sex="",
-    lifestage="",
-    reproduction="",
-)
-location = Location(
-    id=1,
-    collection_area="",
-    gps="",
-    elevation=100,
-)
-taxonomy = Taxonomy(
-    id=1,
-    domain="",
-    kingdom="",
-    phylum="",
-    class_="",
-    family="",
-    species="",
-)
-=======
->>>>>>> 471eebeb3f98b9f886319495a9f7dc74d17322ea
 
 @app.get("/persons", response_model=list[Person])
 def persons(crud: BaseCRUD = Depends(get_crud(Person))):
@@ -225,68 +142,6 @@ def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMeth
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
-
-
-@app.get("/amplification_methods", response_model=list[AmplificationMethod])
-def amplification_methods():
-    return [amp_method.dict()]
-
-
-@app.get("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(id: int):
-    if id != amp_method.id:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid ID.",
-        )
-    return amp_method.dict()
-
-
-@app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(body: AmplificationMethod):
-    return body.dict()
-
-
-@app.post("/amplification_methods", response_model=AmplificationMethod)
-def amplification_methods(body: without_id(AmplificationMethod)):
-    body.id = uuid4().int
-    return body.dict()
-
-
-@app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(id: int):
-    return amp_method.dict()
-
-
-@app.get("/identification_methods", response_model=list[IdentificationMethod])
-def identification_methods():
-    return [id_method.dict()]
-
-
-@app.get("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(id: int):
-    if id != id_method.id:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid ID.",
-        )
-    return seq_method.dict()
-
-
-@app.put("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(body: IdentificationMethod):
-    return body.dict()
-
-
-@app.post("/identification_methods", response_model=IdentificationMethod)
-def identification_methods(body: without_id(IdentificationMethod)):
-    body.id = uuid4().int
-    return body.dict()
-
-
-@app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
-def identification_methods(id: int):
-    return id_method.dict()
 
 
 @app.get("/samples", response_model=list[Sample])
@@ -457,20 +312,6 @@ def plant_identifications(
 
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
-<<<<<<< HEAD
-def plant_identifications(id: int):
-    return plant_identification.dict()
-
-
-@app.get("/locations", response_model=list[Location])
-def identification_methods():
-    return [location.dict()]
-
-
-@app.get("/locations/{id}", response_model=Location)
-def identification_methods(id: int):
-    if id != id_method.id:
-=======
 def plant_identifications(
     id: int, crud: BaseCRUD = Depends(get_crud(PlantIdentification))
 ):
@@ -587,40 +428,10 @@ def locations(crud: BaseCRUD = Depends(get_crud(Location))):
 def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
     item = crud.get(id)
     if item is None:
->>>>>>> 471eebeb3f98b9f886319495a9f7dc74d17322ea
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-<<<<<<< HEAD
-    return location.dict()
-
-
-@app.put("/locations/{id}", response_model=Location)
-def locations(body: Location):
-    return body.dict()
-
-
-@app.post("/locations", response_model=Location)
-def locations(body: without_id(Location)):
-    body.id = uuid4().int
-    return body.dict()
-
-
-@app.delete("/locations/{id}", response_model=Location)
-def locations(id: int):
-    return location.dict()
-
-
-@app.get("/taxonomy", response_model=list[Taxonomy])
-def identification_methods():
-    return [taxonomy.dict()]
-
-
-@app.get("/taxonomy/{id}", response_model=Taxonomy)
-def identification_methods(id: int):
-    if id != id_method.id:
-=======
     return item
 
 
@@ -657,30 +468,10 @@ def taxonomies(crud: BaseCRUD = Depends(get_crud(Taxonomy))):
 def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
     item = crud.get(id)
     if item is None:
->>>>>>> 471eebeb3f98b9f886319495a9f7dc74d17322ea
         raise HTTPException(
             status_code=400,
             detail="Invalid ID.",
         )
-<<<<<<< HEAD
-    return taxonomy.dict()
-
-
-@app.put("/taxonomy/{id}", response_model=Taxonomy)
-def taxonomy(body: Location):
-    return body.dict()
-
-
-@app.post("/taxonomy", response_model=Taxonomy)
-def taxonomy(body: without_id(Taxonomy)):
-    body.id = uuid4().int
-    return body.dict()
-
-
-@app.delete("/taxonomy/{id}", response_model=Taxonomy)
-def locations(id: int):
-    return taxonomy.dict()
-=======
     return item
 
 
@@ -708,4 +499,3 @@ def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
->>>>>>> 471eebeb3f98b9f886319495a9f7dc74d17322ea

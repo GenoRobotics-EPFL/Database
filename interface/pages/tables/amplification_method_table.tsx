@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+import { AppShell, Anchor, Title, createStyles, Space, Table, } from '@mantine/core'
 
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
@@ -8,6 +8,9 @@ import { MyNavbar } from '../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
+
+
+
 
 export default function AmplificationMethodTable() {
   const [amplification_methods, setAmplificationMethods] = useState<API.AmplificationMethod[]>([])
@@ -22,7 +25,7 @@ export default function AmplificationMethodTable() {
       setLoading(false)
     }
     cb()
-  }, []) 
+  }, [])
 
   return (
     <>
@@ -32,15 +35,16 @@ export default function AmplificationMethodTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
       >
 
-        <Title order={2}>
+        <Title mt='md' order={2}>
           Amplification method table
-        </Title><br />
+        </Title>
 
-        <Table>
+
+        <Table mt='md' sx={{ maxWidth: 700 }} >
           <thead>
             <tr>
               <th>ID</th>
@@ -57,9 +61,10 @@ export default function AmplificationMethodTable() {
           </tbody>
         </Table>
 
-        <h4>
-          <Link href="/posts/see_tables">Back</Link>
-        </h4>
+        <Space h="xl" />
+        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+          See tables
+        </Anchor></div>
       </AppShell>
     </>
   )

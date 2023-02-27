@@ -1,13 +1,23 @@
-import { AppShell, Navbar, Header, Title, Button, Tabs, Checkbox, TextInput, Select, NumberInput, Textarea, Footer } from '@mantine/core'
+import {
+  AppShell, createStyles, Title, Button, TextInput, Divider,
+  Stack, Group, Anchor, Text,
+} from '@mantine/core'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
 
 import { useForm } from '@mantine/form';
+import { useEffect } from 'react';
 
-import Link from 'next/link'
 import { API } from '../../types';
 
+
+const useStyles = createStyles((theme) => ({
+  app: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+  },
+
+}));
 
 export default function NewAmplification() {
   const form = useForm({
@@ -45,62 +55,106 @@ export default function NewAmplification() {
     }
   }
 
-  return (
-    <>
+  const { classes } = useStyles();
 
-      <AppShell
-        padding="md"
-        styles={(theme) => ({
-          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-        })}
-        navbar={MyNavbar()}
-        header={MyHeader()}
-        footer={MyFooter()}
-      >
+  function loadInitialValues(): Promise<API.Amplification> {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve({
+        id: 0,
+        sample_id: 0,
+        amplification_method_id: 0,
+        timestamp: new Date(''),
+      }),
+        2000);
+    });
+  }
 
-        <Title order={2}>
-          Add a new amplification
-        </Title><br />
+  function Demo() {
+    const form = useForm<API.Amplification>({
+      initialValues: {
+        id: 0,
+        sample_id: 0,
+        amplification_method_id: 0,
+        timestamp: new Date(''),
+      }
+    });
 
 
-        <form
-          onSubmit={form.onSubmit(
-            async (values) => await postAmplification({
-              sample_id: values.sample_id,
-              amplification_method_id: values.amplification_method_id,
-              timestamp: values.timestamp,
-            })
-          )}
+    useEffect(() => {
+      loadInitialValues().then((values) => {
+        form.setValues(values);
+        form.resetDirty(values);
+      });
+    }, []);
+
+    return (
+      <>
+
+        <AppShell
+          className={classes.app}
+          padding="md"
+          styles={(theme) => ({
+            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+          })}
+          header={MyHeader()}
+          footer={MyFooter()}
         >
-          <TextInput
-            placeholder="Amplification method ID:"
-            label="Amplification method ID:"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('amplification_method_id')}
-          /><br />
-          <label htmlFor="amplificationtime">Amplification datatime:</label><br />
-          <input
-            type="datetime-local"
-            id="timestamp"
-            name="timestamp"
-            {...form.getInputProps('timestamp')}
-          /><br /><br />
 
-          <Button type="submit">Submit</Button>
-        </form>
+          <Title order={2} mt="md">
+            Add a new amplification
+          </Title>
+
+          <Divider mt="lg" />
+
+          <form
+            onSubmit={form.onSubmit(
+              async (values) => await postAmplification({
+                sample_id: values.sample_id,
+                amplification_method_id: values.amplification_method_id,
+                timestamp: values.timestamp,
+              })
+            )}
+            onReset={form.onReset}
+          >
+            <Stack spacing={20} mt="md">
+
+              <Text>Amplification method ID:</Text>
+              <Group>
+                <TextInput
+                  placeholder="Amplification method ID:"
+                  sx={{ width: 100 }}
+                  withAsterisk
+                  {...form.getInputProps('amplification_method_id')}
+                />
+              </Group>
+              <label htmlFor="amplificationtime">Amplification datatime:</label>
+              <Group >
+                <input
+                  type="datetime-local"
+                  id="timestamp"
+                  name="timestamp"
+                  {...form.getInputProps('timestamp')}
+                />
+              </Group>
+
+              <Group mt="md" >
+                <Button type="submit" >Submit</Button>
+                <Button type="reset" onClick={form.reset} > Reset</Button>
+              </Group>
+
+              <Anchor size={14} href="/" target="_self">
+                Back to home page
+              </Anchor>
+            </Stack>
+          </form>
 
 
-        <h4>
-          <Link href="/">Back</Link>
-        </h4>
-
-      </AppShell>
+        </AppShell>
 
 
 
 
 
-    </>
-  );
-}
+      </>
+    );
+  }

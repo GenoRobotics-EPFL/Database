@@ -1,13 +1,29 @@
-import { AppShell, Textarea, Header, Title, Button, Center, Checkbox, TextInput, Select, Footer, Tabs, NumberInput } from '@mantine/core'
+import {
+  TextInput, Select, Anchor, Tabs, NumberInput, Textarea, NavLink, createStyles, Stack, Space, ActionIcon, AppShell, Title, Group, Button,
+} from '@mantine/core'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
-
-
 import { useForm } from '@mantine/form';
-import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
+
+
+
+
+const useStyles = createStyles((theme) => ({
+  app: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+  },
+
+  title: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontWeight: 700,
+  },
+
+}));
+
+
 
 
 export default function NewAmplificationMethod() {
@@ -20,7 +36,6 @@ export default function NewAmplificationMethod() {
     validate: {
       methodname: (value) => (value ? null : 'Invalid method name')
     },
-
   });
 
   const identification_form = useForm({
@@ -54,7 +69,6 @@ export default function NewAmplificationMethod() {
     },
 
   });
-
 
   const postAmplificationMethod = async (data: Omit<API.AmplificationMethod, "id">) => {
     const response = await fetch(
@@ -114,35 +128,38 @@ export default function NewAmplificationMethod() {
     } else {
       console.log("POST /sequencing_methods failed.")
     }
+
+
+
   }
+
+  const { classes } = useStyles();
+
 
   return (
     <>
-
       <AppShell
+        className={classes.app}
         padding="md"
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        
-        navbar={MyNavbar()}
+
         header={MyHeader()}
         footer={MyFooter()}
       >
-        <Title order={2}>
+        <Title order={2} mt='md'>
           Add a new method
-        </Title><br />
+        </Title>
 
-
-
-        <Tabs defaultValue="amplification">
+        <Tabs defaultValue="amplification" mt="lg">
           <Tabs.List>
             <Tabs.Tab value="amplification" >Amplification method</Tabs.Tab>
             <Tabs.Tab value="identification" >Identification method</Tabs.Tab>
             <Tabs.Tab value="sequencing" >Sequencing method</Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="amplification" pt="xs">
+          <Tabs.Panel value="amplification" pt="xs" mt="md">
             <form
               onSubmit={amplification_form.onSubmit(
                 async (values) => await postAmplificationMethod({
@@ -150,19 +167,32 @@ export default function NewAmplificationMethod() {
                 })
               )}
             >
-              <TextInput
-                placeholder="Name"
-                label="Method name"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...amplification_form.getInputProps('methodname')}
-              /><br />
+              <Stack spacing={20}>
+                <TextInput
+                  placeholder="Name"
+                  label="Method name"
+                  sx={{ width: 400 }}
+                  withAsterisk
+                  {...amplification_form.getInputProps('methodname')}
+                />
 
-              <Button type="submit">Submit</Button>
+                <Group mt="md" >
+                  <Button type="submit" >Submit</Button>
+                  <Button type="reset" onClick={amplification_form.reset}> Reset</Button>
+                </Group>
+
+                <Anchor size={14} href="/" target="_self">
+                  Back to home page
+                </Anchor>
+
+              </Stack>
+
             </form>
+
           </Tabs.Panel>
 
-          <Tabs.Panel value="identification" pt="xs">
+          <Tabs.Panel value="identification" pt="xs" mt="md">
+
             <form
               onSubmit={identification_form.onSubmit(
                 async (values) => await postIdentificationMethod({
@@ -173,95 +203,118 @@ export default function NewAmplificationMethod() {
                 })
               )}
             >
-              <TextInput
-                placeholder="Name"
-                label="Method name"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...identification_form.getInputProps('methodname')}
-              /><br />
+              <Stack spacing={20}>
+                <TextInput
+                  placeholder="Name"
+                  label="Method name"
+                  sx={{ width: 400 }}
+                  withAsterisk
+                  {...identification_form.getInputProps('methodname')}
+                />
+                <Textarea
+                  placeholder="Description"
+                  label="Method description"
+                  sx={{ width: 400 }}
+                  withAsterisk
+                  {...identification_form.getInputProps('description')}
+                />
+                <Group>
+                  <Select
+                    label="Method type"
+                    placeholder="Method type"
+                    sx={{ width: 200 }}
+                    withAsterisk
+                    {...identification_form.getInputProps('methodtype')}
+                    data={[
+                      { value: 'sequ', label: 'Sequencing' },
+                      { value: 'tax', label: 'Taxonomic' },
+                    ]}
+                  />
+                  <NumberInput
+                    defaultValue={1}
+                    placeholder="Version"
+                    label="Version"
+                    sx={{ width: 100 }}
+                    withAsterisk
+                    {...identification_form.getInputProps('version')}
+                  />
+                </Group>
 
-              <Textarea
-                placeholder="Description"
-                label="Method description"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...identification_form.getInputProps('description')}
-              /><br />
-              <Select
-                label="Method type"
-                placeholder="Method type"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...identification_form.getInputProps('methodtype')}
-                data={[
-                  { value: 'sequ', label: 'Sequencing' },
-                  { value: 'tax', label: 'Taxonomic' },
-                ]}
-              /><br />
-              <NumberInput
-                defaultValue={1}
-                placeholder="Version"
-                label="Version"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...identification_form.getInputProps('version')}
-              /><br />
-              <Button type="submit">Submit</Button>
+                <Group mt="md" >
+                  <Button type="submit" >Submit</Button>
+                  <Button type="reset" onClick={identification_form.reset} > Reset</Button>
+                </Group>
+
+                <Anchor size={15} href="/" target="_self">
+                  Back to home page
+                </Anchor>
+
+              </Stack>
+
             </form>
+
           </Tabs.Panel>
 
-          <Tabs.Panel value="sequencing" pt="xs">
+          <Tabs.Panel value="sequencing" pt="xs" mt="md">
+
             <form
-              onSubmit={sequencing_form.onSubmit(
-                async (values) => await postSequencingMethod({
-                  name: values.methodname,
-                  description: values.description,
-                  type: values.methodtype,
-                })
-              )}
+              onSubmit={
+                sequencing_form.onSubmit(
+                  async (values) => await postSequencingMethod({
+                    name: values.methodname,
+                    description: values.description,
+                    type: values.methodtype,
+                  }),
+                  sequencing_form.reset
+                )}
             >
-              <TextInput
-                placeholder="Name"
-                label="Method name"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...sequencing_form.getInputProps('methodname')}
-              /><br />
 
-              <Textarea
-                placeholder="Description"
-                label="Method description"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...sequencing_form.getInputProps('description')}
-              /><br />
+              <Stack spacing={20}>
+                <TextInput
+                  placeholder="Name"
+                  label="Method name"
+                  sx={{ width: 400 }}
+                  withAsterisk
+                  {...sequencing_form.getInputProps('methodname')}
+                />
+                <Textarea
+                  placeholder="Description"
+                  label="Method description"
+                  sx={{ width: 400 }}
+                  withAsterisk
+                  {...sequencing_form.getInputProps('description')}
+                />
+                <Select
+                  label="Method type"
+                  placeholder="Method type"
+                  sx={{ width: 200 }}
+                  withAsterisk
+                  data={[
+                    { value: 'dna', label: 'DNA sequencing' },
+                  ]}
+                  {...sequencing_form.getInputProps('methodtype')}
+                />
 
-              <Select
-                label="Method type"
-                placeholder="Method type"
-                sx={{ width: 200 }}
-                withAsterisk
-                data={[
-                  { value: 'dna', label: 'DNA sequencing' },
-                ]}
-                {...sequencing_form.getInputProps('methodtype')}
-              /><br />
-              <Button type="submit">Submit</Button>
+                <Group mt="md" >
+                  <Button type="submit" >Submit</Button>
+                  <Button type="reset" onClick={sequencing_form.reset} > Reset</Button>
+                </Group>
+
+                <Anchor size={15} href="/" target="_self">
+                  Back to home page
+                </Anchor>
+
+              </Stack>
+
             </form>
+
           </Tabs.Panel>
+
         </Tabs>
 
 
-        <h4>
-          <Link href="/">Back</Link>
-        </h4>
-
       </AppShell>
-
-
     </>
   );
 }
-
 
