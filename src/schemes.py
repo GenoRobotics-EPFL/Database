@@ -67,6 +67,19 @@ class Amplification(Base):
     sequencings = relationship("Sequencing", back_populates="amplification")
 
 
+class ConsensusSegment(Base):
+    __tablename__ = "Consensus_segment"
+    id = Column(Integer, primary_key=True, index=True)
+    sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
+    segment_sequence = Column(String(500))
+    primer_name = Column(String(100))
+    primer_desc = Column(String(500))
+    primer2_name = Column(String(100))
+    primer2_desc = Column(String(500))
+    DNA_region = Column(String(100))
+    sequence_length = Column(Integer)
+
+
 class SequencingMethod(Base):
     __tablename__ = "SequencingMethod"
     id = Column(Integer, primary_key=True, index=True)
@@ -85,15 +98,11 @@ class Sequencing(Base):
     sequencing_method_id = Column(Integer, ForeignKey("SequencingMethod.id"))
     timestamp = Column(DateTime(timezone=True))
     base_calling_file = Column(String(100))
-    primer_code = Column(String(500))
-    sequence_length = Column(Integer)
-    barcode = Column(String(500))
-    primer_desc = Column(String(500))
 
     sample = relationship("Sample", back_populates="sequencings")
     sequencing_method = relationship("SequencingMethod", back_populates="sequencings")
     amplification = relationship("Amplification", back_populates="sequencings")
-
+    consensus_segment = relationship("ConsensusSegement", back_populates="sequencings")
     plant_identifications = relationship(
         "PlantIdentification", back_populates="sequencing"
     )

@@ -15,6 +15,7 @@ from .models import (
     SequencingMethod,
     Sample,
     Amplification,
+    ConsensusSegment,
     PlantIdentification,
     AmplificationMethod,
     IdentificationMethod,
@@ -222,6 +223,51 @@ def amplifications(
 
 @app.delete("/amplifications/{id}", response_model=Amplification)
 def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
+    item = crud.delete(id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
+
+@app.get("/consensus_segments", response_model=list[ConsensusSegment])
+def consensus_segments(crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
+    return crud.query()
+
+
+@app.get("/consensus_segments/{id}", response_model=ConsensusSegment)
+def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
+    item = crud.get(id)
+    if item is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ID.",
+        )
+    return item
+
+
+@app.put("/consensus_segments/{id}", response_model=ConsensusSegment)
+def consensus_segments(
+    id: int,
+    body: without_id(ConsensusSegment),
+    crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
+):
+    body.id = id
+    updated = crud.update(id, body)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return body
+
+
+@app.post("/consensus_segments", response_model=ConsensusSegment)
+def consensus_segments(
+    body: without_id(ConsensusSegment),
+    crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
+):
+    return crud.create(body)
+
+
+@app.delete("/consensus_segments/{id}", response_model=ConsensusSegment)
+def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")

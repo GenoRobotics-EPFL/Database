@@ -75,10 +75,18 @@ class Sequencing(ParentModel):
     """
     Store the location of the file
     """
-    primer_code: str
-    sequence_length: int
-    barcode: str
+
+
+class ConsensusSegment(ParentModel):
+    id: int
+    sequence_id: int
+    segment_sequence: str
+    primer_name: str
     primer_desc: str
+    primer2_name: str
+    primer2_desc: str
+    DNA_region: str
+    sequence_length: int
 
 
 class PlantIdentification(ParentModel):
