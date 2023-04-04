@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+import { AppShell, Space, Title, Anchor, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
-import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
 
@@ -23,7 +21,7 @@ export default function IdentificationMethodTable() {
       setLoading(false)
     }
     cb()
-  }, []) 
+  }, [])
 
   return (
     <>
@@ -33,15 +31,15 @@ export default function IdentificationMethodTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
       >
 
-        <Title order={2}>
+        <Title mt='md' order={2}>
           Identification method table
         </Title><br />
 
-        <Table>
+        <Table mt='md' sx={{ maxWidth: 700 }}>
           <thead>
             <tr>
               <th>ID</th>
@@ -59,15 +57,17 @@ export default function IdentificationMethodTable() {
                 <td>{element.description}</td>
                 <td>{element.type}</td>
                 <td>{element.version}</td>
-                
+
               </tr>
             ))}
           </tbody>
         </Table>
 
-        <h4>
-          <Link href="/posts/see_tables">Back</Link>
-        </h4>
+        <Space h="xl" />
+        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+          See tables
+        </Anchor></div>
+
       </AppShell>
     </>
   )

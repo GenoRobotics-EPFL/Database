@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
@@ -11,19 +11,19 @@ import React from 'react'
 
 
 export default function SequencingTable() {
-    const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
-  
-    useEffect(() => {
-      const cb = async () => {
-        setLoading(true)
-        const response = await fetch("http://localhost:8000/sequencings")
-        const data = await response.json() as API.Sequencing[]
-        setSequencings(data)
-        setLoading(false)
-      }
-      cb()
-    }, []) 
+  const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const cb = async () => {
+      setLoading(true)
+      const response = await fetch("http://localhost:8000/sequencings")
+      const data = await response.json() as API.Sequencing[]
+      setSequencings(data)
+      setLoading(false)
+    }
+    cb()
+  }, [])
 
   return (
     <>
@@ -33,15 +33,15 @@ export default function SequencingTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
       >
 
-        <Title order={2}>
+        <Title mt='md' order={2}>
           Sequencing table
-        </Title><br />
+        </Title>
 
-        <Table>
+        <Table mt='md'>
           <thead>
             <tr>
               <th>ID</th>
@@ -75,9 +75,10 @@ export default function SequencingTable() {
           </tbody>
         </Table>
 
-        <h4>
-          <Link href="/posts/see_tables">Back</Link>
-        </h4>
+        <Space h="xl" />
+        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+          See tables
+        </Anchor></div>
       </AppShell>
     </>
   )

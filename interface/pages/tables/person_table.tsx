@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+import { AppShell, Space, Title, Anchor, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
@@ -36,15 +36,15 @@ export default function PersonTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
       >
 
-        <Title order={2}>
+        <Title mt='md' order={2}>
           Person table
-        </Title><br />
+        </Title>
 
-        <Table>
+        <Table mt='md' sx={{ maxWidth: 700 }}>
           <thead>
             <tr>
               <th>Person ID</th>
@@ -63,9 +63,10 @@ export default function PersonTable() {
           </tbody>
         </Table>
 
-        <h4>
-          <Link href="/posts/see_tables">Back</Link>
-        </h4>
+        <Space h="xl" />
+        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+          See tables
+        </Anchor></div>
       </AppShell>
     </>
   )

@@ -1,14 +1,22 @@
-import { useState, useEffect } from 'react'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
 import { MyNavbar } from '../components/navbar';
-import { AppShell, Navbar, Header, Title, Button, Center, Image, Box, BackgroundImage, Text, Footer, MediaQuery, Aside, TextInput } from '@mantine/core'
+import {
+  AppShell, Title, Button, Stack, Group, Anchor, Divider,
+  createStyles, TextInput
+} from '@mantine/core'
 
 
 import { useForm } from '@mantine/form';
-import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
+
+const useStyles = createStyles((theme) => ({
+  app: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+  },
+}));
 
 export default function NewPerson() {
 
@@ -46,22 +54,27 @@ export default function NewPerson() {
     }
   }
 
+  const { classes } = useStyles();
+
+
   return (
     <>
       <AppShell
+        className={classes.app}
         padding="md"
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        navbar={ MyNavbar() }
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
 
       >
-        <Title order={2} >
+        <Title order={2} mt="md" >
           Add a new person
-        </Title><br />
+        </Title>
+
+        <Divider mt="lg" />
 
         <form
           onSubmit={form.onSubmit(
@@ -71,31 +84,37 @@ export default function NewPerson() {
             })
           )}
         >
-          <TextInput
-            placeholder="Name Surname"
-            label="Full Name"
-            withAsterisk
-            sx={{ width: 200 }}
-            {...form.getInputProps('name')}
+          <Stack spacing={20} mt="md">
+            <TextInput
+              placeholder="Name Surname"
+              label="Full Name"
+              withAsterisk
+              sx={{ width: 400 }}
+              {...form.getInputProps('name')}
 
-          /><br />
-          <TextInput
-            placeholder="Enter email"
-            label="Email"
-            withAsterisk
-            sx={{ width: 200 }}
-            {...form.getInputProps('email')}
-          /><br />
+            />
+            <TextInput
+              placeholder="Enter email"
+              label="Email"
+              withAsterisk
+              sx={{ width: 400 }}
+              {...form.getInputProps('email')}
+            />
 
+            <Group mt="md" >
+              <Button type="submit" >Submit</Button>
+              <Button type="reset"  > Reset</Button>
+            </Group>
 
-          <Button type="submit">Submit</Button>
+            <Anchor size={14} href="/" target="_self">
+              Back to home page
+            </Anchor>
+          </Stack>
 
         </form>
 
-        <h4>
-          <Link href="/">Back</Link>
-        </h4>
       </AppShell>
+
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Header, Title, Center, Footer, Table } from '@mantine/core'
+import { AppShell, Space, Title, Anchor, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
@@ -23,7 +23,7 @@ export default function LocationTable() {
       setLoading(false)
     }
     cb()
-  }, []) 
+  }, [])
 
   return (
     <>
@@ -33,15 +33,15 @@ export default function LocationTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={ MyHeader() }
-        footer={ MyFooter() }
+        header={MyHeader()}
+        footer={MyFooter()}
       >
 
-        <Title order={2}>
+        <Title mt='md' order={2}>
           Location table
-        </Title><br />
+        </Title>
 
-        <Table>
+        <Table mt='md' sx={{ maxWidth: 700 }}>
           <thead>
             <tr>
               <th>ID</th>
@@ -56,15 +56,16 @@ export default function LocationTable() {
                 <td>{element.id}</td>
                 <td>{element.collection_area}</td>
                 <td>{element.gps}</td>
-                <td>{element.elevation}</td> 
+                <td>{element.elevation}</td>
               </tr>
             ))}
           </tbody>
         </Table>
 
-        <h4>
-          <Link href="/posts/see_tables">Back</Link>
-        </h4>
+        <Space h="xl" />
+        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+          See tables
+        </Anchor></div>
       </AppShell>
     </>
   )

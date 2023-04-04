@@ -1,4 +1,7 @@
-import { AppShell, Navbar, Header, Title, Button, Center, Tabs, TextInput, Select, NumberInput, Textarea, Text, Footer } from '@mantine/core'
+import {
+  AppShell, Title, Button, TextInput, Select, createStyles,
+  Divider, Stack, Group, Anchor,
+} from '@mantine/core'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
 import { MyNavbar } from '../components/navbar';
@@ -11,6 +14,13 @@ import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
 
+const useStyles = createStyles((theme) => ({
+  app: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+  },
+
+}));
 
 export default function NewPlantIdentification() {
   const form = useForm({
@@ -94,21 +104,26 @@ export default function NewPlantIdentification() {
     }
   }
 
+  const { classes } = useStyles();
+
+
   return (
     <>
       <AppShell
+        className={classes.app}
         padding="md"
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        navbar={MyNavbar()}
         header={MyHeader()}
         footer={MyFooter()}
 
       >
-        <Title order={2}>
+        <Title order={2} mt='md'>
           Add a new plant identification
-        </Title><br />
+        </Title>
+
+        <Divider mt="lg" />
 
         <form
           onSubmit={form.onSubmit(
@@ -124,68 +139,80 @@ export default function NewPlantIdentification() {
             })
           )}
         >
+          <Stack spacing={20} mt="md">
 
-          <TextInput
-            placeholder="Method ID"
-            label="Identification method ID:"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('identification_method_id')}
-          /><br />
-          <label htmlFor="timestamp">Identification datatime:</label><br />
-          <input
-            type="datetime-local"
-            id="timestamp"
-            name="timestamp"
-            {...form.getInputProps('timestamp')}
-          /><br /><br />
-          <Select
-            label="Sex:"
-            placeholder="Sex"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('sex')}
+            <TextInput
+              placeholder="Method ID"
+              label="Identification method ID:"
+              sx={{ width: 200 }}
+              withAsterisk
+              {...form.getInputProps('identification_method_id')}
+            />
 
-            data={[
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' },
-              { value: 'hermaphrodite', label: 'Hermaphrodite' },
-              { value: 'none', label: 'None' }
-            ]}
-          /><br />
-          <Select
-            label="Lifestage:"
-            placeholder="Lifestage"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('lifestage')}
+            <label htmlFor="timestamp">Identification datatime:</label>
+            <Group>
+              <input
+                type="datetime-local"
+                id="timestamp"
+                name="timestamp"
+                {...form.getInputProps('timestamp')}
+              />
+            </Group>
 
-            data={[
-              { value: 'adult', label: 'Adult' },
-              { value: 'immature', label: 'immature' }
-            ]}
-          /><br />
-          <Select
-            label="Reproduction:"
-            placeholder="Reproduction"
-            sx={{ width: 200 }}
-            withAsterisk
-            {...form.getInputProps('reproduction')}
+            <Select
+              label="Sex:"
+              placeholder="Sex"
+              sx={{ width: 200 }}
+              withAsterisk
+              {...form.getInputProps('sex')}
 
-            data={[
-              { value: 'sexual', label: 'Sexual' },
-              { value: 'asexual', label: 'Asexual' },
-              { value: 'cyclic', label: 'Cyclic' },
-              { value: 'pathogen', label: 'Pathogen' }
-            ]}
-          /><br />
+              data={[
+                { value: 'male', label: 'Male' },
+                { value: 'female', label: 'Female' },
+                { value: 'hermaphrodite', label: 'Hermaphrodite' },
+                { value: 'none', label: 'None' }
+              ]}
+            />
+            <Select
+              label="Lifestage:"
+              placeholder="Lifestage"
+              sx={{ width: 200 }}
+              withAsterisk
+              {...form.getInputProps('lifestage')}
 
-          <Button type="submit">Submit</Button>
+              data={[
+                { value: 'adult', label: 'Adult' },
+                { value: 'immature', label: 'immature' }
+              ]}
+            />
+            <Select
+              label="Reproduction:"
+              placeholder="Reproduction"
+              sx={{ width: 200 }}
+              withAsterisk
+              {...form.getInputProps('reproduction')}
+
+              data={[
+                { value: 'sexual', label: 'Sexual' },
+                { value: 'asexual', label: 'Asexual' },
+                { value: 'cyclic', label: 'Cyclic' },
+                { value: 'pathogen', label: 'Pathogen' }
+              ]}
+            />
+
+            <Group mt="md" >
+              <Button type="submit" > Submit</Button>
+              <Button type="reset" onClick={form.reset} > Reset</Button>
+            </Group>
+
+            <Anchor size={14} href="/" target="_self">
+              Back to home page
+            </Anchor>
+
+          </Stack>
         </form>
 
-        <h4>
-          <Link href="/">Back</Link>
-        </h4>
+
 
       </AppShell>
     </>
