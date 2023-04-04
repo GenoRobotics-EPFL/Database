@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AppShell, Anchor, Title, Space, Divider, Table } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { API } from '../../types'

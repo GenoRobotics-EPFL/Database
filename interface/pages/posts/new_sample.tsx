@@ -2,8 +2,8 @@ import {
   AppShell, Title, Button, TextInput, Textarea, createStyles,
   Divider, Stack, Group, Anchor, Paper,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 
 import { Text, useMantineTheme } from '@mantine/core';

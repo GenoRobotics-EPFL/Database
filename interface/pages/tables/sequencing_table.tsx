@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 
 import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'

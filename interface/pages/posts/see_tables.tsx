@@ -6,8 +6,8 @@ import {
   AppShell, Navbar, Title, Group, Center, createStyles,
   Box, SimpleGrid, Text, Container, UnstyledButton, NavLink, Menu, ActionIcon, Divider,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import {
   IconMap, IconLayoutGridAdd, IconChevronDown, IconUserPlus, IconTestPipe, IconLocation,
   IconPlant, IconTournament, IconPlant2, IconColumns, IconHome2

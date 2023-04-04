@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 
 import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
 
