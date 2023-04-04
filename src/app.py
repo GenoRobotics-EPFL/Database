@@ -26,8 +26,9 @@ from .models import (
 from .crud.base import BaseCRUD
 from .crud.file import FileCRUD
 
-load_dotenv(find_dotenv(raise_error_if_not_found=True))
+load_dotenv()
 
+# without_id = lambda x: x
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
 assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"

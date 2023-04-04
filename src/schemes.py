@@ -4,6 +4,7 @@ from .database import Base
 
 
 class Person(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Person"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -14,6 +15,7 @@ class Person(Base):
 
 
 class Location(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Location"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -25,6 +27,7 @@ class Location(Base):
 
 
 class Sample(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Sample"
     id = Column(Integer, primary_key=True, index=True)
     person_id = Column(Integer, ForeignKey("Person.id"))
@@ -43,6 +46,7 @@ class Sample(Base):
 
 
 class AmplificationMethod(Base):
+    __allow_unmapped__ = True
     __tablename__ = "AmplificationMethod"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
@@ -53,6 +57,7 @@ class AmplificationMethod(Base):
 
 
 class Amplification(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Amplification"
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
@@ -68,6 +73,7 @@ class Amplification(Base):
 
 
 class ConsensusSegment(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Consensus_segment"
     id = Column(Integer, primary_key=True, index=True)
     sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
@@ -81,6 +87,7 @@ class ConsensusSegment(Base):
 
 
 class SequencingMethod(Base):
+    __allow_unmapped__ = True
     __tablename__ = "SequencingMethod"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
@@ -91,6 +98,7 @@ class SequencingMethod(Base):
 
 
 class Sequencing(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Sequencing"
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
@@ -102,13 +110,14 @@ class Sequencing(Base):
     sample = relationship("Sample", back_populates="sequencings")
     sequencing_method = relationship("SequencingMethod", back_populates="sequencings")
     amplification = relationship("Amplification", back_populates="sequencings")
-    consensus_segment = relationship("ConsensusSegement", back_populates="sequencings")
+    # consensus_segment = relationship("ConsensusSegment", back_populates="sequencings")
     plant_identifications = relationship(
         "PlantIdentification", back_populates="sequencing"
     )
 
 
 class PlantIdentification(Base):
+    __allow_unmapped__ = True
     __tablename__ = "PlantIdentification"
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
@@ -129,6 +138,7 @@ class PlantIdentification(Base):
 
 
 class IdentificationMethod(Base):
+    __allow_unmapped__ = True
     __tablename__ = "IdentificationMethod"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
@@ -142,6 +152,7 @@ class IdentificationMethod(Base):
 
 
 class Taxonomy(Base):
+    __allow_unmapped__ = True
     __tablename__ = "Taxonomy"
     id = Column(Integer, primary_key=True, index=True)
     domain = Column(String(100))
