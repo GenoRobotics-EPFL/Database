@@ -68,93 +68,74 @@ export default function NewAmplification() {
         2000);
     });
   }
-
-  function Demo() {
-    const form = useForm<API.Amplification>({
-      initialValues: {
-        id: 0,
-        sample_id: 0,
-        amplification_method_id: 0,
-        timestamp: new Date(''),
-      }
+  useEffect(() => {
+    loadInitialValues().then((values) => {
+      form.setValues(values);
+      form.resetDirty(values);
     });
+  }, []);
 
+  return (
+    <>
 
-    useEffect(() => {
-      loadInitialValues().then((values) => {
-        form.setValues(values);
-        form.resetDirty(values);
-      });
-    }, []);
+      <AppShell
+        className={classes.app}
+        padding="md"
+        styles={(theme) => ({
+          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+        })}
+        header={MyHeader()}
+        footer={MyFooter()}
+      >
 
-    return (
-      <>
+        <Title order={2} mt="md">
+          Add a new amplification
+        </Title>
 
-        <AppShell
-          className={classes.app}
-          padding="md"
-          styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-          })}
-          header={MyHeader()}
-          footer={MyFooter()}
+        <Divider mt="lg" />
+
+        <form
+          onSubmit={form.onSubmit(
+            async (values) => await postAmplification({
+              sample_id: values.sample_id,
+              amplification_method_id: values.amplification_method_id,
+              timestamp: values.timestamp,
+            })
+          )}
+          onReset={form.onReset}
         >
+          <Stack spacing={20} mt="md">
 
-          <Title order={2} mt="md">
-            Add a new amplification
-          </Title>
+            <Text>Amplification method ID:</Text>
+            <Group>
+              <TextInput
+                placeholder="Amplification method ID:"
+                sx={{ width: 100 }}
+                withAsterisk
+                {...form.getInputProps('amplification_method_id')}
+              />
+            </Group>
+            <label htmlFor="amplificationtime">Amplification datatime:</label>
+            <Group >
+              <input
+                type="datetime-local"
+                id="timestamp"
+                name="timestamp"
+                {...form.getInputProps('timestamp')}
+              />
+            </Group>
 
-          <Divider mt="lg" />
+            <Group mt="md" >
+              <Button type="submit" >Submit</Button>
+              <Button type="reset" onClick={form.reset} > Reset</Button>
+            </Group>
 
-          <form
-            onSubmit={form.onSubmit(
-              async (values) => await postAmplification({
-                sample_id: values.sample_id,
-                amplification_method_id: values.amplification_method_id,
-                timestamp: values.timestamp,
-              })
-            )}
-            onReset={form.onReset}
-          >
-            <Stack spacing={20} mt="md">
-
-              <Text>Amplification method ID:</Text>
-              <Group>
-                <TextInput
-                  placeholder="Amplification method ID:"
-                  sx={{ width: 100 }}
-                  withAsterisk
-                  {...form.getInputProps('amplification_method_id')}
-                />
-              </Group>
-              <label htmlFor="amplificationtime">Amplification datatime:</label>
-              <Group >
-                <input
-                  type="datetime-local"
-                  id="timestamp"
-                  name="timestamp"
-                  {...form.getInputProps('timestamp')}
-                />
-              </Group>
-
-              <Group mt="md" >
-                <Button type="submit" >Submit</Button>
-                <Button type="reset" onClick={form.reset} > Reset</Button>
-              </Group>
-
-              <Anchor size={14} href="/" target="_self">
-                Back to home page
-              </Anchor>
-            </Stack>
-          </form>
-
-
-        </AppShell>
-
-
-
-
-
-      </>
-    );
-  }
+            <Anchor size={14} href="/" target="_self">
+              Back to home page
+            </Anchor>
+          </Stack>
+        </form>
+      </AppShell>
+    </>
+  )
+}

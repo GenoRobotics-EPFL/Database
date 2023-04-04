@@ -77,6 +77,7 @@ export const MyHeader = () => {
 
   const navlinks = data.map((item) => (
     <NavLink
+      key={item.title}
       label={item.title}
       onClick={() => open("/posts" + item.page, "_self")}
       active
@@ -137,7 +138,7 @@ export const MyHeader = () => {
             </Menu.Dropdown>
           </Menu>
 
-          <Title order={1} size="h2" weight={600} className={classes.title}>
+          <Title order={1} size="h2" weight={600}>
             <img
               height={50}
               width='auto'

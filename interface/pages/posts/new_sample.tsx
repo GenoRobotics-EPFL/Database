@@ -110,7 +110,7 @@ export default function NewSample() {
                     type="datetime-local"
                     id="timestamp"
                     name="timestamp"
-                    sx={{ width: 200 }}
+                    style={{ width: 200 }}
                     {...form.getInputProps('timestamp')}
                   />
                 </Group>
@@ -122,7 +122,7 @@ export default function NewSample() {
                     type="datetime-local"
                     id="image_timestamp"
                     name="image_timestamp"
-                    sx={{ width: 400 }}
+                    style={{ width: 400 }}
                     {...form.getInputProps('image_timestamp')}
                   />
                 </Group>
