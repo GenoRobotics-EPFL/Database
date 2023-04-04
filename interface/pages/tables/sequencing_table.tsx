@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
+import { AppShell, Anchor, Title, Space, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { MyNavbar } from '../../components/navbar';
-import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
-
+import { URL } from '../../utils/config';
 
 export default function SequencingTable() {
   const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
@@ -17,7 +16,7 @@ export default function SequencingTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/sequencings")
+      const response = await fetch(`${URL}/sequencings`)
       const data = await response.json() as API.Sequencing[]
       setSequencings(data)
       setLoading(false)

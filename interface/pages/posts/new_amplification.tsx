@@ -9,6 +9,7 @@ import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 
 import { API } from '../../types';
+import { URL } from '../../utils/config';
 
 
 const useStyles = createStyles((theme) => ({
@@ -37,7 +38,7 @@ export default function NewAmplification() {
 
   const postAmplification = async (data: Omit<API.Amplification, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/amplifications/",
+      `${URL}/amplifications/`,
       {
         method: 'POST',
         headers: {

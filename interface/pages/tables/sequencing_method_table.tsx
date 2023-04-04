@@ -6,7 +6,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
-
+import { URL } from '../../utils/config';
 
 export default function SequencingMethodTable() {
   const [sequencing_methods, setSequencingMethods] = useState<API.SequencingMethod[]>([])
@@ -15,7 +15,7 @@ export default function SequencingMethodTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/sequencing_methods")
+      const response = await fetch(`${URL}/sequencing_methods`)
       const data = await response.json() as API.SequencingMethod[]
       setSequencingMethods(data)
       setLoading(false)

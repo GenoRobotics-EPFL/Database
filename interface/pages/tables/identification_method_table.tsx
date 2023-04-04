@@ -6,6 +6,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
+import { URL } from '../../utils/config';
 
 
 export default function IdentificationMethodTable() {
@@ -15,7 +16,7 @@ export default function IdentificationMethodTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/identification_methods")
+      const response = await fetch(`${URL}/identification_methods`)
       const data = await response.json() as API.IdentificationMethod[]
       setIdentificationMethods(data)
       setLoading(false)

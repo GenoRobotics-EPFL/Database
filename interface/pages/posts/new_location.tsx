@@ -11,7 +11,7 @@ import { useForm } from '@mantine/form';
 import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
-
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -41,7 +41,7 @@ export default function NewLocation() {
 
   const postLocation = async (data: Omit<API.Location, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/locations/",
+      `${URL}/locations/`,
       {
         method: 'POST',
         headers: {

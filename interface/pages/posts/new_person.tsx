@@ -10,6 +10,7 @@ import {
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -36,7 +37,7 @@ export default function NewPerson() {
 
   const postPerson = async (data: Omit<API.Person, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/persons/",
+      `${URL}/persons/`,
       {
         method: 'POST',
         headers: {

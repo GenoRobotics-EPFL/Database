@@ -8,7 +8,7 @@ import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
-
+import { URL } from '../../utils/config';
 
 export default function PlantIdentificationTable() {
   const [persons, setSequencings] = useState<API.PlantIdentification[]>([])
@@ -17,7 +17,7 @@ export default function PlantIdentificationTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/plant_identifications")
+      const response = await fetch(`${URL}/plant_identifications`)
       const data = await response.json() as API.PlantIdentification[]
       setSequencings(data)
       setLoading(false)

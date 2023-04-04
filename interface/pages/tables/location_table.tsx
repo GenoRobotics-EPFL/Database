@@ -8,6 +8,7 @@ import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
+import { URL } from '../../utils/config';
 
 
 export default function LocationTable() {
@@ -17,7 +18,7 @@ export default function LocationTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/locations")
+      const response = await fetch(`${URL}/locations`)
       const data = await response.json() as API.Location[]
       setLocations(data)
       setLoading(false)

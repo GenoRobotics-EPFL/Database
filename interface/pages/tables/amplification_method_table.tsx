@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Anchor, Title, createStyles, Space, Table, } from '@mantine/core'
+import { AppShell, Anchor, Title, Space, Table, } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
-import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
-
-
-
+import { URL } from '../../utils/config';
 
 export default function AmplificationMethodTable() {
   const [amplification_methods, setAmplificationMethods] = useState<API.AmplificationMethod[]>([])
@@ -19,7 +15,7 @@ export default function AmplificationMethodTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/amplification_methods")
+      const response = await fetch(`${URL}/amplification_methods`)
       const data = await response.json() as API.AmplificationMethod[]
       setAmplificationMethods(data)
       setLoading(false)

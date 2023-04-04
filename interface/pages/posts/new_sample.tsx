@@ -13,6 +13,7 @@ import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { API } from '../../types';
 import React from 'react';
 import { useState } from 'react';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -43,7 +44,7 @@ export default function NewSample() {
 
   const postSample = async (data: Omit<API.Sample, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/samples/",
+      `${URL}/samples/`,
       {
         method: 'POST',
         headers: {

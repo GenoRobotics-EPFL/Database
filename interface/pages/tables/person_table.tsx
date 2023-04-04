@@ -8,7 +8,7 @@ import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
-
+import { URL } from '../../utils/config';
 
 export default function PersonTable() {
   const [persons, setPersons] = useState<API.Person[]>([])
@@ -19,7 +19,7 @@ export default function PersonTable() {
     // https://ultimatecourses.com/blog/using-async-await-inside-react-use-effect-hook
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/persons")
+      const response = await fetch(`${URL}/persons`)
       const data = await response.json() as API.Person[]
       setPersons(data)
       setLoading(false)
