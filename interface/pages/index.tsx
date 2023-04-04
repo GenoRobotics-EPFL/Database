@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 
-import { MyHeader } from './components/header'
-import { MyFooter } from './components/footer'
+import { MyHeader } from '../components/header'
+import { MyFooter } from '../components/footer'
 import {
   AppShell, Title, Text, createStyles, Card, SimpleGrid, Container, Group, Button,
   UnstyledButton, Blockquote, ActionIcon, useMantineColorScheme,

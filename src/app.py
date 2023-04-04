@@ -28,7 +28,6 @@ from .crud.file import FileCRUD
 
 load_dotenv()
 
-# without_id = lambda x: x
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
 assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"
@@ -54,7 +53,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://genorobotics.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

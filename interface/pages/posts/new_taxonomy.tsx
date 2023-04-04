@@ -2,14 +2,14 @@ import {
   AppShell, Title, Button, TextInput, createStyles,
   Stack, Group, Anchor, Divider
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+import { MyNavbar } from '../../components/navbar';
 import { useForm } from '@mantine/form';
 
-import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -44,7 +44,7 @@ export default function NewTaxonomy() {
 
   const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/taxonomies/",
+      `${URL}/taxonomies/`,
       {
         method: 'POST',
         headers: {

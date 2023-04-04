@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 
 import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
+import { URL } from '../../utils/config';
 
 
 export default function TaxonomyTable() {
@@ -15,7 +16,7 @@ export default function TaxonomyTable() {
   useEffect(() => {
     const cb = async () => {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/taxonomy")
+      const response = await fetch(`${URL}/taxonomy`)
       const data = await response.json() as API.Taxonomy[]
       setTaxonomy(data)
       setLoading(false)

@@ -2,8 +2,8 @@ import {
   AppShell, Title, Button, TextInput, Textarea, createStyles,
   Divider, Stack, Group, Anchor, Paper,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 
 import { Text, useMantineTheme } from '@mantine/core';
@@ -13,6 +13,7 @@ import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { API } from '../../types';
 import React from 'react';
 import { useState } from 'react';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -43,7 +44,7 @@ export default function NewSample() {
 
   const postSample = async (data: Omit<API.Sample, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/samples/",
+      `${URL}/samples/`,
       {
         method: 'POST',
         headers: {
@@ -110,7 +111,7 @@ export default function NewSample() {
                     type="datetime-local"
                     id="timestamp"
                     name="timestamp"
-                    sx={{ width: 200 }}
+                    style={{ width: 200 }}
                     {...form.getInputProps('timestamp')}
                   />
                 </Group>
@@ -122,7 +123,7 @@ export default function NewSample() {
                     type="datetime-local"
                     id="image_timestamp"
                     name="image_timestamp"
-                    sx={{ width: 400 }}
+                    style={{ width: 400 }}
                     {...form.getInputProps('image_timestamp')}
                   />
                 </Group>

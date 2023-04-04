@@ -2,9 +2,9 @@ import {
   AppShell, Title, Button, TextInput, createStyles,
   Group, Textarea, Anchor, Stack, Divider,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+import { MyNavbar } from '../../components/navbar';
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'
@@ -15,6 +15,7 @@ import React from 'react';
 import { Text, useMantineTheme } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -58,7 +59,7 @@ export default function NewSequencing() {
 
   const postSequencing = async (data: Omit<API.Sequencing, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/sequencings/",
+      `${URL}/sequencings/`,
       {
         method: 'POST',
         headers: {
@@ -189,7 +190,6 @@ export default function NewSequencing() {
               />
             </Group>
 
-
             <Group>
               <TextInput
                 placeholder="Primer code"
@@ -207,7 +207,6 @@ export default function NewSequencing() {
               />
             </Group>
 
-
             <Group mt="md" >
               <Button type="submit" > Submit</Button>
               <Button type="reset"  > Reset</Button>
@@ -219,15 +218,7 @@ export default function NewSequencing() {
 
           </Stack>
         </form>
-
-
-
       </AppShell>
-
-
-
-
-
     </>
   );
 }
