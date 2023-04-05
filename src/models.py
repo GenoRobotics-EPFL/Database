@@ -38,6 +38,9 @@ class Sample(ParentModel):
     person_id: int
     location_id: int
     timestamp: datetime
+    sex: str or None
+    lifestage: str or None
+    reproduction: str or None
     image_url: str
     image_timestamp: datetime
     image_desc: str
@@ -96,9 +99,10 @@ class PlantIdentification(ParentModel):
     taxonomy_id: int
     identification_method_id: int
     timestamp: datetime
-    sex: str or None
-    lifestage: str or None
-    reproduction: str or None
+    seq1_score: float
+    seq2_score: float
+    seq3_score: float
+    seq4_score: float
 
 
 class IdentificationMethod(ParentModel):
@@ -111,6 +115,8 @@ class IdentificationMethod(ParentModel):
 
 class Taxonomy(ParentModel):
     id: int
+    sample_id: int
+    identification_id: int
     domain: str
     kingdom: str
     phylum: str
