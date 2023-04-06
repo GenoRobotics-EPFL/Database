@@ -3,30 +3,38 @@ from typing import Type
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from dotenv import find_dotenv
+
+load_dotenv()
 
 from .models import (
     Person,
+    PersonNoId,
     Location,
+    LocationNoId,
     Sequencing,
+    SequencingNoId,
     SequencingMethod,
+    SequencingMethodNoId,
     Sample,
+    SampleNoId,
     Amplification,
+    AmplificationNoId,
     ConsensusSegment,
+    ConsensusSegmentNoId,
     PlantIdentification,
+    PlantIdentificationNoId,
     AmplificationMethod,
+    AmplificationMethodNoId,
     IdentificationMethod,
+    IdentificationMethodNoId,
     Taxonomy,
-    without_id,
+    TaxonomyNoId,
 )
 
 from .crud.base import BaseCRUD
 from .crud.file import FileCRUD
-
-load_dotenv()
 
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
@@ -80,9 +88,7 @@ def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(
-    id: int, body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))
-):
+def persons(id: int, body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -91,7 +97,7 @@ def persons(
 
 
 @app.post("/persons", response_model=Person)
-def persons(body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
     return crud.create(body)
 
 
@@ -122,7 +128,7 @@ def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMeth
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(
     id: int,
-    body: without_id(SequencingMethod),
+    body: SequencingMethodNoId,
     crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
     body.id = id
@@ -134,7 +140,7 @@ def sequencing_methods(
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
 def sequencing_methods(
-    body: without_id(SequencingMethod),
+    body: SequencingMethodNoId,
     crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
     return crud.create(body)
@@ -165,9 +171,7 @@ def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(
-    id: int, body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))
-):
+def samples(id: int, body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -176,7 +180,7 @@ def samples(
 
 
 @app.post("/samples", response_model=Sample)
-def samples(body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
     return crud.create(body)
 
 
@@ -207,7 +211,7 @@ def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
 @app.put("/amplifications/{id}", response_model=Amplification)
 def amplifications(
     id: int,
-    body: without_id(Amplification),
+    body: AmplificationNoId,
     crud: BaseCRUD = Depends(get_crud(Amplification)),
 ):
     body.id = id
@@ -219,7 +223,7 @@ def amplifications(
 
 @app.post("/amplifications", response_model=Amplification)
 def amplifications(
-    body: without_id(Amplification), crud: BaseCRUD = Depends(get_crud(Amplification))
+    body: AmplificationNoId, crud: BaseCRUD = Depends(get_crud(Amplification))
 ):
     return crud.create(body)
 
@@ -251,7 +255,7 @@ def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegme
 @app.put("/consensus_segments/{id}", response_model=ConsensusSegment)
 def consensus_segments(
     id: int,
-    body: without_id(ConsensusSegment),
+    body: ConsensusSegmentNoId,
     crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
 ):
     body.id = id
@@ -263,7 +267,7 @@ def consensus_segments(
 
 @app.post("/consensus_segments", response_model=ConsensusSegment)
 def consensus_segments(
-    body: without_id(ConsensusSegment),
+    body: ConsensusSegmentNoId,
     crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
 ):
     return crud.create(body)
@@ -296,7 +300,7 @@ def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
 @app.put("/sequencings/{id}", response_model=Sequencing)
 def sequencings(
     id: int,
-    body: without_id(Sequencing),
+    body: SequencingNoId,
     crud: BaseCRUD = Depends(get_crud(Sequencing)),
 ):
     body.id = id
@@ -307,9 +311,7 @@ def sequencings(
 
 
 @app.post("/sequencings", response_model=Sequencing)
-def sequencings(
-    body: without_id(Sequencing), crud: BaseCRUD = Depends(get_crud(Sequencing))
-):
+def sequencings(body: SequencingNoId, crud: BaseCRUD = Depends(get_crud(Sequencing))):
     return crud.create(body)
 
 
@@ -342,7 +344,7 @@ def plant_identifications(
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(
     id: int,
-    body: without_id(PlantIdentification),
+    body: PlantIdentificationNoId,
     crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
     body.id = id
@@ -354,7 +356,7 @@ def plant_identifications(
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
 def plant_identifications(
-    body: without_id(PlantIdentification),
+    body: PlantIdentificationNoId,
     crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
     return crud.create(body)
@@ -391,7 +393,7 @@ def amplification_methods(
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(
     id: int,
-    body: without_id(AmplificationMethod),
+    body: AmplificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
     body.id = id
@@ -403,7 +405,7 @@ def amplification_methods(
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
 def amplification_methods(
-    body: without_id(AmplificationMethod),
+    body: AmplificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
     return crud.create(body)
@@ -440,7 +442,7 @@ def identification_method(
 @app.put("/identification_method/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int,
-    body: without_id(IdentificationMethod),
+    body: IdentificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
     body.id = id
@@ -452,7 +454,7 @@ def identification_method(
 
 @app.post("/identification_method", response_model=IdentificationMethod)
 def identification_method(
-    body: without_id(IdentificationMethod),
+    body: IdentificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
     return crud.create(body)
@@ -486,7 +488,7 @@ def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
 
 @app.put("/locations/{id}", response_model=Location)
 def locations(
-    id: int, body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))
+    id: int, body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -496,7 +498,7 @@ def locations(
 
 
 @app.post("/locations", response_model=Location)
-def locations(body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))):
     return crud.create(body)
 
 
@@ -526,7 +528,7 @@ def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
 def taxonomies(
-    id: int, body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
+    id: int, body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -536,9 +538,7 @@ def taxonomies(
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
-def taxonomies(
-    body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
-):
+def taxonomies(body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
     return crud.create(body)
 
 

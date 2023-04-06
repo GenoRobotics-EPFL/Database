@@ -1,18 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, create_model, Field
-
-from typing import Type, Union
-
-
-def without_id(model: Type[BaseModel]) -> Type[BaseModel]:
-    """
-    Return the same class with the `id` field optional
-    """
-    return create_model(
-        f"Unidentified{model.__name__}",
-        id=(Union[int, None], None),
-        __base__=model,
-    )
+from pydantic import BaseModel
 
 
 class ParentModel(BaseModel):
@@ -20,55 +7,74 @@ class ParentModel(BaseModel):
         orm_mode = True
 
 
-class Person(ParentModel):
-    id: int
+class PersonNoId(ParentModel):
     name: str
     email: str
 
 
-class Location(ParentModel):
+class Person(PersonNoId):
     id: int
+
+
+class LocationNoId(ParentModel):
     collection_area: str
     gps: str
     elevation: int
 
 
-class Sample(ParentModel):
+class Location(LocationNoId):
+    id: int
+
+
+class SampleNoId(ParentModel):
     id: int
     person_id: int
     location_id: int
     timestamp: datetime
-    sex: str or None
-    lifestage: str or None
-    reproduction: str or None
+    sex: str | None
+    lifestage: str | None
+    reproduction: str | None
     image_url: str
     image_timestamp: datetime
     image_desc: str
 
 
-class AmplificationMethod(ParentModel):
+class Sample(SampleNoId):
+    id: int
+
+
+class AmplificationMethodNoId(ParentModel):
     id: int
     name: str
 
-    class Config:
-        orm_mode = True
+
+class AmplificationMethod(AmplificationMethodNoId):
+    id: int
 
 
-class Amplification(ParentModel):
+class AmplificationNoId(ParentModel):
     id: int
     sample_id: int
     amplification_method_id: int
     timestamp: datetime
 
 
-class SequencingMethod(ParentModel):
+class Amplification(AmplificationNoId):
+    id: int
+
+
+class SequencingMethodNoId(ParentModel):
     id: int
     name: str
     description: str
     type: str
 
 
-class Sequencing(ParentModel):
+class SequencingMethod(SequencingMethodNoId):
+    id: int
+
+
+class SequencingNoId(ParentModel):
     id: int
     sample_id: int
     amplification_id: int
@@ -80,7 +86,11 @@ class Sequencing(ParentModel):
     """
 
 
-class ConsensusSegment(ParentModel):
+class Sequencing(SequencingNoId):
+    id: int
+
+
+class ConsensusSegmentNoId(ParentModel):
     id: int
     sequence_id: int
     segment_sequence: str
@@ -92,7 +102,11 @@ class ConsensusSegment(ParentModel):
     sequence_length: int
 
 
-class PlantIdentification(ParentModel):
+class ConsensusSegment(ConsensusSegmentNoId):
+    id: int
+
+
+class PlantIdentificationNoId(ParentModel):
     id: int
     sample_id: int
     sequencing_id: int
@@ -105,7 +119,11 @@ class PlantIdentification(ParentModel):
     seq4_score: float
 
 
-class IdentificationMethod(ParentModel):
+class PlantIdentification(PlantIdentificationNoId):
+    id: int
+
+
+class IdentificationMethodNoId(ParentModel):
     id: int
     name: str
     description: str
@@ -113,7 +131,11 @@ class IdentificationMethod(ParentModel):
     version: int
 
 
-class Taxonomy(ParentModel):
+class IdentificationMethod(IdentificationMethodNoId):
+    id: int
+
+
+class TaxonomyNoId(ParentModel):
     id: int
     sample_id: int
     identification_id: int
@@ -123,3 +145,7 @@ class Taxonomy(ParentModel):
     class_: str
     family: str
     species: str
+
+
+class Taxonomy(TaxonomyNoId):
+    id: int

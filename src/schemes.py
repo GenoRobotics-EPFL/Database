@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Float
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -128,10 +128,10 @@ class PlantIdentification(Base):
     sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
     identification_method_id = Column(Integer, ForeignKey("IdentificationMethod.id"))
     timestamp = Column(DateTime(timezone=True))
-    seq1_score = Column(float)
-    seq2_score = Column(float)
-    seq3_score = Column(float)
-    seq4_score = Column(float)
+    seq1_score = Column(Float)
+    seq2_score = Column(Float)
+    seq3_score = Column(Float)
+    seq4_score = Column(Float)
     sample = relationship("Sample", back_populates="plant_identifications")
     identification_method = relationship(
         "IdentificationMethod", back_populates="plant_identifications"

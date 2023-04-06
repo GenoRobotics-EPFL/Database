@@ -3,9 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-USE_DEV = False
-
-if USE_DEV:
+if os.environ.get("USE_MYSQL") is not None:
     ENGINE = "mysql+mysqldb"
     USERNAME = os.environ["MYSQLUSER"]
     PASSWORD = os.environ["MYSQLPASSWORD"]
