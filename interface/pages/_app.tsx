@@ -3,10 +3,10 @@ import { MantineProvider } from '@mantine/core';
 import React from 'react';
 import { GetServerSidePropsContext } from 'next';
 import { useState } from 'react';
-import Head from 'next/head';
 import { ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { getCookie, setCookie } from 'cookies-next';
 import { NotificationsProvider } from '@mantine/notifications';
+import { DataProvider } from '../utils/dataState';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -19,25 +19,15 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   };
 
   return (
-    // <MantineProvider
-    //   withGlobalStyles
-    //   withNormalizeCSS
-    // // theme={{
-    // //   /** Put your mantine theme override here */
-    // //   colorScheme: 'light',
-    // // }}
-    // >
-    //   <Component {...pageProps} />
-    // </MantineProvider>
-
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <NotificationsProvider>
-          <Component {...pageProps} />
+          <DataProvider>
+            <Component {...pageProps} />
+          </DataProvider>
         </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
-
   );
 }
 
