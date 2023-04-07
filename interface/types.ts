@@ -1,4 +1,9 @@
-import internal from "stream"
+
+export namespace Core {
+  export type Identifiable = {
+    id: number
+  }
+}
 
 export namespace API {
 
@@ -20,14 +25,17 @@ export namespace API {
     person_id: number
     location_id: number
     timestamp: Date
+    sex: string | null
+    lifestage: string | null
+    reproduction: string | null
     image_url: string
     image_timestamp: Date
     image_desc: string
   }
 
   export type AmplificationMethod = {
-    id : number
-    name : string
+    id: number
+    name: string
   }
 
   export type Amplification = {
@@ -51,13 +59,18 @@ export namespace API {
     sequencing_method_id: number
     timestamp: Date
     base_calling_file: string
-  
-    //Store the location of the file
- 
-    primer_code: string
-    sequence_length: string
-    barcode: string
+  }
+
+  export type ConsensusSegment = {
+    id: number
+    sequence_id: number
+    segment_sequence: string
+    primer_name: string
     primer_desc: string
+    primer2_name: string
+    primer2_desc: string
+    DNA_region: string
+    sequence_length: number
   }
 
   export type PlantIdentification = {
@@ -67,9 +80,6 @@ export namespace API {
     taxonomy_id: number
     identification_method_id: number
     timestamp: Date
-    sex: string | null
-    lifestage: string | null
-    reproduction: string | null
   }
 
   export type IdentificationMethod = {
@@ -82,6 +92,8 @@ export namespace API {
 
   export type Taxonomy = {
     id: number
+    sample_id: number
+    identification_id: number
     domain: string
     kingdom: string
     phylum: string
@@ -90,6 +102,6 @@ export namespace API {
     species: string
   }
 
-  }
+}
 
 

@@ -159,7 +159,7 @@ class Taxonomy(Base):
     __tablename__ = "Taxonomy"
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
-    identification_id = Column(Integer, ForeignKey("Plant_identification.id"))
+    identification_id = Column(Integer, ForeignKey("PlantIdentification.id"))
     domain = Column(String(100))
     kingdom = Column(String(100))
     phylum = Column(String(100))
@@ -170,3 +170,4 @@ class Taxonomy(Base):
     plant_identifications = relationship(
         "PlantIdentification", back_populates="taxonomy"
     )
+    sample = relationship("Sample", back_populates="taxonomy")

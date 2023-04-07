@@ -421,12 +421,12 @@ def amplification_methods(
     return item
 
 
-@app.get("/identification_method", response_model=list[IdentificationMethod])
+@app.get("/identification_methods", response_model=list[IdentificationMethod])
 def identification_method(crud: BaseCRUD = Depends(get_crud(IdentificationMethod))):
     return crud.query()
 
 
-@app.get("/identification_method/{id}", response_model=IdentificationMethod)
+@app.get("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
 ):
@@ -439,7 +439,7 @@ def identification_method(
     return item
 
 
-@app.put("/identification_method/{id}", response_model=IdentificationMethod)
+@app.put("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int,
     body: IdentificationMethodNoId,
@@ -452,7 +452,7 @@ def identification_method(
     return body
 
 
-@app.post("/identification_method", response_model=IdentificationMethod)
+@app.post("/identification_methods", response_model=IdentificationMethod)
 def identification_method(
     body: IdentificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
@@ -460,7 +460,7 @@ def identification_method(
     return crud.create(body)
 
 
-@app.delete("/identification_method/{id}", response_model=IdentificationMethod)
+@app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
 ):

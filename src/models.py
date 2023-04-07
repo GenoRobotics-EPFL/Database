@@ -27,7 +27,6 @@ class Location(LocationNoId):
 
 
 class SampleNoId(ParentModel):
-    id: int
     person_id: int
     location_id: int
     timestamp: datetime
@@ -44,7 +43,6 @@ class Sample(SampleNoId):
 
 
 class AmplificationMethodNoId(ParentModel):
-    id: int
     name: str
 
 
@@ -53,7 +51,6 @@ class AmplificationMethod(AmplificationMethodNoId):
 
 
 class AmplificationNoId(ParentModel):
-    id: int
     sample_id: int
     amplification_method_id: int
     timestamp: datetime
@@ -64,7 +61,6 @@ class Amplification(AmplificationNoId):
 
 
 class SequencingMethodNoId(ParentModel):
-    id: int
     name: str
     description: str
     type: str
@@ -75,7 +71,6 @@ class SequencingMethod(SequencingMethodNoId):
 
 
 class SequencingNoId(ParentModel):
-    id: int
     sample_id: int
     amplification_id: int
     sequencing_method_id: int
@@ -91,7 +86,6 @@ class Sequencing(SequencingNoId):
 
 
 class ConsensusSegmentNoId(ParentModel):
-    id: int
     sequence_id: int
     segment_sequence: str
     primer_name: str
@@ -107,7 +101,6 @@ class ConsensusSegment(ConsensusSegmentNoId):
 
 
 class PlantIdentificationNoId(ParentModel):
-    id: int
     sample_id: int
     sequencing_id: int
     taxonomy_id: int
@@ -124,7 +117,6 @@ class PlantIdentification(PlantIdentificationNoId):
 
 
 class IdentificationMethodNoId(ParentModel):
-    id: int
     name: str
     description: str
     type: str
@@ -136,7 +128,6 @@ class IdentificationMethod(IdentificationMethodNoId):
 
 
 class TaxonomyNoId(ParentModel):
-    id: int
     sample_id: int
     identification_id: int
     domain: str
