@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { getCookie, setCookie } from 'cookies-next';
 import { NotificationsProvider } from '@mantine/notifications';
-import { DataProvider } from '../utils/dataState';
+import { DataStateProvider } from '../utils/dataState';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -22,9 +22,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <NotificationsProvider>
-          <DataProvider>
+          <DataStateProvider>
             <Component {...pageProps} />
-          </DataProvider>
+          </DataStateProvider>
         </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>

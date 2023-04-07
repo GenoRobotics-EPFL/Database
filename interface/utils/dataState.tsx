@@ -167,19 +167,19 @@ function useInternalDataState() {
   }
 }
 
-const dataContext = createContext<DataState>({} as any)
+const dataStateContext = createContext<DataState>({} as any)
 
-export interface DataProviderProps {
+export interface DataStateProviderProps {
   children: ReactNode
 }
 
-export const DataProvider: FC<DataProviderProps> = (props) => {
+export const DataStateProvider: FC<DataStateProviderProps> = (props) => {
   const values = useInternalDataState()
   return (
-    <dataContext.Provider value={values}>
+    <dataStateContext.Provider value={values}>
       {props.children}
-    </dataContext.Provider>
+    </dataStateContext.Provider>
   )
 }
 
-export const useDataState = () => useContext(dataContext)
+export const useDataState = () => useContext(dataStateContext)
