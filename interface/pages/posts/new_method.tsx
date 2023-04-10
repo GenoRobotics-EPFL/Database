@@ -6,6 +6,7 @@ import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
+import { URL } from '../../utils/config';
 
 
 const useStyles = createStyles((theme) => ({
@@ -20,7 +21,6 @@ const useStyles = createStyles((theme) => ({
   },
 
 }));
-
 
 export default function NewAmplificationMethod() {
 
@@ -68,7 +68,7 @@ export default function NewAmplificationMethod() {
 
   const postAmplificationMethod = async (data: Omit<API.AmplificationMethod, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/amplification_methods/",
+      `${URL}/amplification_methods/`,
       {
         method: 'POST',
         headers: {
@@ -88,7 +88,7 @@ export default function NewAmplificationMethod() {
 
   const postIdentificationMethod = async (data: Omit<API.IdentificationMethod, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/identification_methods/",
+      `${URL}/identification_methods/`,
       {
         method: 'POST',
         headers: {
@@ -108,7 +108,7 @@ export default function NewAmplificationMethod() {
 
   const postSequencingMethod = async (data: Omit<API.SequencingMethod, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/sequencing_methods/",
+      `${URL}/sequencing_methods/`,
       {
         method: 'POST',
         headers: {
@@ -124,13 +124,9 @@ export default function NewAmplificationMethod() {
     } else {
       console.log("POST /sequencing_methods failed.")
     }
-
-
-
   }
 
   const { classes } = useStyles();
-
 
   return (
     <>
@@ -313,4 +309,3 @@ export default function NewAmplificationMethod() {
     </>
   );
 }
-

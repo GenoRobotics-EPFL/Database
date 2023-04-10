@@ -5,14 +5,11 @@ import {
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 
-
-
-
 import { useForm } from '@mantine/form';
 
-import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
+import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -46,7 +43,7 @@ export default function NewPlantIdentification() {
 
   const postPlantIdentification = async (data: Omit<API.PlantIdentification, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/plant_identifications/",
+      `${URL}/plant_identifications/`,
       {
         method: 'POST',
         headers: {
@@ -64,7 +61,45 @@ export default function NewPlantIdentification() {
     }
   }
 
+  const postLocation = async (data: Omit<API.Location, "id">) => {
+    const response = await fetch(
+      `${URL}/locations/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    const location = await response.json()
+    if (response.status == 200) {
+      console.log("POST /locations")
+      console.dir(location)
+    } else {
+      console.log("POST /locations failed.")
+    }
+  }
 
+  const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
+    const response = await fetch(
+      `${URL}/taxonomy/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    const taxonomy = await response.json()
+    if (response.status == 200) {
+      console.log("POST /taxonomy")
+      console.dir(taxonomy)
+    } else {
+      console.log("POST /taxonomy failed.")
+    }
+  }
 
   const { classes } = useStyles();
 

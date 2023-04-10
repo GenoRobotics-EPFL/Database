@@ -19,7 +19,6 @@ import { Carousel } from '@mantine/carousel';
 import { useMediaQuery } from '@mantine/hooks';
 import { Paper, useMantineTheme } from '@mantine/core';
 
-
 const useStyles = createStyles((theme) => ({
   card: {
     height: 300,

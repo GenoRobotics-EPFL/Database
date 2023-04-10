@@ -19,6 +19,17 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   };
 
   return (
+    // <MantineProvider
+    //   withGlobalStyles
+    //   withNormalizeCSS
+    // // theme={{
+    // //   /** Put your mantine theme override here */
+    // //   colorScheme: 'light',
+    // // }}
+    // >
+    //   <Component {...pageProps} />
+    // </MantineProvider>
+
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <NotificationsProvider>

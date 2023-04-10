@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 
 import { API } from '../../types';
 import { useRouter } from 'next/router'
+import { URL } from '../../utils/config';
 
 
 const useStyles = createStyles((theme) => ({
@@ -38,7 +39,7 @@ export default function NewAmplification() {
 
   const postAmplification = async (data: Omit<API.Amplification, "id">) => {
     const response = await fetch(
-      "http://localhost:8000/amplifications/",
+      `${URL}/amplifications/`,
       {
         method: 'POST',
         headers: {
@@ -69,27 +70,12 @@ export default function NewAmplification() {
         2000);
     });
   }
-
-  function Demo() {
-    const form = useForm<API.Amplification>({
-      initialValues: {
-        id: 0,
-        sample_id: 0,
-        amplification_method_id: 0,
-        timestamp: new Date(''),
-      }
+  useEffect(() => {
+    loadInitialValues().then((values) => {
+      form.setValues(values);
+      form.resetDirty(values);
     });
-
-
-    useEffect(() => {
-      loadInitialValues().then((values) => {
-        form.setValues(values);
-        form.resetDirty(values);
-      });
-    }, []);
-  }
-
-  const router = useRouter()
+  }, []);
 
   return (
     <>
@@ -151,14 +137,7 @@ export default function NewAmplification() {
             </Anchor>
           </Stack>
         </form>
-
-
       </AppShell>
-
-
-
-
-
     </>
-  );
+  )
 }
