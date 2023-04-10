@@ -1,6 +1,6 @@
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+
 import {
   AppShell, Title, Button, Stack, Group, Anchor, Divider,
   createStyles, TextInput

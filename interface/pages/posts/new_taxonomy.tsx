@@ -2,9 +2,8 @@ import {
   AppShell, Title, Button, TextInput, createStyles,
   Stack, Group, Anchor, Divider
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'

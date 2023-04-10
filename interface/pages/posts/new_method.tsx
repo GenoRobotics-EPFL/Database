@@ -1,13 +1,11 @@
 import {
   TextInput, Select, Anchor, Tabs, NumberInput, Textarea, NavLink, createStyles, Stack, Space, ActionIcon, AppShell, Title, Group, Button,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
-
-
 
 
 const useStyles = createStyles((theme) => ({
@@ -22,8 +20,6 @@ const useStyles = createStyles((theme) => ({
   },
 
 }));
-
-
 
 
 export default function NewAmplificationMethod() {

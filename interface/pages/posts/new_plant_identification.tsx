@@ -2,9 +2,9 @@ import {
   AppShell, Title, Button, TextInput, Select, createStyles,
   Divider, Stack, Group, Anchor,
 } from '@mantine/core'
-import { MyHeader } from '../components/header'
-import { MyFooter } from '../components/footer'
-import { MyNavbar } from '../components/navbar';
+import { MyHeader } from '../../components/header'
+import { MyFooter } from '../../components/footer'
+
 
 
 
@@ -64,45 +64,7 @@ export default function NewPlantIdentification() {
     }
   }
 
-  const postLocation = async (data: Omit<API.Location, "id">) => {
-    const response = await fetch(
-      "http://localhost:8000/locations/",
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const location = await response.json()
-    if (response.status == 200) {
-      console.log("POST /locations")
-      console.dir(location)
-    } else {
-      console.log("POST /locations failed.")
-    }
-  }
 
-  const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
-    const response = await fetch(
-      "http://localhost:8000/taxonomy/",
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const taxonomy = await response.json()
-    if (response.status == 200) {
-      console.log("POST /taxonomy")
-      console.dir(taxonomy)
-    } else {
-      console.log("POST /taxonomy failed.")
-    }
-  }
 
   const { classes } = useStyles();
 
