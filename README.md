@@ -69,9 +69,30 @@ The API can use a json file as database, it is stored in the filesystem
 under (`.db/data.json`).
 
 * Set in the `.env` file:
-> ```
-> DB_TYPE="json"
-> ```
+    ```
+    DB_TYPE="json"
+    ```
+
+### AWS
+
+The (large) files are stored separately on [AWS S3](https://aws.amazon.com/s3/).
+
+To disable AWS (until the account is set up), set in the `.env` file:
+```
+AWS_DISABLED="true"
+```
+
+To connect to AWS:
+* Ask for the credentials
+* Set in the `.env` file:
+    ```
+    AWS_BUCKET_NAME="..."
+    AWS_REGION_NAME="eu-central-1"
+    AWS_ACCESS_KEY_ID="..."
+    AWS_SECRET_ACCESS_KEY="..."
+    ```
+
+
 
 ### Run (local)
 

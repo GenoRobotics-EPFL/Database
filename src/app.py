@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from .models import (
+    S3UploadFileEnd,
+    S3UploadFileStart,
+    S3UploadFileURL,
     Person,
     PersonNoId,
     Location,
@@ -35,7 +38,7 @@ from .models import (
 
 from .crud.base import BaseCRUD
 from .crud.file import FileCRUD
-
+from . import s3
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
 assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"
@@ -48,6 +51,8 @@ if DB_TYPE == "sql":
     CRUD = SQLCRUD
 else:
     CRUD = FileCRUD
+
+s3.assert_bucket_exist()
 
 
 def get_crud(model: Type[BaseModel]) -> BaseCRUD:
@@ -69,6 +74,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/files/upload/url/{filename}")
+def upload_file_url(filename: str) -> S3UploadFileURL:
+    url = s3.get_upload_file_url(filename)
+    return S3UploadFileURL(url=url)
+
+
+@app.post("/files/upload/large-start/{filename}")
+def upload_large_file_start(filename: str, n_parts: int) -> S3UploadFileStart:
+    return s3.get_upload_large_file_data(filename, n_parts)
+
+
+@app.post("/files/upload/large-complete/{filename}")
+def upload_large_file_complete(filename: str, body: S3UploadFileEnd):
+    s3.complete_upload_large_file(filename, body)
+
+
+@app.delete("/files/{filename}")
+def delete_file(filename: str):
+    s3.delete_file(filename)
 
 
 @app.get("/persons", response_model=list[Person])

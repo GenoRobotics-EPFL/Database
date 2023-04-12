@@ -7,6 +7,25 @@ export namespace Core {
 
 export namespace API {
 
+  export type S3UploadFileURL = {
+    url: string
+  }
+
+  export type S3UploadFileStart = {
+    upload_id: string
+    urls: string[]
+  }
+
+  export type S3UploadFilePart = {
+    part: number
+    etag: string
+  }
+
+  export type S3UploadFileEnd = {
+    upload_id: string
+    parts: S3UploadFilePart[]
+  }
+
   export type Person = {
     id: number
     name: string

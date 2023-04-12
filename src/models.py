@@ -2,6 +2,25 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
+class S3UploadFileURL(BaseModel):
+    url: str
+
+
+class S3UploadFileStart(BaseModel):
+    upload_id: str
+    urls: list[str]
+
+
+class S3UploadFilePart(BaseModel):
+    part: int
+    etag: str
+
+
+class S3UploadFileEnd(BaseModel):
+    upload_id: str
+    parts: list[S3UploadFilePart]
+
+
 class ParentModel(BaseModel):
     class Config:
         orm_mode = True

@@ -8,12 +8,13 @@ import { useForm } from '@mantine/form';
 
 import { Text, useMantineTheme } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE, MIME_TYPES } from '@mantine/dropzone';
 
 import { API } from '../../types';
 import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
+import useFileUploader from '../../utils/useFileUploader';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -29,6 +30,7 @@ export default function NewSample() {
   const state = useDataState()
   const { classes } = useStyles();
   const theme = useMantineTheme();
+  const fileUploader = useFileUploader()
 
   const form = useForm({
     initialValues: {
@@ -55,6 +57,20 @@ export default function NewSample() {
     } else {
       console.log("POST /samples failed.")
     }
+  }
+
+  const uploadFile = (file: File) => {
+    fileUploader.uploadFile(file)
+      .then(r => {
+        if (r.status == 200) {
+          // success
+        } else {
+          // failure
+        }
+      })
+      .catch(e => {
+        // failure
+      })
   }
 
   return (
@@ -146,12 +162,9 @@ export default function NewSample() {
           />
           <Group>
             <Dropzone
-              onDrop={(files) => console.log('accepted files', files)}
+              maxFiles={1}
+              onDrop={(files) => uploadFile(files[0])}
               onReject={(files) => console.log('rejected files', files)}
-              maxSize={3 * 1024 ** 2}
-              accept={IMAGE_MIME_TYPE}
-
-            // {...props}
             >
               <Group position="center" spacing="xl" style={{ minHeight: 50, pointerEvents: 'none' }}>
                 <Dropzone.Accept>
