@@ -5,6 +5,7 @@ import {
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 
+import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
 
 import { API } from '../../types';
@@ -28,15 +29,13 @@ export default function NewPlantIdentification() {
       taxonomy_id: 0,
       identification_method_id: 0,
       timestamp: new Date(''),
-      sex: '',
-      lifestage: '',
-      reproduction: '',
+      seq1_score: 0,
+      seq2_score: 0,
+      seq3_score: 0,
+      seq4_score: 0,
     },
 
     validate: {
-      sex: (value) => (value ? null : 'Select one'),
-      lifestage: (value) => (value ? null : 'Select one'),
-      reproduction: (value) => (value ? null : 'Select one'),
     },
 
   });
@@ -61,47 +60,8 @@ export default function NewPlantIdentification() {
     }
   }
 
-  const postLocation = async (data: Omit<API.Location, "id">) => {
-    const response = await fetch(
-      `${URL}/locations/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const location = await response.json()
-    if (response.status == 200) {
-      console.log("POST /locations")
-      console.dir(location)
-    } else {
-      console.log("POST /locations failed.")
-    }
-  }
-
-  const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
-    const response = await fetch(
-      `${URL}/taxonomy/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const taxonomy = await response.json()
-    if (response.status == 200) {
-      console.log("POST /taxonomy")
-      console.dir(taxonomy)
-    } else {
-      console.log("POST /taxonomy failed.")
-    }
-  }
-
   const { classes } = useStyles();
+  const router = useRouter()
 
 
   return (
@@ -130,9 +90,10 @@ export default function NewPlantIdentification() {
               taxonomy_id: values.taxonomy_id,
               identification_method_id: values.identification_method_id,
               timestamp: values.timestamp,
-              sex: values.sex,
-              lifestage: values.lifestage,
-              reproduction: values.reproduction,
+              seq1_score: values.seq1_score,
+              seq2_score: values.seq2_score,
+              seq3_score: values.seq3_score,
+              seq4_score: values.seq4_score
             })
           )}
         >
@@ -156,53 +117,12 @@ export default function NewPlantIdentification() {
               />
             </Group>
 
-            <Select
-              label="Sex:"
-              placeholder="Sex"
-              sx={{ width: 200 }}
-              withAsterisk
-              {...form.getInputProps('sex')}
-
-              data={[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
-                { value: 'hermaphrodite', label: 'Hermaphrodite' },
-                { value: 'none', label: 'None' }
-              ]}
-            />
-            <Select
-              label="Lifestage:"
-              placeholder="Lifestage"
-              sx={{ width: 200 }}
-              withAsterisk
-              {...form.getInputProps('lifestage')}
-
-              data={[
-                { value: 'adult', label: 'Adult' },
-                { value: 'immature', label: 'immature' }
-              ]}
-            />
-            <Select
-              label="Reproduction:"
-              placeholder="Reproduction"
-              sx={{ width: 200 }}
-              withAsterisk
-              {...form.getInputProps('reproduction')}
-
-              data={[
-                { value: 'sexual', label: 'Sexual' },
-                { value: 'asexual', label: 'Asexual' },
-                { value: 'cyclic', label: 'Cyclic' },
-                { value: 'pathogen', label: 'Pathogen' }
-              ]}
-            />
-
             <Group mt="md" >
               <Button type="submit" > Submit</Button>
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

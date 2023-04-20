@@ -5,6 +5,7 @@ import {
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
+import { useRouter } from 'next/router'
 
 import { API } from '../../types';
 import React from 'react';
@@ -61,6 +62,7 @@ export default function NewTaxonomy() {
     }
   }
   const { classes } = useStyles();
+  const router = useRouter()
 
   return (
     <>
@@ -141,7 +143,7 @@ export default function NewTaxonomy() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14}  onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 
@@ -155,3 +157,4 @@ export default function NewTaxonomy() {
     </>
   )
 }
+ 

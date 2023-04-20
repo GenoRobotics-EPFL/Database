@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
 
-
+import { useRouter } from 'next/router'
 import { Text, useMantineTheme } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
@@ -78,6 +78,7 @@ export default function NewSequencing() {
 
   const { classes } = useStyles();
   const theme = useMantineTheme();
+  const router = useRouter()
 
   return (
     <>
@@ -106,10 +107,6 @@ export default function NewSequencing() {
               sequencing_method_id: values.sequencing_method_id,
               timestamp: values.timestamp,
               base_calling_file: values.base_calling_file,
-              primer_code: values.primer_code,
-              sequence_length: values.sequence_length,
-              barcode: values.barcode,
-              primer_desc: values.primer_desc,
             })
           )}
         >
@@ -172,46 +169,13 @@ export default function NewSequencing() {
                 </Group>
               </Dropzone>
             </Group>
-            <Group>
-              <TextInput
-                placeholder="Sequence length"
-                label="Sequence length:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('sequence_length')}
-              />
-              <TextInput
-                placeholder="Barcode"
-                label="Barcode:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('barcode')}
-              />
-            </Group>
-
-            <Group>
-              <TextInput
-                placeholder="Primer code"
-                label="Primer code:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('primer_code')}
-              />
-              <TextInput
-                placeholder="Primer description"
-                label="Primer description:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('primer_desc')}
-              />
-            </Group>
 
             <Group mt="md" >
               <Button type="submit" > Submit</Button>
               <Button type="reset"  > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

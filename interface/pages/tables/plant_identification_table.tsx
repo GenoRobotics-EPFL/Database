@@ -9,10 +9,12 @@ import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 export default function PlantIdentificationTable() {
   const [persons, setSequencings] = useState<API.PlantIdentification[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     const cb = async () => {
@@ -41,7 +43,7 @@ export default function PlantIdentificationTable() {
           Plant Identification table
         </Title>
 
-        <Table mt='md' sx={{ maxWidth: 1000 }}>
+        <Table mt='md' sx={{ maxWidth: 1300 }}>
           <thead>
             <tr>
               <th>ID</th>
@@ -50,9 +52,11 @@ export default function PlantIdentificationTable() {
               <th>Taxonomy ID</th>
               <th>Identification method ID</th>
               <th>Time stamp</th>
-              <th>Sex</th>
-              <th>Lifestage</th>
-              <th>Reproduction</th>
+              <th>Sequence 1 score</th>
+              <th>Sequence 2 score</th>
+              <th>Sequence 3 score</th>
+              <th>Sequence 4 score</th>
+
             </tr>
           </thead>
           <tbody>
@@ -64,16 +68,17 @@ export default function PlantIdentificationTable() {
                 <td>{element.taxonomy_id}</td>
                 <td>{element.identification_method_id}</td>
                 <td>{element.timestamp.toString()}</td>
-                <td>{element.sex}</td>
-                <td>{element.lifestage}</td>
-                <td>{element.reproduction}</td>
+                <td>{element.seq1_score}</td>
+                <td>{element.seq2_score}</td>
+                <td>{element.seq3_score}</td>
+                <td>{element.seq4_score}</td>
               </tr>
             ))}
           </tbody>
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor>
         </div>

@@ -8,10 +8,12 @@ import { MyNavbar } from '../../components/navbar';
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 export default function SequencingTable() {
   const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     const cb = async () => {
@@ -49,11 +51,6 @@ export default function SequencingTable() {
               <th>Sequencing method ID</th>
               <th>Time stamp</th>
               <th>Base calling file</th>
-              <th>Primer code</th>
-              <th>Sequence length</th>
-              <th>Barcode</th>
-              <th>Primer description</th>
-
             </tr>
           </thead>
           <tbody>
@@ -65,17 +62,13 @@ export default function SequencingTable() {
                 <td>{element.sequencing_method_id}</td>
                 <td>{element.timestamp.toString()}</td>
                 <td>{element.base_calling_file}</td>
-                <td>{element.primer_code}</td>
-                <td>{element.sequence_length}</td>
-                <td>{element.barcode}</td>
-                <td>{element.primer_desc}</td>
               </tr>
             ))}
           </tbody>
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
       </AppShell>

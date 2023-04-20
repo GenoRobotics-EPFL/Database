@@ -8,6 +8,7 @@ import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 export default function AmplificationTable() {
   const [amplifications, setAmplifications] = useState<API.Amplification[]>([])
@@ -23,6 +24,8 @@ export default function AmplificationTable() {
     }
     cb()
   }, [])
+  const router = useRouter()
+
 
   return (
     <>
@@ -62,7 +65,7 @@ export default function AmplificationTable() {
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push("/posts/see_tables")}>
           See tables
         </Anchor></div>
 

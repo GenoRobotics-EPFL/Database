@@ -1,10 +1,11 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
+import { useRouter } from 'next/router'
 
 import {
   AppShell, Navbar, Title, Group, Center, createStyles,
-  Box, SimpleGrid, Text, Container, UnstyledButton, NavLink, Menu, ActionIcon, Divider,
+  Box, SimpleGrid, Text, Container, NavLink, Menu,
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
@@ -79,6 +80,8 @@ const data = [
   { title: 'Location table', icon: IconLocation, color: 'cyan', page: '/location_table' },
   { title: 'Plant identification table', icon: IconPlant, color: 'pink', page: '/plant_identification_table' },
   { title: 'Taxonomy table', icon: IconPlant2, color: 'red', page: '/taxonomy_table' },
+  { title: 'Consensus segment', icon: IconColumns, color: 'orange', page: '/consensus_segment_table' },
+
 ];
 
 
@@ -88,6 +91,7 @@ export default function SeeTables() {
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const router = useRouter()
 
   const card = data.map((item) => (
     <Carousel.Slide key={item.title}>
@@ -108,7 +112,7 @@ export default function SeeTables() {
         <item.icon color={theme.colors[item.color][6]} size={32} />
         <NavLink variant="subtle" color="dark"
           label='Open table'
-          onClick={() => open("/tables/" + item.page, "_self")}
+          onClick={() => router.push("/tables/" + item.page)}
         />
       </Paper>
     </Carousel.Slide>
@@ -174,9 +178,9 @@ export default function SeeTables() {
                   </Group>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <NavLink label="Amplification method" onClick={() => open("/tables/amplification_method_table", "_self")} />
-                  <NavLink label="Sequencing method" onClick={() => open("/tables/sequencing_method_table", "_self")} />
-                  <NavLink label="Identification method" onClick={() => open("/tables/identification_method_table", "_self")} />
+                  <NavLink label="Amplification method" onClick={() => router.push("/tables/amplification_method_table")} />
+                  <NavLink label="Sequencing method" onClick={() => router.push("/tables/sequencing_method_table")} />
+                  <NavLink label="Identification method" onClick={() => router.push("/tables/identification_method_table")} />
                 </Menu.Dropdown>
               </Menu>
             </Paper>

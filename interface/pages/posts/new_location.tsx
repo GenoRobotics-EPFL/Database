@@ -6,6 +6,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { MyNavbar } from '../../components/navbar';
 
+import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
 
 import Link from 'next/link'
@@ -20,7 +21,6 @@ const useStyles = createStyles((theme) => ({
   },
 
 }));
-
 
 export default function NewLocation() {
   const form = useForm({
@@ -61,6 +61,7 @@ export default function NewLocation() {
   }
 
   const { classes } = useStyles();
+  const router = useRouter()
 
   return (
     <>
@@ -118,7 +119,7 @@ export default function NewLocation() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

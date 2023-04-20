@@ -9,10 +9,12 @@ import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 export default function PersonTable() {
   const [persons, setPersons] = useState<API.Person[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     // define inner callback as useEffect doesn't support async callback
@@ -64,7 +66,7 @@ export default function PersonTable() {
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
       </AppShell>

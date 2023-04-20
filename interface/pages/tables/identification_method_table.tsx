@@ -7,11 +7,13 @@ import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 
 export default function IdentificationMethodTable() {
   const [identification_methods, setIdentificationMethods] = useState<API.IdentificationMethod[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     const cb = async () => {
@@ -65,7 +67,7 @@ export default function IdentificationMethodTable() {
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push("/posts/see_tables")}>
           See tables
         </Anchor></div>
 

@@ -7,6 +7,7 @@ import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 
 const useStyles = createStyles((theme) => ({
@@ -127,6 +128,7 @@ export default function NewAmplificationMethod() {
   }
 
   const { classes } = useStyles();
+  const router = useRouter()
 
   return (
     <>
@@ -173,7 +175,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={amplification_form.reset}> Reset</Button>
                 </Group>
 
-                <Anchor size={14} href="/" target="_self">
+                <Anchor size={14}  onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 
@@ -237,7 +239,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={identification_form.reset} > Reset</Button>
                 </Group>
 
-                <Anchor size={15} href="/" target="_self">
+                <Anchor size={15}  onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 
@@ -292,7 +294,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={sequencing_form.reset} > Reset</Button>
                 </Group>
 
-                <Anchor size={15} href="/" target="_self">
+                <Anchor size={15}  onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 

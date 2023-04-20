@@ -2,14 +2,15 @@
 import React from 'react';
 import {
   Header, Group, ActionIcon, useMantineColorScheme, Title, NavLink,
-  Menu, createStyles, Burger
+  Menu, createStyles, Burger, Text
 } from '@mantine/core';
 import {
-  IconMap, IconLayoutGridAdd, IconChevronRight, IconUserPlus, IconTestPipe, IconLocation,
-  IconPlant, IconTournament, IconPlant2, IconColumns, IconSun, IconMoonStars, IconHome,
+  IconMap, IconLayoutGridAdd, IconUserPlus, IconTestPipe, IconLocation,
+  IconPlant, IconTournament, IconPlant2, IconSun, IconMoonStars, IconColumns,
 } from '@tabler/icons';
 import { useDisclosure } from '@mantine/hooks';
-
+import { Router } from 'tabler-icons-react';
+import { useRouter } from 'next/router'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -49,12 +50,18 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
+  hover: {
+    transition: 'box-shadow 150ms ease, transform 100ms ease',
+    '&:hover': {
+      transform: 'scale(1.04)',
+    },
+  },
 
 }));
 
 
 const links = [
-  { label: 'Add to database', link: '/' },
+  { label: 'Home Page', link: '/' },
   { label: 'See tables', link: '/posts/see_tables/' }
 ]
 
@@ -67,6 +74,8 @@ const data = [
   { title: 'Location', icon: IconLocation, page: '/new_location' },
   { title: 'Plant identification', icon: IconPlant, page: '/new_plant_identification' },
   { title: 'Taxonomy', icon: IconPlant2, page: '/new_taxonomy' },
+  { title: 'Consensus segment', icon: IconColumns, page: '/new_taxonomy' },
+
 ];
 
 export const MyHeader = () => {
@@ -74,12 +83,12 @@ export const MyHeader = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [opened, { toggle, close }] = useDisclosure(false);
   const { classes, cx } = useStyles();
+  const router = useRouter()
 
   const navlinks = data.map((item) => (
     <NavLink
-      key={item.title}
       label={item.title}
-      onClick={() => open("/posts" + item.page, "_self")}
+      onClick={() => router.push("/posts" + item.page)}
       active
       variant="subtle"
       color="dark"
@@ -95,7 +104,7 @@ export const MyHeader = () => {
       onClick={(event) => {
         event.preventDefault();
         close();
-        open(item.link, "_self")
+        router.push(item.link)
       }}
     >
       {item.label}
@@ -113,40 +122,22 @@ export const MyHeader = () => {
 
             <Menu.Dropdown>
               <Menu.Label>Add to Database</Menu.Label>
-
               {navlinks}
-
               <Menu.Divider />
-
-              <Menu.Label>Other</Menu.Label>
-              <NavLink
-                label="See Tables"
-                onClick={() => open("/posts/see_tables", "_self")}
-                variant="subtle"
-                active
-                color="dark"
-                icon={<IconColumns size={14} color={"green"} />}
-              />
-              <NavLink
-                label="Home Page"
-                onClick={() => open("/", "_self")}
-                variant="subtle"
-                active
-                color="dark"
-                icon={<IconHome size={14} color={"green"} />}
-              />
             </Menu.Dropdown>
           </Menu>
 
           <Title order={1} size="h2" weight={600}>
             <img
               height={50}
+              className={classes.hover}
               width='auto'
               src="https://www.genorobotics.org/wp-content/uploads/2020/11/Genorobotics-logo-12-fond-transp.png"
               alt="GenoRobotics"
-              onClick={() => open("/", "_self")}
+              onClick={() => router.push("/")}
             />
-            GenoRobotics</Title>
+            <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }}> GenoRobotics </Text>
+          </Title>
 
         </Group>
 

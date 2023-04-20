@@ -7,9 +7,9 @@ import { MyFooter } from '../../components/footer'
 
 import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router'
 
 import { API } from '../../types';
-import { useRouter } from 'next/router'
 import { URL } from '../../utils/config';
 
 
@@ -58,6 +58,7 @@ export default function NewAmplification() {
   }
 
   const { classes } = useStyles();
+  const router = useRouter()
 
   function loadInitialValues(): Promise<API.Amplification> {
     return new Promise((resolve) => {
@@ -132,7 +133,7 @@ export default function NewAmplification() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
           </Stack>

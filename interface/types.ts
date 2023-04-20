@@ -1,4 +1,5 @@
 import internal from "stream"
+import { SecureContext } from "tls"
 
 export namespace API {
 
@@ -20,14 +21,17 @@ export namespace API {
     person_id: number
     location_id: number
     timestamp: Date
+    sex: string,
+    lifestage: string,
+    reproduction: string,
     image_url: string
     image_timestamp: Date
     image_desc: string
   }
 
   export type AmplificationMethod = {
-    id : number
-    name : string
+    id: number
+    name: string
   }
 
   export type Amplification = {
@@ -51,13 +55,9 @@ export namespace API {
     sequencing_method_id: number
     timestamp: Date
     base_calling_file: string
-  
+
     //Store the location of the file
- 
-    primer_code: string
-    sequence_length: string
-    barcode: string
-    primer_desc: string
+
   }
 
   export type PlantIdentification = {
@@ -67,9 +67,10 @@ export namespace API {
     taxonomy_id: number
     identification_method_id: number
     timestamp: Date
-    sex: string | null
-    lifestage: string | null
-    reproduction: string | null
+    seq1_score: number
+    seq2_score: number
+    seq3_score: number
+    seq4_score: number
   }
 
   export type IdentificationMethod = {
@@ -90,6 +91,19 @@ export namespace API {
     species: string
   }
 
+  export type ConsensusSegment = {
+    id: number
+    sequence_id: number
+    segment_sequence: string
+    primer_name: string
+    primer_desc: string
+    primer2_name: string
+    primer2_desc: string
+    DNA_region: string
+    sequence_length: string
   }
+
+
+}
 
 

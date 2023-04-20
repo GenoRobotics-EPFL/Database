@@ -1,8 +1,25 @@
-import { Center, Footer, Group, Text, Image, Divider, } from '@mantine/core'
+import { Center, Footer, Group, Text, Image, Divider, createStyles } from '@mantine/core'
 
 import React from 'react'
+import { useRouter } from 'next/router'
+
+
+const useStyles = createStyles((theme) => ({
+
+  hover: {
+    transition: 'box-shadow 150ms ease, transform 100ms ease',
+    '&:hover': {
+      transform: 'scale(1.02)',
+    },
+  },
+
+}));
 
 export const MyFooter = () => {
+
+  const { classes, cx } = useStyles();
+  const router = useRouter()
+
   return (
 
 
@@ -13,9 +30,11 @@ export const MyFooter = () => {
           <img
             height='100'
             width='auto'
+            className={classes.hover}
             src="https://www.genorobotics.org/wp-content/uploads/2020/04/Genorobotics-logo-52.png"
             alt="Genorobotics logo-52" ></img>
-          <Text size={12}>Copyright © 2022 GenoRobotics</Text>
+
+          <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }} size={12}>Copyright © 2022 GenoRobotics</Text>
         </Group>
 
       </Center>
@@ -26,29 +45,3 @@ export const MyFooter = () => {
 }
 
 
-
-// export const MyFooter = () => {
-//   return (
-
-
-//     <Footer height={300} p="xs">
-
-//       <Center>
-//         <img
-//           height='110'
-//           width='auto'
-//           src="https://www.genorobotics.org/wp-content/uploads/2020/04/Genorobotics-logo-52.png"
-//           alt="Genorobotics logo-52" ></img>
-//         <Text size={14}>Copyright © 2022 GenoRobotics</Text>
-
-//       </Center>
-//       <Divider>
-//         <Center>
-
-//           <Text size={14}>Copyright © 2022 GenoRobotics</Text>
-
-//         </Center>
-//       </Divider>
-//     </Footer>
-//   )
-// }

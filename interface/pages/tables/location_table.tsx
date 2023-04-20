@@ -9,11 +9,13 @@ import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
 
 
 export default function LocationTable() {
   const [locations, setLocations] = useState<API.Location[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     const cb = async () => {
@@ -64,7 +66,7 @@ export default function LocationTable() {
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
       </AppShell>

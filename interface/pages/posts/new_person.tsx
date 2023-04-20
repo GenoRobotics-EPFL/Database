@@ -5,7 +5,7 @@ import {
   createStyles, TextInput
 } from '@mantine/core'
 
-
+import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
@@ -55,6 +55,7 @@ export default function NewPerson() {
   }
 
   const { classes } = useStyles();
+  const router = useRouter()
 
 
   return (
@@ -106,7 +107,7 @@ export default function NewPerson() {
               <Button type="reset"  > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14}  onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
           </Stack>
