@@ -91,6 +91,17 @@ def _create_bucket() -> None:
     )
 
 
+def file_exists(filename: str) -> bool:
+    """
+    Return if the file already exists
+    """
+    try:
+        s3.head_object(Bucket=BUCKET_NAME, Key=filename)
+    except ClientError:
+        return False
+    return True
+
+
 def get_download_file_url(filename: str, expiration: int = 3600) -> str:
     """
     Return an URL that can be used to download the file `filename`

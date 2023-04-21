@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from .models import (
+    S3FileExists,
     S3UploadFileEnd,
     S3UploadFileStart,
     S3FileURL,
@@ -96,6 +97,12 @@ def upload_large_file_start(filename: str, n_parts: int) -> S3UploadFileStart:
 @app.post("/files/upload/large-complete/{filename}")
 def upload_large_file_complete(filename: str, body: S3UploadFileEnd):
     s3.complete_upload_large_file(filename, body)
+
+
+@app.get("/files/exists/{filename}")
+def check_file_exists(filename: str) -> S3FileExists:
+    exists = s3.file_exists(filename)
+    return S3FileExists(exists=exists)
 
 
 @app.delete("/files/{filename}")

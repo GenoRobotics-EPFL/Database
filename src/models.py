@@ -6,6 +6,10 @@ class S3FileURL(BaseModel):
     url: str
 
 
+class S3FileExists(BaseModel):
+    exists: bool
+
+
 class S3UploadFileStart(BaseModel):
     upload_id: str
     urls: list[str]
