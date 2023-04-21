@@ -63,6 +63,17 @@ def _create_bucket() -> None:
         },
     )
 
+    # make the bucket private
+    s3.put_public_access_block(
+        Bucket=BUCKET_NAME,
+        PublicAccessBlockConfiguration={
+            "BlockPublicAcls": True,
+            "IgnorePublicAcls": True,
+            "BlockPublicPolicy": True,
+            "RestrictPublicBuckets": True,
+        },
+    )
+
     # must set expose headers to extract header for complete_upload_large_file
     # https://stackoverflow.com/questions/43344819/reading-response-headers-with-fetch-api/44816592#44816592
     s3.put_bucket_cors(

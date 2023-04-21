@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class S3UploadFileURL(BaseModel):
+class S3FileURL(BaseModel):
     url: str
 
 

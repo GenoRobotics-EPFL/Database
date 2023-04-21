@@ -4,3 +4,4 @@ sqlalchemy>=1.4.44
 black
 python-dotenv
 psycopg2-binary
+boto3>=1.26.117

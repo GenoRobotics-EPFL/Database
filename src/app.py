@@ -11,7 +11,7 @@ load_dotenv()
 from .models import (
     S3UploadFileEnd,
     S3UploadFileStart,
-    S3UploadFileURL,
+    S3FileURL,
     Person,
     PersonNoId,
     Location,
@@ -76,10 +76,16 @@ app.add_middleware(
 )
 
 
+@app.get("/files/download/url/{filename}")
+def upload_file_url(filename: str) -> S3FileURL:
+    url = s3.get_download_file_url(filename)
+    return S3FileURL(url=url)
+
+
 @app.get("/files/upload/url/{filename}")
-def upload_file_url(filename: str) -> S3UploadFileURL:
+def upload_file_url(filename: str) -> S3FileURL:
     url = s3.get_upload_file_url(filename)
-    return S3UploadFileURL(url=url)
+    return S3FileURL(url=url)
 
 
 @app.post("/files/upload/large-start/{filename}")
