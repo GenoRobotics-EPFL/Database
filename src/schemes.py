@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Float
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -33,6 +33,9 @@ class Sample(Base):
     person_id = Column(Integer, ForeignKey("Person.id"))
     location_id = Column(Integer, ForeignKey("Location.id"))
     timestamp = Column(DateTime(timezone=True))
+    sex = Column(String(100))
+    lifestage = Column(String(100))
+    reproduction = Column(String(100))
     image_url = Column(String(500))
     image_timestamp = Column(DateTime(timezone=True))
     image_desc: Column(String(500))
@@ -43,6 +46,7 @@ class Sample(Base):
     amplifications = relationship("Amplification", back_populates="sample")
     sequencings = relationship("Sequencing", back_populates="sample")
     plant_identifications = relationship("PlantIdentification", back_populates="sample")
+    taxonomy = relationship("Taxonomy", back_populates="sample")
 
 
 class AmplificationMethod(Base):
@@ -122,13 +126,12 @@ class PlantIdentification(Base):
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
     sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
-    taxonomy_id = Column(Integer, ForeignKey("Taxonomy.id"))
     identification_method_id = Column(Integer, ForeignKey("IdentificationMethod.id"))
     timestamp = Column(DateTime(timezone=True))
-    sex = Column(String(100))
-    lifestage = Column(String(100))
-    reproduction = Column(String(100))
-
+    seq1_score = Column(Float)
+    seq2_score = Column(Float)
+    seq3_score = Column(Float)
+    seq4_score = Column(Float)
     sample = relationship("Sample", back_populates="plant_identifications")
     identification_method = relationship(
         "IdentificationMethod", back_populates="plant_identifications"
@@ -155,6 +158,8 @@ class Taxonomy(Base):
     __allow_unmapped__ = True
     __tablename__ = "Taxonomy"
     id = Column(Integer, primary_key=True, index=True)
+    sample_id = Column(Integer, ForeignKey("Sample.id"))
+    identification_id = Column(Integer, ForeignKey("PlantIdentification.id"))
     domain = Column(String(100))
     kingdom = Column(String(100))
     phylum = Column(String(100))
@@ -165,3 +170,4 @@ class Taxonomy(Base):
     plant_identifications = relationship(
         "PlantIdentification", back_populates="taxonomy"
     )
+    sample = relationship("Sample", back_populates="taxonomy")

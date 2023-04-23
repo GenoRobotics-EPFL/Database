@@ -3,31 +3,43 @@ from typing import Type
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from dotenv import find_dotenv
+
+load_dotenv()
 
 from .models import (
+    S3FileExists,
+    S3UploadFileEnd,
+    S3UploadFileStart,
+    S3FileURL,
     Person,
+    PersonNoId,
     Location,
+    LocationNoId,
     Sequencing,
+    SequencingNoId,
     SequencingMethod,
+    SequencingMethodNoId,
     Sample,
+    SampleNoId,
     Amplification,
+    AmplificationNoId,
     ConsensusSegment,
+    ConsensusSegmentNoId,
     PlantIdentification,
+    PlantIdentificationNoId,
     AmplificationMethod,
+    AmplificationMethodNoId,
     IdentificationMethod,
+    IdentificationMethodNoId,
     Taxonomy,
-    without_id,
+    TaxonomyNoId,
 )
 
 from .crud.base import BaseCRUD
 from .crud.file import FileCRUD
-
-load_dotenv(find_dotenv(raise_error_if_not_found=True))
-
+from . import s3
 
 DB_TYPE = os.environ.get("DB_TYPE", "sql")
 assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"
@@ -40,6 +52,8 @@ if DB_TYPE == "sql":
     CRUD = SQLCRUD
 else:
     CRUD = FileCRUD
+
+s3.assert_bucket_exist()
 
 
 def get_crud(model: Type[BaseModel]) -> BaseCRUD:
@@ -63,6 +77,39 @@ app.add_middleware(
 )
 
 
+@app.get("/files/download/url/{filename}")
+def upload_file_url(filename: str) -> S3FileURL:
+    url = s3.get_download_file_url(filename)
+    return S3FileURL(url=url)
+
+
+@app.get("/files/upload/url/{filename}")
+def upload_file_url(filename: str) -> S3FileURL:
+    url = s3.get_upload_file_url(filename)
+    return S3FileURL(url=url)
+
+
+@app.post("/files/upload/large-start/{filename}")
+def upload_large_file_start(filename: str, n_parts: int) -> S3UploadFileStart:
+    return s3.get_upload_large_file_data(filename, n_parts)
+
+
+@app.post("/files/upload/large-complete/{filename}")
+def upload_large_file_complete(filename: str, body: S3UploadFileEnd):
+    s3.complete_upload_large_file(filename, body)
+
+
+@app.get("/files/exists/{filename}")
+def check_file_exists(filename: str) -> S3FileExists:
+    exists = s3.file_exists(filename)
+    return S3FileExists(exists=exists)
+
+
+@app.delete("/files/{filename}")
+def delete_file(filename: str):
+    s3.delete_file(filename)
+
+
 @app.get("/persons", response_model=list[Person])
 def persons(crud: BaseCRUD = Depends(get_crud(Person))):
     return crud.query()
@@ -80,9 +127,7 @@ def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(
-    id: int, body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))
-):
+def persons(id: int, body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -91,7 +136,7 @@ def persons(
 
 
 @app.post("/persons", response_model=Person)
-def persons(body: without_id(Person), crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
     return crud.create(body)
 
 
@@ -122,7 +167,7 @@ def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMeth
 @app.put("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(
     id: int,
-    body: without_id(SequencingMethod),
+    body: SequencingMethodNoId,
     crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
     body.id = id
@@ -134,7 +179,7 @@ def sequencing_methods(
 
 @app.post("/sequencing_methods", response_model=SequencingMethod)
 def sequencing_methods(
-    body: without_id(SequencingMethod),
+    body: SequencingMethodNoId,
     crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
 ):
     return crud.create(body)
@@ -165,9 +210,7 @@ def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(
-    id: int, body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))
-):
+def samples(id: int, body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -176,7 +219,7 @@ def samples(
 
 
 @app.post("/samples", response_model=Sample)
-def samples(body: without_id(Sample), crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
     return crud.create(body)
 
 
@@ -207,7 +250,7 @@ def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
 @app.put("/amplifications/{id}", response_model=Amplification)
 def amplifications(
     id: int,
-    body: without_id(Amplification),
+    body: AmplificationNoId,
     crud: BaseCRUD = Depends(get_crud(Amplification)),
 ):
     body.id = id
@@ -219,7 +262,7 @@ def amplifications(
 
 @app.post("/amplifications", response_model=Amplification)
 def amplifications(
-    body: without_id(Amplification), crud: BaseCRUD = Depends(get_crud(Amplification))
+    body: AmplificationNoId, crud: BaseCRUD = Depends(get_crud(Amplification))
 ):
     return crud.create(body)
 
@@ -251,7 +294,7 @@ def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegme
 @app.put("/consensus_segments/{id}", response_model=ConsensusSegment)
 def consensus_segments(
     id: int,
-    body: without_id(ConsensusSegment),
+    body: ConsensusSegmentNoId,
     crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
 ):
     body.id = id
@@ -263,7 +306,7 @@ def consensus_segments(
 
 @app.post("/consensus_segments", response_model=ConsensusSegment)
 def consensus_segments(
-    body: without_id(ConsensusSegment),
+    body: ConsensusSegmentNoId,
     crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
 ):
     return crud.create(body)
@@ -296,7 +339,7 @@ def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
 @app.put("/sequencings/{id}", response_model=Sequencing)
 def sequencings(
     id: int,
-    body: without_id(Sequencing),
+    body: SequencingNoId,
     crud: BaseCRUD = Depends(get_crud(Sequencing)),
 ):
     body.id = id
@@ -307,9 +350,7 @@ def sequencings(
 
 
 @app.post("/sequencings", response_model=Sequencing)
-def sequencings(
-    body: without_id(Sequencing), crud: BaseCRUD = Depends(get_crud(Sequencing))
-):
+def sequencings(body: SequencingNoId, crud: BaseCRUD = Depends(get_crud(Sequencing))):
     return crud.create(body)
 
 
@@ -342,7 +383,7 @@ def plant_identifications(
 @app.put("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(
     id: int,
-    body: without_id(PlantIdentification),
+    body: PlantIdentificationNoId,
     crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
     body.id = id
@@ -354,7 +395,7 @@ def plant_identifications(
 
 @app.post("/plant_identifications", response_model=PlantIdentification)
 def plant_identifications(
-    body: without_id(PlantIdentification),
+    body: PlantIdentificationNoId,
     crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
 ):
     return crud.create(body)
@@ -391,7 +432,7 @@ def amplification_methods(
 @app.put("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(
     id: int,
-    body: without_id(AmplificationMethod),
+    body: AmplificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
     body.id = id
@@ -403,7 +444,7 @@ def amplification_methods(
 
 @app.post("/amplification_methods", response_model=AmplificationMethod)
 def amplification_methods(
-    body: without_id(AmplificationMethod),
+    body: AmplificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
 ):
     return crud.create(body)
@@ -419,12 +460,12 @@ def amplification_methods(
     return item
 
 
-@app.get("/identification_method", response_model=list[IdentificationMethod])
+@app.get("/identification_methods", response_model=list[IdentificationMethod])
 def identification_method(crud: BaseCRUD = Depends(get_crud(IdentificationMethod))):
     return crud.query()
 
 
-@app.get("/identification_method/{id}", response_model=IdentificationMethod)
+@app.get("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
 ):
@@ -437,10 +478,10 @@ def identification_method(
     return item
 
 
-@app.put("/identification_method/{id}", response_model=IdentificationMethod)
+@app.put("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int,
-    body: without_id(IdentificationMethod),
+    body: IdentificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
     body.id = id
@@ -450,15 +491,15 @@ def identification_method(
     return body
 
 
-@app.post("/identification_method", response_model=IdentificationMethod)
+@app.post("/identification_methods", response_model=IdentificationMethod)
 def identification_method(
-    body: without_id(IdentificationMethod),
+    body: IdentificationMethodNoId,
     crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
 ):
     return crud.create(body)
 
 
-@app.delete("/identification_method/{id}", response_model=IdentificationMethod)
+@app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
     id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
 ):
@@ -486,7 +527,7 @@ def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
 
 @app.put("/locations/{id}", response_model=Location)
 def locations(
-    id: int, body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))
+    id: int, body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -496,7 +537,7 @@ def locations(
 
 
 @app.post("/locations", response_model=Location)
-def locations(body: without_id(Location), crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))):
     return crud.create(body)
 
 
@@ -526,7 +567,7 @@ def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
 def taxonomies(
-    id: int, body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
+    id: int, body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -536,9 +577,7 @@ def taxonomies(
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
-def taxonomies(
-    body: without_id(Taxonomy), crud: BaseCRUD = Depends(get_crud(Taxonomy))
-):
+def taxonomies(body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
     return crud.create(body)
 
 

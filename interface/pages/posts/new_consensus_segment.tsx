@@ -31,7 +31,7 @@ export default function NewConsensusSegment() {
       primer2_name: '',
       primer2_desc: '',
       DNA_region: '',
-      sequence_length: ''
+      sequence_length: 0,
     },
 
     validate: {

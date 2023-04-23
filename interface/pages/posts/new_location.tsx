@@ -4,7 +4,6 @@ import {
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 
 import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';

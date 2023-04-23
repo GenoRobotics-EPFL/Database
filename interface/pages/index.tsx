@@ -127,7 +127,6 @@ const Home: NextPage = () => {
 
 
         <Card radius="md" className={classes.card}>
-
           <SimpleGrid cols={3} mt="md">
             {items}
           </SimpleGrid>

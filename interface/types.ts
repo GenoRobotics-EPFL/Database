@@ -1,7 +1,30 @@
-import internal from "stream"
-import { SecureContext } from "tls"
+
+export namespace Core {
+  export type Identifiable = {
+    id: number
+  }
+}
 
 export namespace API {
+
+  export type S3UploadFileURL = {
+    url: string
+  }
+
+  export type S3UploadFileStart = {
+    upload_id: string
+    urls: string[]
+  }
+
+  export type S3UploadFilePart = {
+    part: number
+    etag: string
+  }
+
+  export type S3UploadFileEnd = {
+    upload_id: string
+    parts: S3UploadFilePart[]
+  }
 
   export type Person = {
     id: number
@@ -21,9 +44,9 @@ export namespace API {
     person_id: number
     location_id: number
     timestamp: Date
-    sex: string,
-    lifestage: string,
-    reproduction: string,
+    sex: string | null
+    lifestage: string | null
+    reproduction: string | null
     image_url: string
     image_timestamp: Date
     image_desc: string
@@ -55,9 +78,18 @@ export namespace API {
     sequencing_method_id: number
     timestamp: Date
     base_calling_file: string
+  }
 
-    //Store the location of the file
-
+  export type ConsensusSegment = {
+    id: number
+    sequence_id: number
+    segment_sequence: string
+    primer_name: string
+    primer_desc: string
+    primer2_name: string
+    primer2_desc: string
+    DNA_region: string
+    sequence_length: number
   }
 
   export type PlantIdentification = {
@@ -83,6 +115,8 @@ export namespace API {
 
   export type Taxonomy = {
     id: number
+    sample_id: number
+    identification_id: number
     domain: string
     kingdom: string
     phylum: string
@@ -91,17 +125,7 @@ export namespace API {
     species: string
   }
 
-  export type ConsensusSegment = {
-    id: number
-    sequence_id: number
-    segment_sequence: string
-    primer_name: string
-    primer_desc: string
-    primer2_name: string
-    primer2_desc: string
-    DNA_region: string
-    sequence_length: string
-  }
+
 
 
 }

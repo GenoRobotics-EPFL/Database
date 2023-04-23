@@ -1,6 +1,4 @@
-FROM python:3.11-alpine
-
-RUN apk --no-cache add py3-mysqlclient
+FROM python:3.10-alpine
 
 WORKDIR /code
 

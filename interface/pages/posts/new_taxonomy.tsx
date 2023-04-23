@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { API } from '../../types';
 import React from 'react';
 import { URL } from '../../utils/config';
+import { Id } from 'tabler-icons-react';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -22,6 +23,8 @@ export default function NewTaxonomy() {
   const form = useForm({
     initialValues: {
       id: 0,
+      sample_id: 0,
+      identification_id: 0,
       domain: '',
       kingdom: '',
       phylum: '',
@@ -85,6 +88,8 @@ export default function NewTaxonomy() {
         <form
           onSubmit={form.onSubmit(
             async (values) => await postTaxonomy({
+              sample_id: values.sample_id,
+              identification_id: values.identification_id,
               domain: values.domain,
               kingdom: values.kingdom,
               phylum: values.phylum,
@@ -143,7 +148,7 @@ export default function NewTaxonomy() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14}  onClick={() => router.push('/')}>
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 
@@ -157,4 +162,3 @@ export default function NewTaxonomy() {
     </>
   )
 }
- 
