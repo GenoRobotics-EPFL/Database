@@ -8,7 +8,6 @@ import {
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
 
@@ -80,14 +79,14 @@ export default function NewPerson() {
             placeholder="Name Surname"
             label="Full Name"
             withAsterisk
-            sx={{ width: 400 }}
+            sx={{ width: 300 }}
             {...form.getInputProps('name')}
           />
           <TextInput
             placeholder="Enter email"
             label="Email"
             withAsterisk
-            sx={{ width: 400 }}
+            sx={{ width: 300 }}
             {...form.getInputProps('email')}
           />
 

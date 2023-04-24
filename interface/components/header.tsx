@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Header, Group, ActionIcon, useMantineColorScheme, Title, NavLink,
-  Menu, createStyles, Burger, Text
+  Menu, createStyles, Burger, Text, Image,
 } from '@mantine/core';
 import {
   IconMap, IconLayoutGridAdd, IconUserPlus, IconTestPipe, IconLocation,
@@ -87,6 +87,7 @@ export const MyHeader = () => {
 
   const navlinks = data.map((item) => (
     <NavLink
+      key={item.title}
       label={item.title}
       onClick={() => router.push("/posts" + item.page)}
       active
@@ -128,15 +129,17 @@ export const MyHeader = () => {
           </Menu>
 
           <Title order={1} size="h2" weight={600}>
-            <img
-              height={50}
-              className={classes.hover}
-              width='auto'
-              src="https://www.genorobotics.org/wp-content/uploads/2020/11/Genorobotics-logo-12-fond-transp.png"
-              alt="GenoRobotics"
-              onClick={() => router.push("/")}
-            />
-            <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }}> GenoRobotics </Text>
+            <Group>
+              <Image
+                height={50}
+                className={classes.hover}
+                width='auto'
+                src="https://www.genorobotics.org/wp-content/uploads/2020/11/Genorobotics-logo-12-fond-transp.png"
+                alt="GenoRobotics"
+                onClick={() => router.push("/")}
+              />
+              <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }}> GenoRobotics </Text>
+            </Group>
           </Title>
 
         </Group>

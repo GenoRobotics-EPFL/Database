@@ -43,6 +43,7 @@ export namespace API {
     id: number
     person_id: number
     location_id: number
+    name: string | null
     timestamp: Date
     sex: string | null
     lifestage: string | null
@@ -115,8 +116,6 @@ export namespace API {
 
   export type Taxonomy = {
     id: number
-    sample_id: number
-    identification_id: number
     domain: string
     kingdom: string
     phylum: string

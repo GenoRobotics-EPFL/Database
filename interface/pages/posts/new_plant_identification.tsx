@@ -4,6 +4,7 @@ import {
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
+import { useDataState } from '../../utils/dataState';
 
 import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
@@ -21,6 +22,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewPlantIdentification() {
+  const state = useDataState()
+
   const form = useForm({
     initialValues: {
       id: 0,
@@ -41,20 +44,9 @@ export default function NewPlantIdentification() {
   });
 
   const postPlantIdentification = async (data: Omit<API.PlantIdentification, "id">) => {
-    const response = await fetch(
-      `${URL}/plant_identifications/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const plant_identification = await response.json()
+    const response = await state.postPlantIdentification(data)
     if (response.status == 200) {
       console.log("POST /plant_identifications")
-      console.dir(plant_identification)
     } else {
       console.log("POST /plant_identifications failed.")
     }
@@ -98,13 +90,61 @@ export default function NewPlantIdentification() {
           )}
         >
           <Stack spacing={20} mt="md">
-
-            <TextInput
-              placeholder="Method ID"
-              label="Identification method ID:"
+            <Select
+              label="Sample ID:"
               sx={{ width: 200 }}
+              data={state.samples.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sample_id')}
+              value={String(form.values.sample_id)}
+              onChange={(v) => form.setValues({ ...form.values, sample_id: Number(v) })}
+            />
+            <Select
+              label="Sequencing ID:"
+              sx={{ width: 200 }}
+              data={state.sequencings.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.id
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sequencing_id')}
+              value={String(form.values.sequencing_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequencing_id: Number(v) })}
+            />
+            <Select
+              label="Identification method:"
+              sx={{ width: 200 }}
+              data={state.identificationMethods.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
               withAsterisk
               {...form.getInputProps('identification_method_id')}
+              value={String(form.values.identification_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, identification_method_id: Number(v) })}
+            />
+            <Select
+              label="Taxonomy:"
+              sx={{ width: 200 }}
+              data={state.taxonomies.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.species
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('taxonomy_id')}
+              value={String(form.values.taxonomy_id)}
+              onChange={(v) => form.setValues({ ...form.values, taxonomy_id: Number(v) })}
             />
 
             <label htmlFor="timestamp">Identification datatime:</label>
@@ -116,7 +156,34 @@ export default function NewPlantIdentification() {
                 {...form.getInputProps('timestamp')}
               />
             </Group>
-
+            <TextInput
+              placeholder="Sequence 1 score "
+              label="Score 1:"
+              withAsterisk
+              sx={{ width: 100 }}
+              {...form.getInputProps('seq1_score')}
+            />
+            <TextInput
+              placeholder="Sequence 2 score "
+              label="Score 2:"
+              withAsterisk
+              sx={{ width: 100 }}
+              {...form.getInputProps('seq2_score')}
+            />
+            <TextInput
+              placeholder="Sequence 3 score "
+              label="Score 3:"
+              withAsterisk
+              sx={{ width: 100 }}
+              {...form.getInputProps('seq3_score')}
+            />
+            <TextInput
+              placeholder="Sequence 4 score "
+              label="Score 4:"
+              withAsterisk
+              sx={{ width: 100 }}
+              {...form.getInputProps('seq4_score')}
+            />
             <Group mt="md" >
               <Button type="submit" > Submit</Button>
               <Button type="reset" onClick={form.reset} > Reset</Button>

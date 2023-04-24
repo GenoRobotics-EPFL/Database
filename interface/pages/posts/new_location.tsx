@@ -8,7 +8,7 @@ import { MyFooter } from '../../components/footer'
 import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
 
-import Link from 'next/link'
+import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
 import { URL } from '../../utils/config';
@@ -22,6 +22,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewLocation() {
+
+  const router = useRouter()
+  const state = useDataState()
+  const { classes } = useStyles();
   const form = useForm({
     initialValues: {
       id: 0,
@@ -40,27 +44,16 @@ export default function NewLocation() {
 
 
   const postLocation = async (data: Omit<API.Location, "id">) => {
-    const response = await fetch(
-      `${URL}/locations/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const location = await response.json()
+    const response = await state.postLocation(data)
     if (response.status == 200) {
       console.log("POST /locations")
-      console.dir(location)
+      form.reset()
     } else {
       console.log("POST /locations failed.")
     }
   }
 
-  const { classes } = useStyles();
-  const router = useRouter()
+
 
   return (
     <>

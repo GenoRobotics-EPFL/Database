@@ -1,11 +1,11 @@
 import {
   AppShell, Title, Button, TextInput, createStyles,
-  Group, Textarea, Anchor, Stack, Divider,
+  Group, Textarea, Anchor, Stack, Divider, Select,
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
-
+import { useDataState } from '../../utils/dataState';
 import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
@@ -30,6 +30,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewSequencing() {
+  const state = useDataState()
+
   const form = useForm({
     initialValues: {
       id: 0,
@@ -57,20 +59,10 @@ export default function NewSequencing() {
 
 
   const postSequencing = async (data: Omit<API.Sequencing, "id">) => {
-    const response = await fetch(
-      `${URL}/sequencings/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const sequencing = await response.json()
+    const response = await state.postSequencing(data)
     if (response.status == 200) {
       console.log("POST /sequencings")
-      console.dir(sequencing)
+      form.reset()
     } else {
       console.log("POST /sequencings failed.")
     }
@@ -113,6 +105,48 @@ export default function NewSequencing() {
 
           <Stack spacing={20} mt="md">
 
+            <Select
+              label="Sample ID:"
+              sx={{ width: 200 }}
+              data={state.samples.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sample_id')}
+              value={String(form.values.sample_id)}
+              onChange={(v) => form.setValues({ ...form.values, sample_id: Number(v) })}
+            />
+            <Select
+              label="Amplification ID:"
+              sx={{ width: 200 }}
+              data={state.amplifications.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.id
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sequencing_method_id')}
+              value={String(form.values.sequencing_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequencing_method_id: Number(v) })}
+            />
+            <Select
+              label="Sequencing method:"
+              sx={{ width: 200 }}
+              data={state.sequencingMethods.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sequencing_method_id')}
+              value={String(form.values.sequencing_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequencing_method_id: Number(v) })}
+            />
             <label htmlFor="sequencingtime">Sequencing datatime:</label>
             <Group>
               <input

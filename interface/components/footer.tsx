@@ -27,12 +27,12 @@ export const MyFooter = () => {
 
       <Center>
         <Group sx={{ height: '80%' }} px={20} position='apart'>
-          <img
-            height='100'
+          <Image
+            height={100}
             width='auto'
             className={classes.hover}
             src="https://www.genorobotics.org/wp-content/uploads/2020/04/Genorobotics-logo-52.png"
-            alt="Genorobotics logo-52" ></img>
+            alt="Genorobotics logo-52" ></Image>
 
           <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }} size={12}>Copyright © 2022 GenoRobotics</Text>
         </Group>

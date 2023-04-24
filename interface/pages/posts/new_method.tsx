@@ -5,6 +5,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
+import { useDataState } from '../../utils/dataState';
 import React from 'react';
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
@@ -24,6 +25,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewAmplificationMethod() {
+  const state = useDataState()
 
   const amplification_form = useForm({
     initialValues: {
@@ -68,64 +70,37 @@ export default function NewAmplificationMethod() {
   });
 
   const postAmplificationMethod = async (data: Omit<API.AmplificationMethod, "id">) => {
-    const response = await fetch(
-      `${URL}/amplification_methods/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const amplification_method = await response.json()
+    const response = await state.postAmplificationMethod(data)
     if (response.status == 200) {
       console.log("POST /amplification_methods")
-      console.dir(amplification_method)
+      amplification_form.reset()
     } else {
       console.log("POST /amplification_methods failed.")
     }
   }
 
+
   const postIdentificationMethod = async (data: Omit<API.IdentificationMethod, "id">) => {
-    const response = await fetch(
-      `${URL}/identification_methods/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const identification_method = await response.json()
+    const response = await state.postIdentificationMethod(data)
     if (response.status == 200) {
       console.log("POST /identification_methods")
-      console.dir(identification_method)
+      identification_form.reset()
     } else {
       console.log("POST /identification_methods failed.")
     }
   }
 
+
   const postSequencingMethod = async (data: Omit<API.SequencingMethod, "id">) => {
-    const response = await fetch(
-      `${URL}/sequencing_methods/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const sequencing_method = await response.json()
+    const response = await state.postSequencingMethod(data)
     if (response.status == 200) {
       console.log("POST /sequencing_methods")
-      console.dir(sequencing_method)
+      sequencing_form.reset()
     } else {
       console.log("POST /sequencing_methods failed.")
     }
   }
+
 
   const { classes } = useStyles();
   const router = useRouter()
@@ -165,7 +140,7 @@ export default function NewAmplificationMethod() {
                 <TextInput
                   placeholder="Name"
                   label="Method name"
-                  sx={{ width: 400 }}
+                  sx={{ width: 200 }}
                   withAsterisk
                   {...amplification_form.getInputProps('methodname')}
                 />
@@ -175,7 +150,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={amplification_form.reset}> Reset</Button>
                 </Group>
 
-                <Anchor size={14}  onClick={() => router.push('/')}>
+                <Anchor size={14} onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 
@@ -201,7 +176,7 @@ export default function NewAmplificationMethod() {
                 <TextInput
                   placeholder="Name"
                   label="Method name"
-                  sx={{ width: 400 }}
+                  sx={{ width: 200 }}
                   withAsterisk
                   {...identification_form.getInputProps('methodname')}
                 />
@@ -239,7 +214,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={identification_form.reset} > Reset</Button>
                 </Group>
 
-                <Anchor size={15}  onClick={() => router.push('/')}>
+                <Anchor size={15} onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 
@@ -267,7 +242,7 @@ export default function NewAmplificationMethod() {
                 <TextInput
                   placeholder="Name"
                   label="Method name"
-                  sx={{ width: 400 }}
+                  sx={{ width: 200 }}
                   withAsterisk
                   {...sequencing_form.getInputProps('methodname')}
                 />
@@ -294,7 +269,7 @@ export default function NewAmplificationMethod() {
                   <Button type="reset" onClick={sequencing_form.reset} > Reset</Button>
                 </Group>
 
-                <Anchor size={15}  onClick={() => router.push('/')}>
+                <Anchor size={15} onClick={() => router.push('/')}>
                   Back to home page
                 </Anchor>
 

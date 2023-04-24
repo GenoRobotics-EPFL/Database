@@ -97,6 +97,7 @@ function useInternalDataState() {
   const [sequencings, setSequencings] = useState<API.Sequencing[] | null>(null)
   const [sequencingMethods, setSequencingMethods] = useState<API.SequencingMethod[] | null>(null)
   const [taxonomies, setTaxonomies] = useState<API.Taxonomy[] | null>(null)
+  const [consensusSegments, setConsensusSegments] = useState<API.ConsensusSegment[] | null>(null)
 
   const proxyPerson = getDataProxy<API.Person>("persons", setLoading, [persons, setPersons])
   const proxyLocation = getDataProxy<API.Location>("locations", setLoading, [locations, setLocations])
@@ -108,6 +109,7 @@ function useInternalDataState() {
   const proxySequencing = getDataProxy<API.Sequencing>("sequencings", setLoading, [sequencings, setSequencings])
   const proxySequencingMethod = getDataProxy<API.SequencingMethod>("sequencing_methods", setLoading, [sequencingMethods, setSequencingMethods])
   const proxyTaxonomy = getDataProxy<API.Taxonomy>("taxonomies", setLoading, [taxonomies, setTaxonomies])
+  const proxyConsensusSegment = getDataProxy<API.ConsensusSegment>("consensus_segments", setLoading, [consensusSegments, setConsensusSegments])
 
   useEffect(() => {
     const cb = async () => {
@@ -123,6 +125,7 @@ function useInternalDataState() {
         proxySequencing.get(),
         proxySequencingMethod.get(),
         proxyTaxonomy.get(),
+        proxyConsensusSegment.get(),
       ]
       for (const p of promises) {
         await p
@@ -164,6 +167,9 @@ function useInternalDataState() {
     taxonomies: taxonomies ?? [],
     postTaxonomy: proxyTaxonomy.post,
     putTaxonomy: proxyTaxonomy.put,
+    postConsensusSegment: proxyConsensusSegment.post,
+    putConsensusSegment: proxyConsensusSegment.post,
+    consensusSements: consensusSegments ?? [],
   }
 }
 

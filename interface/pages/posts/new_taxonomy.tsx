@@ -6,6 +6,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 import { useRouter } from 'next/router'
+import { useDataState } from '../../utils/dataState';
 
 import { API } from '../../types';
 import React from 'react';
@@ -20,6 +21,9 @@ const useStyles = createStyles((theme) => ({
 
 }));
 export default function NewTaxonomy() {
+
+  const state = useDataState()
+
   const form = useForm({
     initialValues: {
       id: 0,
@@ -46,24 +50,15 @@ export default function NewTaxonomy() {
   });
 
   const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
-    const response = await fetch(
-      `${URL}/taxonomies/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const taxonomy = await response.json()
+    const response = await state.postTaxonomy(data)
     if (response.status == 200) {
       console.log("POST /taxonomies")
-      console.dir(taxonomy)
+      form.reset()
     } else {
       console.log("POST /taxonomies failed.")
     }
   }
+
   const { classes } = useStyles();
   const router = useRouter()
 
@@ -88,8 +83,6 @@ export default function NewTaxonomy() {
         <form
           onSubmit={form.onSubmit(
             async (values) => await postTaxonomy({
-              sample_id: values.sample_id,
-              identification_id: values.identification_id,
               domain: values.domain,
               kingdom: values.kingdom,
               phylum: values.phylum,

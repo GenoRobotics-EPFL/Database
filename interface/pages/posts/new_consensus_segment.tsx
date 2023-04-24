@@ -7,7 +7,7 @@ import { MyFooter } from '../../components/footer'
 
 import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
-
+import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
 import { URL } from '../../utils/config';
@@ -21,6 +21,11 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewConsensusSegment() {
+
+  const router = useRouter()
+  const state = useDataState()
+  const { classes } = useStyles();
+
   const form = useForm({
     initialValues: {
       id: 0,
@@ -41,27 +46,14 @@ export default function NewConsensusSegment() {
   });
 
   const postConsensusSegment = async (data: Omit<API.ConsensusSegment, "id">) => {
-    const response = await fetch(
-      `${URL}/consensus_segments/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const consensus_segment = await response.json()
+    const response = await state.postConsensusSegment(data)
     if (response.status == 200) {
       console.log("POST /consensus_segments")
-      console.dir(consensus_segment)
+      form.reset()
     } else {
       console.log("POST /consensus_segments failed.")
     }
   }
-
-  const { classes } = useStyles();
-  const router = useRouter()
 
   return (
     <>
@@ -96,6 +88,20 @@ export default function NewConsensusSegment() {
           )}
         >
           <Stack spacing={20} mt="md">
+            <Select
+              label="Sequencing ID:"
+              sx={{ width: 200 }}
+              data={state.sequencings.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.id
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sequence_id')}
+              value={String(form.values.sequence_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequence_id: Number(v) })}
+            />
 
             <TextInput
               placeholder="Segment sequence"
@@ -107,32 +113,32 @@ export default function NewConsensusSegment() {
 
             <TextInput
               placeholder="Primer name"
-              label="Primer name:"
+              label="Forward primer name:"
               sx={{ width: 200 }}
               withAsterisk
               {...form.getInputProps('primer_name')}
             />
 
             <TextInput
-              placeholder="Primer description"
-              label="Primer description:"
-              sx={{ width: 200 }}
+              placeholder="Sequence"
+              label="Forward primer sequence:"
+              sx={{ width: 300 }}
               withAsterisk
               {...form.getInputProps('primer_desc')}
             />
 
             <TextInput
               placeholder="Primer name"
-              label="Primer 2 name:"
+              label="Reverse primer name:"
               sx={{ width: 200 }}
               withAsterisk
               {...form.getInputProps('primer2_name')}
             />
 
             <TextInput
-              placeholder="Primer description"
-              label="Primer 2 description:"
-              sx={{ width: 200 }}
+              placeholder="Sequence"
+              label="Reverse primer sequence:"
+              sx={{ width: 300 }}
               withAsterisk
               {...form.getInputProps('primer2_desc')}
             />

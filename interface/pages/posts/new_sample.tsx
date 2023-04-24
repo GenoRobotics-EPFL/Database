@@ -14,7 +14,6 @@ import { API } from '../../types';
 import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useState, useEffect } from 'react';
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router';
 import useFileUploader from '../../utils/useFileUploader';
 
@@ -109,6 +108,7 @@ export default function NewSample() {
           async (values) => await postSample({
             person_id: values.person_id,
             location_id: values.location_id,
+            name: null,
             timestamp: values.timestamp,
             sex: null,
             lifestage: null,
@@ -156,12 +156,19 @@ export default function NewSample() {
                   type="datetime-local"
                   id="image_timestamp"
                   name="image_timestamp"
-                  style={{ width: 400 }}
+                  style={{ width: 200 }}
                   {...form.getInputProps('image_timestamp')}
                 />
               </Group>
             </Stack>
           </Group>
+          <TextInput
+            placeholder="Name"
+            label="Name:"
+            withAsterisk
+            {...form.getInputProps('name')}
+            sx={{ width: 200 }}
+          />
           <Select
             label="Sex:"
             placeholder="Sex"

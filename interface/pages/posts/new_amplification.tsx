@@ -1,16 +1,16 @@
 import {
   AppShell, createStyles, Title, Button, TextInput, Divider,
-  Stack, Group, Anchor, Text,
+  Stack, Group, Anchor, Text, Select,
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 
 import { useForm } from '@mantine/form';
-import { useEffect } from 'react';
+import { API } from '../../types';
+import React from 'react';
+import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router'
 
-import { API } from '../../types';
-import { URL } from '../../utils/config';
 
 
 const useStyles = createStyles((theme) => ({
@@ -22,6 +22,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewAmplification() {
+  const router = useRouter()
+  const state = useDataState()
+  const { classes } = useStyles();
+
   const form = useForm({
     initialValues: {
       id: 0,
@@ -38,45 +42,14 @@ export default function NewAmplification() {
 
 
   const postAmplification = async (data: Omit<API.Amplification, "id">) => {
-    const response = await fetch(
-      `${URL}/amplifications/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const amplification = await response.json()
+    const response = await state.postAmplification(data)
     if (response.status == 200) {
       console.log("POST /amplifications")
-      console.dir(amplification)
+      form.reset()
     } else {
       console.log("POST /amplifications failed.")
     }
   }
-
-  const { classes } = useStyles();
-  const router = useRouter()
-
-  function loadInitialValues(): Promise<API.Amplification> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve({
-        id: 0,
-        sample_id: 0,
-        amplification_method_id: 0,
-        timestamp: new Date(''),
-      }),
-        2000);
-    });
-  }
-  useEffect(() => {
-    loadInitialValues().then((values) => {
-      form.setValues(values);
-      form.resetDirty(values);
-    });
-  }, []);
 
   return (
     <>
@@ -109,15 +82,21 @@ export default function NewAmplification() {
         >
           <Stack spacing={20} mt="md">
 
-            <Text>Amplification method ID:</Text>
-            <Group>
-              <TextInput
-                placeholder="Amplification method ID:"
-                sx={{ width: 100 }}
-                withAsterisk
-                {...form.getInputProps('amplification_method_id')}
-              />
-            </Group>
+            <Select
+              label="Amplification method:"
+              sx={{ width: 200 }}
+              data={state.amplificationMethods.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('amplification_method_id')}
+              value={String(form.values.amplification_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, amplification_method_id: Number(v) })}
+            />
+
             <label htmlFor="amplificationtime">Amplification datatime:</label>
             <Group >
               <input

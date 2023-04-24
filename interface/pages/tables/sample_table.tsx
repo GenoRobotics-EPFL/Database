@@ -44,6 +44,7 @@ export default function SampleTable() {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Name</th>
               <th>Person ID</th>
               <th>Location ID</th>
               <th>Time stamp</th>
@@ -59,6 +60,7 @@ export default function SampleTable() {
             {samples.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
+                <td>{element.name}</td>
                 <td>{element.person_id}</td>
                 <td>{element.location_id}</td>
                 <td>{element.timestamp.toString()}</td>
