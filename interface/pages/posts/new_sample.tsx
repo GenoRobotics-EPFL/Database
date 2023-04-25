@@ -1,6 +1,6 @@
 import {
   AppShell, Title, Button, TextInput, Textarea, createStyles,
-  Divider, Stack, Group, Anchor, Select, Table
+  Divider, Stack, Group, Anchor, Select, Table, LoadingOverlay
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
@@ -94,7 +94,7 @@ export default function NewSample() {
       styles={(theme) => ({
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
-      header={MyHeader()}
+      header={MyHeader(false, false)}
       footer={MyFooter()}
     >
       <Title order={2} mt="md">

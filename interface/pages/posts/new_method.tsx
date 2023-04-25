@@ -114,7 +114,7 @@ export default function NewAmplificationMethod() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader()}
+        header={MyHeader(false, false)}
         footer={MyFooter()}
       >
         <Title order={2} mt='md'>

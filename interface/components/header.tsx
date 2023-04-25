@@ -2,14 +2,13 @@
 import React from 'react';
 import {
   Header, Group, ActionIcon, useMantineColorScheme, Title, NavLink,
-  Menu, createStyles, Burger, Text, Image,
+  Menu, createStyles, Burger, Text, Image, Button,
 } from '@mantine/core';
 import {
   IconMap, IconLayoutGridAdd, IconUserPlus, IconTestPipe, IconLocation,
   IconPlant, IconTournament, IconPlant2, IconSun, IconMoonStars, IconColumns,
 } from '@tabler/icons';
 import { useDisclosure } from '@mantine/hooks';
-import { Router } from 'tabler-icons-react';
 import { useRouter } from 'next/router'
 
 const useStyles = createStyles((theme) => ({
@@ -55,15 +54,17 @@ const useStyles = createStyles((theme) => ({
     '&:hover': {
       transform: 'scale(1.04)',
     },
+    cursor: 'pointer'
   },
+
+  pointer: {
+    cursor: 'pointer'
+  }
 
 }));
 
 
-const links = [
-  { label: 'Home Page', link: '/' },
-  { label: 'See tables', link: '/posts/see_tables/' }
-]
+
 
 const data = [
   { title: 'Method', icon: IconLayoutGridAdd, page: '/new_method' },
@@ -74,16 +75,21 @@ const data = [
   { title: 'Location', icon: IconLocation, page: '/new_location' },
   { title: 'Plant identification', icon: IconPlant, page: '/new_plant_identification' },
   { title: 'Taxonomy', icon: IconPlant2, page: '/new_taxonomy' },
-  { title: 'Consensus segment', icon: IconColumns, page: '/new_taxonomy' },
+  { title: 'Consensus segment', icon: IconColumns, page: '/new_consensus_segment' },
 
 ];
 
-export const MyHeader = () => {
+export const MyHeader = (home_state: boolean | false, table_state: boolean | false) => {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [opened, { toggle, close }] = useDisclosure(false);
   const { classes, cx } = useStyles();
   const router = useRouter()
+
+  const links = [
+    { label: 'Home Page', disabled: home_state, link: '/' },
+    { label: 'See tables', disabled: table_state, link: '/posts/see_tables/' }
+  ]
 
   const navlinks = data.map((item) => (
     <NavLink
@@ -98,18 +104,17 @@ export const MyHeader = () => {
   ));
 
   const header_links = links.map((item) => (
-    <a
+    <Button
       key={item.label}
-      href={item.link}
+      variant='subtle'
+      disabled={item.disabled}
       className={cx(classes.link)}
-      onClick={(event) => {
-        event.preventDefault();
-        close();
+      onClick={() => {
         router.push(item.link)
       }}
     >
       {item.label}
-    </a>
+    </Button>
   ));
 
   return (
@@ -138,7 +143,7 @@ export const MyHeader = () => {
                 alt="GenoRobotics"
                 onClick={() => router.push("/")}
               />
-              <Text component='a' onClick={() => router.push("/")} styles={{ cursor: 'pointer' }}> GenoRobotics </Text>
+              <Text className={classes.pointer} onClick={() => router.push("/")}> GenoRobotics </Text>
             </Group>
           </Title>
 

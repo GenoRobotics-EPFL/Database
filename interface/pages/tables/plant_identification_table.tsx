@@ -4,7 +4,6 @@ import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
@@ -35,7 +34,7 @@ export default function PlantIdentificationTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader()}
+        header={MyHeader(false, false)}
         footer={MyFooter()}
       >
 

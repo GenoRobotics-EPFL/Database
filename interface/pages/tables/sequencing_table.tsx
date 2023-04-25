@@ -4,7 +4,6 @@ import { AppShell, Anchor, Title, Space, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
@@ -34,7 +33,7 @@ export default function SequencingTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader()}
+        header={MyHeader(false, false)}
         footer={MyFooter()}
       >
 

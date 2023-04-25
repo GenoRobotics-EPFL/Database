@@ -129,7 +129,7 @@ export default function SeeTables() {
             color: theme.colorScheme === 'dark' ? theme.colors.yellow[4] : theme.colors.dark[6]
           },
         })}
-        header={MyHeader()}
+        header={MyHeader(false, true)}
         footer={MyFooter()}
       >
 

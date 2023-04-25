@@ -7,7 +7,6 @@ import { MyFooter } from '../../components/footer'
 
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
-import { MyNavbar } from '../../components/navbar';
 import Link from 'next/link'
 import { API } from '../../types'
 import { URL } from '../../utils/config';
@@ -25,7 +24,7 @@ export default function PersonTable() {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
 
-      header={MyHeader()}
+      header={MyHeader(false, false)}
       footer={MyFooter()}
     >
 

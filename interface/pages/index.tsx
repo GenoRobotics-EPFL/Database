@@ -109,7 +109,8 @@ const Home: NextPage = () => {
           },
         })}
 
-        header={<MyHeader />}
+        // header={<MyHeader />}
+        header={MyHeader(true, false)}
         footer={<MyFooter />}
       >
 
