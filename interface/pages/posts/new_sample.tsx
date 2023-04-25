@@ -13,7 +13,6 @@ import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE, MIME_TYPES } from '@mantine/d
 import { API } from '../../types';
 import React from 'react';
 import { useDataState } from '../../utils/dataState';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import useFileUploader from '../../utils/useFileUploader';
 
@@ -35,12 +34,12 @@ export default function NewSample() {
   const theme = useMantineTheme();
   const fileUploader = useFileUploader()
 
-  const form = useForm({
+  const form = useForm<Omit<API.Sample, "id">>({
     initialValues: {
-      id: 0,
       person_id: 0,
       location_id: 0,
       timestamp: new Date(''),
+      name: "",
       sex: '',
       lifestage: '',
       reproduction: '',
@@ -53,7 +52,8 @@ export default function NewSample() {
       lifestage: (value) => (value ? null : 'Select one'),
       reproduction: (value) => (value ? null : 'Select one'),
       person_id: (value) => (value ? null : 'Select someone...'),
-      image_url: (value) => (value ? null : 'Invalid barcode'),
+      location_id: (value) => (value ? null : 'Select a location...'),
+      image_url: (value) => (value ? null : 'Enter an image...'),
       image_desc: (value) => (value ? null : 'Enter description'),
     },
 
@@ -70,13 +70,11 @@ export default function NewSample() {
     }
   }
 
-  const [value, setValue] = useState(null);
-
-
   const uploadFile = (file: File) => {
     fileUploader.uploadFile(file)
       .then(r => {
         if (r.status == 200) {
+          form.setValues({ ...form.values, image_url: file.name })
           // success
         } else {
           // failure
@@ -135,6 +133,22 @@ export default function NewSample() {
             // https://mantine.dev/core/select/#controlled
             value={String(form.values.person_id)}
             onChange={(v) => form.setValues({ ...form.values, person_id: Number(v) })}
+          />
+          <Select
+            label="Location"
+            sx={{ width: 200 }}
+            data={state.locations.map(p => (
+              {
+                value: String(p.id),
+                label: `${p.collection_area} (${p.id})`
+              }
+            ))}
+            withAsterisk
+            {...form.getInputProps('location_id')}
+            // override value/onChange as the value as to be a string
+            // https://mantine.dev/core/select/#controlled
+            value={String(form.values.location_id)}
+            onChange={(v) => form.setValues({ ...form.values, location_id: Number(v) })}
           />
           <Group>
             <Stack>
@@ -208,13 +222,6 @@ export default function NewSample() {
               { value: 'cyclic', label: 'Cyclic' },
               { value: 'pathogen', label: 'Pathogen' }
             ]}
-          />
-          <TextInput
-            placeholder="Image URL"
-            label="URL:"
-            withAsterisk
-            {...form.getInputProps('image_url')}
-            sx={{ width: 400 }}
           />
           <Textarea
             placeholder="Description"

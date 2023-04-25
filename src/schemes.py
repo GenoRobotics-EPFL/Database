@@ -38,7 +38,7 @@ class Sample(Base):
     reproduction = Column(String(100))
     image_url = Column(String(500))
     image_timestamp = Column(DateTime(timezone=True))
-    image_desc: Column(String(500))
+    image_desc = Column(String(500))
 
     person = relationship("Person", back_populates="samples")
     location = relationship("Location", back_populates="samples")

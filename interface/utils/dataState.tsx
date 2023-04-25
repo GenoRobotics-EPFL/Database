@@ -168,7 +168,7 @@ function useInternalDataState() {
     postTaxonomy: proxyTaxonomy.post,
     putTaxonomy: proxyTaxonomy.put,
     postConsensusSegment: proxyConsensusSegment.post,
-    putConsensusSegment: proxyConsensusSegment.post,
+    putConsensusSegment: proxyConsensusSegment.put,
     consensusSements: consensusSegments ?? [],
   }
 }
