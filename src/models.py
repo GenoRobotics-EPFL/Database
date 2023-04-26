@@ -73,16 +73,6 @@ class AmplificationMethod(AmplificationMethodNoId):
     id: int
 
 
-class AmplificationNoId(ParentModel):
-    sample_id: int
-    amplification_method_id: int
-    timestamp: datetime
-
-
-class Amplification(AmplificationNoId):
-    id: int
-
-
 class SequencingMethodNoId(ParentModel):
     name: str
     description: str
@@ -95,8 +85,9 @@ class SequencingMethod(SequencingMethodNoId):
 
 class SequencingNoId(ParentModel):
     sample_id: int
-    amplification_id: int
     sequencing_method_id: int
+    amplification_method_id: int
+    amplification_timestamp: datetime
     timestamp: datetime
     base_calling_file: str
     """
@@ -111,10 +102,10 @@ class Sequencing(SequencingNoId):
 class ConsensusSegmentNoId(ParentModel):
     sequence_id: int
     segment_sequence: str
-    primer_name: str
-    primer_desc: str
-    primer2_name: str
-    primer2_desc: str
+    primer_forw_name: str
+    primer_forw_seq: str
+    primer_rev_name: str
+    primer_rev_seq: str
     DNA_region: str
     sequence_length: int
 

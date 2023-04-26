@@ -32,8 +32,9 @@ class Sample(Base):
     id = Column(Integer, primary_key=True, index=True)
     person_id = Column(Integer, ForeignKey("Person.id"))
     location_id = Column(Integer, ForeignKey("Location.id"))
+    name = Column(String(100))
     timestamp = Column(DateTime(timezone=True))
-    sex = Column(String(100))
+    sex = Column(String(100))  # three: male, female, hermaphrodite
     lifestage = Column(String(100))
     reproduction = Column(String(100))
     image_url = Column(String(500))
@@ -43,7 +44,6 @@ class Sample(Base):
     person = relationship("Person", back_populates="samples")
     location = relationship("Location", back_populates="samples")
 
-    amplifications = relationship("Amplification", back_populates="sample")
     sequencings = relationship("Sequencing", back_populates="sample")
     plant_identifications = relationship("PlantIdentification", back_populates="sample")
     taxonomy = relationship("Taxonomy", back_populates="sample")
@@ -55,25 +55,7 @@ class AmplificationMethod(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
 
-    amplifications = relationship(
-        "Amplification", back_populates="amplification_method"
-    )
-
-
-class Amplification(Base):
-    __allow_unmapped__ = True
-    __tablename__ = "Amplification"
-    id = Column(Integer, primary_key=True, index=True)
-    sample_id = Column(Integer, ForeignKey("Sample.id"))
-    amplification_method_id = Column(Integer, ForeignKey("AmplificationMethod.id"))
-    timestamp = Column(DateTime(timezone=True))
-
-    sample = relationship("Sample", back_populates="amplifications")
-    amplification_method = relationship(
-        "AmplificationMethod", back_populates="amplifications"
-    )
-
-    sequencings = relationship("Sequencing", back_populates="amplification")
+    sequencings = relationship("Sequencing", back_populates="amplification_method")
 
 
 class ConsensusSegment(Base):
@@ -82,10 +64,10 @@ class ConsensusSegment(Base):
     id = Column(Integer, primary_key=True, index=True)
     sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
     segment_sequence = Column(String(500))
-    primer_name = Column(String(100))
-    primer_desc = Column(String(500))
-    primer2_name = Column(String(100))
-    primer2_desc = Column(String(500))
+    primer_forw_name = Column(String(100))
+    primer_forw_seq = Column(String(1000))
+    primer_rev_name = Column(String(100))
+    primer_rev_seq = Column(String(1000))
     DNA_region = Column(String(100))
     sequence_length = Column(Integer)
 
@@ -106,15 +88,14 @@ class Sequencing(Base):
     __tablename__ = "Sequencing"
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("Sample.id"))
-    amplification_id = Column(Integer, ForeignKey("Amplification.id"))
+    amplification_method_id = Column(Integer, ForeignKey("AmplificationMethod.id"))
+    amplification_timestamp = Column(DateTime(timezone=True))
     sequencing_method_id = Column(Integer, ForeignKey("SequencingMethod.id"))
     timestamp = Column(DateTime(timezone=True))
     base_calling_file = Column(String(100))
 
     sample = relationship("Sample", back_populates="sequencings")
     sequencing_method = relationship("SequencingMethod", back_populates="sequencings")
-    amplification = relationship("Amplification", back_populates="sequencings")
-    # consensus_segment = relationship("ConsensusSegment", back_populates="sequencings")
     plant_identifications = relationship(
         "PlantIdentification", back_populates="sequencing"
     )

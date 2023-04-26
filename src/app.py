@@ -231,50 +231,6 @@ def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
     return item
 
 
-@app.get("/amplifications", response_model=list[Amplification])
-def amplifications(crud: BaseCRUD = Depends(get_crud(Amplification))):
-    return crud.query()
-
-
-@app.get("/amplifications/{id}", response_model=Amplification)
-def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
-    item = crud.get(id)
-    if item is None:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid ID.",
-        )
-    return item
-
-
-@app.put("/amplifications/{id}", response_model=Amplification)
-def amplifications(
-    id: int,
-    body: AmplificationNoId,
-    crud: BaseCRUD = Depends(get_crud(Amplification)),
-):
-    body.id = id
-    updated = crud.update(id, body)
-    if not updated:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return body
-
-
-@app.post("/amplifications", response_model=Amplification)
-def amplifications(
-    body: AmplificationNoId, crud: BaseCRUD = Depends(get_crud(Amplification))
-):
-    return crud.create(body)
-
-
-@app.delete("/amplifications/{id}", response_model=Amplification)
-def amplifications(id: int, crud: BaseCRUD = Depends(get_crud(Amplification))):
-    item = crud.delete(id)
-    if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return item
-
-
 @app.get("/consensus_segments", response_model=list[ConsensusSegment])
 def consensus_segments(crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
     return crud.query()
