@@ -52,6 +52,7 @@ class Location(LocationNoId):
 class SampleNoId(ParentModel):
     person_id: int
     location_id: int
+    name: int
     timestamp: datetime
     sex: str | None
     lifestage: str | None
