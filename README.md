@@ -63,35 +63,25 @@ To connect to the prod database:
     PGPORT="..."
     ```
 
-#### DB Json (deprecated)
-
-The API can use a json file as database, it is stored in the filesystem
-under (`.db/data.json`).
-
-* Set in the `.env` file:
-    ```
-    DB_TYPE="json"
-    ```
-
 ### AWS
 
 The (large) files are stored separately on [AWS S3](https://aws.amazon.com/s3/).
 
-To disable AWS (until the account is set up), set in the `.env` file:
-```
-AWS_DISABLED="true"
-```
+> **Deprecated**  
+> To disable AWS (why not), set in the `.env` file:
+> ```
+> AWS_DISABLED="true"
+> ```
 
 To connect to AWS:
 * Ask for the credentials
 * Set in the `.env` file:
     ```
-    AWS_BUCKET_NAME="..."
+    AWS_BUCKET_NAME="genorobotics-bucket"
     AWS_REGION_NAME="eu-central-1"
     AWS_ACCESS_KEY_ID="..."
     AWS_SECRET_ACCESS_KEY="..."
     ```
-
 
 
 ### Run (local)
@@ -100,8 +90,12 @@ To connect to AWS:
 > Once started, documentation is auto-generated and accessible at [http://localhost:8000/docs](http://localhost:8000/docs)
 
 To run directly:
-```
-uvicorn src.app:app
+```bash
+uvicorn app:app --app-dir src
+
+# or
+cd src
+uvicorn app:app
 ```
 
 To start via docker (need [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/)):
