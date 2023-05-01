@@ -39,7 +39,9 @@ from crud import CRUD
 import s3
 import utils
 
-utils.fill_db()
+# Uncomment the following line to fill the database with mock data
+# Note: this should only be done once and NOT on the prod db
+# utils.fill_db()
 
 s3.assert_bucket_exist()
 
