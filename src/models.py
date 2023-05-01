@@ -52,7 +52,7 @@ class Location(LocationNoId):
 class SampleNoId(ParentModel):
     person_id: int
     location_id: int
-    name: int
+    name: str
     timestamp: datetime
     sex: str | None
     lifestage: str | None
@@ -101,7 +101,7 @@ class Sequencing(SequencingNoId):
 
 
 class ConsensusSegmentNoId(ParentModel):
-    sequence_id: int
+    sequencing_id: int
     segment_sequence: str
     primer_forw_name: str
     primer_forw_seq: str
@@ -143,8 +143,6 @@ class IdentificationMethod(IdentificationMethodNoId):
 
 
 class TaxonomyNoId(ParentModel):
-    sample_id: int
-    identification_id: int
     domain: str
     kingdom: str
     phylum: str

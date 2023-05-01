@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from .models import (
+from models import (
     S3FileExists,
     S3UploadFileEnd,
     S3UploadFileStart,
@@ -23,8 +23,6 @@ from .models import (
     SequencingMethodNoId,
     Sample,
     SampleNoId,
-    Amplification,
-    AmplificationNoId,
     ConsensusSegment,
     ConsensusSegmentNoId,
     PlantIdentification,
@@ -37,26 +35,18 @@ from .models import (
     TaxonomyNoId,
 )
 
-from .crud.base import BaseCRUD
-from .crud.file import FileCRUD
-from . import s3
+from crud import CRUD
+import s3
+import utils
 
-DB_TYPE = os.environ.get("DB_TYPE", "sql")
-assert DB_TYPE in ("sql", "json"), "DB_TYPE must be one of: sql, json"
-
-# only imports SQL CRUD if it is going to be used:
-# that way a mysql setup is not required to test the api
-if DB_TYPE == "sql":
-    from .crud.sql import SQLCRUD
-
-    CRUD = SQLCRUD
-else:
-    CRUD = FileCRUD
+# Uncomment the following line to fill the database with mock data
+# Note: this should only be done once and NOT on the prod db
+# utils.fill_db()
 
 s3.assert_bucket_exist()
 
 
-def get_crud(model: Type[BaseModel]) -> BaseCRUD:
+def get_crud(model: Type[BaseModel]) -> CRUD:
     def inner():
         yield from CRUD.as_dependency(model)
 
@@ -111,12 +101,12 @@ def delete_file(filename: str):
 
 
 @app.get("/persons", response_model=list[Person])
-def persons(crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(crud: CRUD = Depends(get_crud(Person))):
     return crud.query()
 
 
 @app.get("/persons/{id}", response_model=Person)
-def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(id: int, crud: CRUD = Depends(get_crud(Person))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -127,7 +117,7 @@ def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
 
 
 @app.put("/persons/{id}", response_model=Person)
-def persons(id: int, body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(id: int, body: PersonNoId, crud: CRUD = Depends(get_crud(Person))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -136,12 +126,12 @@ def persons(id: int, body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person)
 
 
 @app.post("/persons", response_model=Person)
-def persons(body: PersonNoId, crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(body: PersonNoId, crud: CRUD = Depends(get_crud(Person))):
     return crud.create(body)
 
 
 @app.delete("/persons/{id}", response_model=Person)
-def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
+def persons(id: int, crud: CRUD = Depends(get_crud(Person))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -149,12 +139,12 @@ def persons(id: int, crud: BaseCRUD = Depends(get_crud(Person))):
 
 
 @app.get("/sequencing_methods", response_model=list[SequencingMethod])
-def sequencing_methods(crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+def sequencing_methods(crud: CRUD = Depends(get_crud(SequencingMethod))):
     return crud.query()
 
 
 @app.get("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+def sequencing_methods(id: int, crud: CRUD = Depends(get_crud(SequencingMethod))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -168,7 +158,7 @@ def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMeth
 def sequencing_methods(
     id: int,
     body: SequencingMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
+    crud: CRUD = Depends(get_crud(SequencingMethod)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -180,13 +170,13 @@ def sequencing_methods(
 @app.post("/sequencing_methods", response_model=SequencingMethod)
 def sequencing_methods(
     body: SequencingMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(SequencingMethod)),
+    crud: CRUD = Depends(get_crud(SequencingMethod)),
 ):
     return crud.create(body)
 
 
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
-def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMethod))):
+def sequencing_methods(id: int, crud: CRUD = Depends(get_crud(SequencingMethod))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -194,12 +184,12 @@ def sequencing_methods(id: int, crud: BaseCRUD = Depends(get_crud(SequencingMeth
 
 
 @app.get("/samples", response_model=list[Sample])
-def samples(crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(crud: CRUD = Depends(get_crud(Sample))):
     return crud.query()
 
 
 @app.get("/samples/{id}", response_model=Sample)
-def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(id: int, crud: CRUD = Depends(get_crud(Sample))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -210,7 +200,7 @@ def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
 
 
 @app.put("/samples/{id}", response_model=Sample)
-def samples(id: int, body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(id: int, body: SampleNoId, crud: CRUD = Depends(get_crud(Sample))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -219,12 +209,12 @@ def samples(id: int, body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample)
 
 
 @app.post("/samples", response_model=Sample)
-def samples(body: SampleNoId, crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(body: SampleNoId, crud: CRUD = Depends(get_crud(Sample))):
     return crud.create(body)
 
 
 @app.delete("/samples/{id}", response_model=Sample)
-def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
+def samples(id: int, crud: CRUD = Depends(get_crud(Sample))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -232,12 +222,12 @@ def samples(id: int, crud: BaseCRUD = Depends(get_crud(Sample))):
 
 
 @app.get("/consensus_segments", response_model=list[ConsensusSegment])
-def consensus_segments(crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
+def consensus_segments(crud: CRUD = Depends(get_crud(ConsensusSegment))):
     return crud.query()
 
 
 @app.get("/consensus_segments/{id}", response_model=ConsensusSegment)
-def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
+def consensus_segments(id: int, crud: CRUD = Depends(get_crud(ConsensusSegment))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -251,7 +241,7 @@ def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegme
 def consensus_segments(
     id: int,
     body: ConsensusSegmentNoId,
-    crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
+    crud: CRUD = Depends(get_crud(ConsensusSegment)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -263,13 +253,13 @@ def consensus_segments(
 @app.post("/consensus_segments", response_model=ConsensusSegment)
 def consensus_segments(
     body: ConsensusSegmentNoId,
-    crud: BaseCRUD = Depends(get_crud(ConsensusSegment)),
+    crud: CRUD = Depends(get_crud(ConsensusSegment)),
 ):
     return crud.create(body)
 
 
 @app.delete("/consensus_segments/{id}", response_model=ConsensusSegment)
-def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegment))):
+def consensus_segments(id: int, crud: CRUD = Depends(get_crud(ConsensusSegment))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -277,12 +267,12 @@ def consensus_segments(id: int, crud: BaseCRUD = Depends(get_crud(ConsensusSegme
 
 
 @app.get("/sequencings", response_model=list[Sequencing])
-def sequencings(crud: BaseCRUD = Depends(get_crud(Sequencing))):
+def sequencings(crud: CRUD = Depends(get_crud(Sequencing))):
     return crud.query()
 
 
 @app.get("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
+def sequencings(id: int, crud: CRUD = Depends(get_crud(Sequencing))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -296,7 +286,7 @@ def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
 def sequencings(
     id: int,
     body: SequencingNoId,
-    crud: BaseCRUD = Depends(get_crud(Sequencing)),
+    crud: CRUD = Depends(get_crud(Sequencing)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -306,12 +296,12 @@ def sequencings(
 
 
 @app.post("/sequencings", response_model=Sequencing)
-def sequencings(body: SequencingNoId, crud: BaseCRUD = Depends(get_crud(Sequencing))):
+def sequencings(body: SequencingNoId, crud: CRUD = Depends(get_crud(Sequencing))):
     return crud.create(body)
 
 
 @app.delete("/sequencings/{id}", response_model=Sequencing)
-def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
+def sequencings(id: int, crud: CRUD = Depends(get_crud(Sequencing))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -319,14 +309,12 @@ def sequencings(id: int, crud: BaseCRUD = Depends(get_crud(Sequencing))):
 
 
 @app.get("/plant_identifications", response_model=list[PlantIdentification])
-def plant_identifications(crud: BaseCRUD = Depends(get_crud(PlantIdentification))):
+def plant_identifications(crud: CRUD = Depends(get_crud(PlantIdentification))):
     return crud.query()
 
 
 @app.get("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(
-    id: int, crud: BaseCRUD = Depends(get_crud(PlantIdentification))
-):
+def plant_identifications(id: int, crud: CRUD = Depends(get_crud(PlantIdentification))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -340,7 +328,7 @@ def plant_identifications(
 def plant_identifications(
     id: int,
     body: PlantIdentificationNoId,
-    crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
+    crud: CRUD = Depends(get_crud(PlantIdentification)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -352,15 +340,13 @@ def plant_identifications(
 @app.post("/plant_identifications", response_model=PlantIdentification)
 def plant_identifications(
     body: PlantIdentificationNoId,
-    crud: BaseCRUD = Depends(get_crud(PlantIdentification)),
+    crud: CRUD = Depends(get_crud(PlantIdentification)),
 ):
     return crud.create(body)
 
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
-def plant_identifications(
-    id: int, crud: BaseCRUD = Depends(get_crud(PlantIdentification))
-):
+def plant_identifications(id: int, crud: CRUD = Depends(get_crud(PlantIdentification))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -368,14 +354,12 @@ def plant_identifications(
 
 
 @app.get("/amplification_methods", response_model=list[AmplificationMethod])
-def amplification_methods(crud: BaseCRUD = Depends(get_crud(AmplificationMethod))):
+def amplification_methods(crud: CRUD = Depends(get_crud(AmplificationMethod))):
     return crud.query()
 
 
 @app.get("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(
-    id: int, crud: BaseCRUD = Depends(get_crud(AmplificationMethod))
-):
+def amplification_methods(id: int, crud: CRUD = Depends(get_crud(AmplificationMethod))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -389,7 +373,7 @@ def amplification_methods(
 def amplification_methods(
     id: int,
     body: AmplificationMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
+    crud: CRUD = Depends(get_crud(AmplificationMethod)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -401,15 +385,13 @@ def amplification_methods(
 @app.post("/amplification_methods", response_model=AmplificationMethod)
 def amplification_methods(
     body: AmplificationMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(AmplificationMethod)),
+    crud: CRUD = Depends(get_crud(AmplificationMethod)),
 ):
     return crud.create(body)
 
 
 @app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
-def amplification_methods(
-    id: int, crud: BaseCRUD = Depends(get_crud(AmplificationMethod))
-):
+def amplification_methods(id: int, crud: CRUD = Depends(get_crud(AmplificationMethod))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -417,13 +399,13 @@ def amplification_methods(
 
 
 @app.get("/identification_methods", response_model=list[IdentificationMethod])
-def identification_method(crud: BaseCRUD = Depends(get_crud(IdentificationMethod))):
+def identification_method(crud: CRUD = Depends(get_crud(IdentificationMethod))):
     return crud.query()
 
 
 @app.get("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
-    id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
+    id: int, crud: CRUD = Depends(get_crud(IdentificationMethod))
 ):
     item = crud.get(id)
     if item is None:
@@ -438,7 +420,7 @@ def identification_method(
 def identification_method(
     id: int,
     body: IdentificationMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
+    crud: CRUD = Depends(get_crud(IdentificationMethod)),
 ):
     body.id = id
     updated = crud.update(id, body)
@@ -450,14 +432,14 @@ def identification_method(
 @app.post("/identification_methods", response_model=IdentificationMethod)
 def identification_method(
     body: IdentificationMethodNoId,
-    crud: BaseCRUD = Depends(get_crud(IdentificationMethod)),
+    crud: CRUD = Depends(get_crud(IdentificationMethod)),
 ):
     return crud.create(body)
 
 
 @app.delete("/identification_methods/{id}", response_model=IdentificationMethod)
 def identification_method(
-    id: int, crud: BaseCRUD = Depends(get_crud(IdentificationMethod))
+    id: int, crud: CRUD = Depends(get_crud(IdentificationMethod))
 ):
     item = crud.delete(id)
     if item is None:
@@ -466,12 +448,12 @@ def identification_method(
 
 
 @app.get("/locations", response_model=list[Location])
-def locations(crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(crud: CRUD = Depends(get_crud(Location))):
     return crud.query()
 
 
 @app.get("/locations/{id}", response_model=Location)
-def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(id: int, crud: CRUD = Depends(get_crud(Location))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -482,9 +464,7 @@ def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
 
 
 @app.put("/locations/{id}", response_model=Location)
-def locations(
-    id: int, body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))
-):
+def locations(id: int, body: LocationNoId, crud: CRUD = Depends(get_crud(Location))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -493,12 +473,12 @@ def locations(
 
 
 @app.post("/locations", response_model=Location)
-def locations(body: LocationNoId, crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(body: LocationNoId, crud: CRUD = Depends(get_crud(Location))):
     return crud.create(body)
 
 
 @app.delete("/locations/{id}", response_model=Location)
-def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
+def locations(id: int, crud: CRUD = Depends(get_crud(Location))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -506,12 +486,12 @@ def locations(id: int, crud: BaseCRUD = Depends(get_crud(Location))):
 
 
 @app.get("/taxonomies", response_model=list[Taxonomy])
-def taxonomies(crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+def taxonomies(crud: CRUD = Depends(get_crud(Taxonomy))):
     return crud.query()
 
 
 @app.get("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+def taxonomies(id: int, crud: CRUD = Depends(get_crud(Taxonomy))):
     item = crud.get(id)
     if item is None:
         raise HTTPException(
@@ -522,9 +502,7 @@ def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
 
 
 @app.put("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(
-    id: int, body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))
-):
+def taxonomies(id: int, body: TaxonomyNoId, crud: CRUD = Depends(get_crud(Taxonomy))):
     body.id = id
     updated = crud.update(id, body)
     if not updated:
@@ -533,12 +511,12 @@ def taxonomies(
 
 
 @app.post("/taxonomies", response_model=Taxonomy)
-def taxonomies(body: TaxonomyNoId, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+def taxonomies(body: TaxonomyNoId, crud: CRUD = Depends(get_crud(Taxonomy))):
     return crud.create(body)
 
 
 @app.delete("/taxonomies/{id}", response_model=Taxonomy)
-def taxonomies(id: int, crud: BaseCRUD = Depends(get_crud(Taxonomy))):
+def taxonomies(id: int, crud: CRUD = Depends(get_crud(Taxonomy))):
     item = crud.delete(id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
