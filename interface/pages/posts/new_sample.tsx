@@ -48,9 +48,6 @@ export default function NewSample() {
       image_desc: '',
     },
     validate: {
-      sex: (value) => (value ? null : 'Select one'),
-      lifestage: (value) => (value ? null : 'Select one'),
-      reproduction: (value) => (value ? null : 'Select one'),
       person_id: (value) => (value ? null : 'Select someone...'),
       location_id: (value) => (value ? null : 'Select a location...'),
       image_url: (value) => (value ? null : 'Enter an image...'),
@@ -106,7 +103,7 @@ export default function NewSample() {
           async (values) => await postSample({
             person_id: values.person_id,
             location_id: values.location_id,
-            name: null,
+            name: values.name,
             timestamp: values.timestamp,
             sex: null,
             lifestage: null,

@@ -2,7 +2,7 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import {
   AppShell, Title, Button, Stack, Group, Anchor, Divider,
-  createStyles, TextInput
+  createStyles, TextInput, Notification,
 } from '@mantine/core'
 
 import { useForm } from '@mantine/form';
@@ -10,6 +10,10 @@ import { API } from '../../types';
 import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
+import { IconCheck, IconX } from '@tabler/icons';
+
+import { showNotification } from '@mantine/notifications';
+
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -17,6 +21,14 @@ const useStyles = createStyles((theme) => ({
     paddingRight: theme.spacing.md,
   },
 }));
+
+
+const validateForm = () => {
+  <Notification icon={<IconCheck size="1.1rem" />} color="teal" title="Teal notification">
+    This is teal notification with icon
+  </Notification>
+}
+
 
 export default function NewPerson() {
 
@@ -46,8 +58,6 @@ export default function NewPerson() {
     }
   }
 
-
-
   return (
     <AppShell
       className={classes.app}
@@ -75,6 +85,7 @@ export default function NewPerson() {
         )}
       >
         <Stack spacing={20} mt="md">
+
           <TextInput
             placeholder="Name Surname"
             label="Full Name"
@@ -91,8 +102,14 @@ export default function NewPerson() {
           />
 
           <Group mt="md" >
-            <Button type="submit"> Submit </Button>
-            <Button type="reset"> Reset </Button>
+            <Button type="submit" onClick={() =>
+              showNotification({
+                title: 'Notification',
+                message: 'Your form was successfully submitted! 🤥',
+                color: 'teal',
+                icon: <IconCheck />,
+              })}> Submit </Button>
+            <Button type="reset" onClick={form.reset}> Reset </Button>
           </Group>
 
           <Anchor

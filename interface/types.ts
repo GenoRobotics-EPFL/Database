@@ -43,7 +43,7 @@ export namespace API {
     id: number
     person_id: number
     location_id: number
-    name: string | null
+    name: string
     timestamp: Date
     sex: string | null
     lifestage: string | null
@@ -58,12 +58,12 @@ export namespace API {
     name: string
   }
 
-  export type Amplification = {
-    id: number
-    sample_id: number
-    amplification_method_id: number
-    timestamp: Date
-  }
+  // export type Amplification = {
+  //   id: number
+  //   sample_id: number
+  //   amplification_method_id: number
+  //   timestamp: Date
+  // }
 
   export type SequencingMethod = {
     id: number
@@ -75,7 +75,8 @@ export namespace API {
   export type Sequencing = {
     id: number
     sample_id: number
-    amplification_id: number
+    amplification_method_id: number
+    amplification_timestamp: Date
     sequencing_method_id: number
     timestamp: Date
     base_calling_file: string
@@ -85,10 +86,10 @@ export namespace API {
     id: number
     sequence_id: number
     segment_sequence: string
-    primer_name: string
-    primer_desc: string
-    primer2_name: string
-    primer2_desc: string
+    primer_forw_name: string
+    primer_forw_seq: string
+    primer_rev_name: string
+    primer_rev_seq: string
     DNA_region: string
     sequence_length: number
   }

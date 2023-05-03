@@ -46,7 +46,8 @@ export default function SequencingTable() {
             <tr>
               <th>ID</th>
               <th>Sample ID</th>
-              <th>Amplification ID</th>
+              <th>Amplification method ID</th>
+              <th>Amplification timestamp</th>
               <th>Sequencing method ID</th>
               <th>Time stamp</th>
               <th>Base calling file</th>
@@ -57,7 +58,8 @@ export default function SequencingTable() {
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.sample_id}</td>
-                <td>{element.amplification_id}</td>
+                <td>{element.amplification_method_id}</td>
+                <td>{element.amplification_timestamp.toString()}</td>
                 <td>{element.sequencing_method_id}</td>
                 <td>{element.timestamp.toString()}</td>
                 <td>{element.base_calling_file}</td>

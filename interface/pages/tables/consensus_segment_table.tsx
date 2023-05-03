@@ -64,10 +64,10 @@ export default function ConsensusSegmentTable() {
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.sequence_id}</td>
-                <td>{element.primer_name}</td>
-                <td>{element.primer_desc}</td>
-                <td>{element.primer2_name}</td>
-                <td>{element.primer2_desc}</td>
+                <td>{element.primer_forw_name}</td>
+                <td>{element.primer_forw_seq}</td>
+                <td>{element.primer_rev_name}</td>
+                <td>{element.primer_rev_seq}</td>
                 <td>{element.DNA_region}</td>
                 <td>{element.sequence_length}</td>
               </tr>

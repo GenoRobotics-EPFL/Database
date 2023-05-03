@@ -89,7 +89,7 @@ function useInternalDataState() {
   const [loading, setLoading] = useState<boolean>(false)
   const [persons, setPersons] = useState<API.Person[] | null>(null)
   const [locations, setLocations] = useState<API.Location[] | null>(null)
-  const [amplifications, setAmplifications] = useState<API.Amplification[] | null>(null)
+  // const [amplifications, setAmplifications] = useState<API.Amplification[] | null>(null)
   const [amplificationMethods, setAmplificationMethods] = useState<API.AmplificationMethod[] | null>(null)
   const [plantIdentifications, setPlantIdentifications] = useState<API.PlantIdentification[] | null>(null)
   const [identificationMethods, setIdentificationMethods] = useState<API.IdentificationMethod[] | null>(null)
@@ -101,7 +101,7 @@ function useInternalDataState() {
 
   const proxyPerson = getDataProxy<API.Person>("persons", setLoading, [persons, setPersons])
   const proxyLocation = getDataProxy<API.Location>("locations", setLoading, [locations, setLocations])
-  const proxyAmplification = getDataProxy<API.Amplification>("amplifications", setLoading, [amplifications, setAmplifications])
+  // const proxyAmplification = getDataProxy<API.Amplification>("amplifications", setLoading, [amplifications, setAmplifications])
   const proxyAmplificationMethod = getDataProxy<API.AmplificationMethod>("amplification_methods", setLoading, [amplificationMethods, setAmplificationMethods])
   const proxyPlantIdentification = getDataProxy<API.PlantIdentification>("plant_identifications", setLoading, [plantIdentifications, setPlantIdentifications])
   const proxyIdentificationMethod = getDataProxy<API.IdentificationMethod>("identification_methods", setLoading, [identificationMethods, setIdentificationMethods])
@@ -117,7 +117,7 @@ function useInternalDataState() {
       const promises = [
         proxyPerson.get(),
         proxyLocation.get(),
-        proxyAmplification.get(),
+        // proxyAmplification.get(),
         proxyAmplificationMethod.get(),
         proxyPlantIdentification.get(),
         proxyIdentificationMethod.get(),
@@ -143,9 +143,9 @@ function useInternalDataState() {
     locations: locations ?? [],
     postLocation: proxyLocation.post,
     putLocation: proxyLocation.put,
-    amplifications: amplifications ?? [],
-    postAmplification: proxyAmplification.post,
-    putAmplification: proxyAmplification.put,
+    // amplifications: amplifications ?? [],
+    // postAmplification: proxyAmplification.post,
+    // putAmplification: proxyAmplification.put,
     amplificationMethods: amplificationMethods ?? [],
     postAmplificationMethod: proxyAmplificationMethod.post,
     putAmplificationMethod: proxyAmplificationMethod.put,

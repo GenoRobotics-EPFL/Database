@@ -36,23 +36,14 @@ export default function NewSequencing() {
     initialValues: {
       id: 0,
       sample_id: 0,
-      amplification_id: 0,
+      amplification_method_id: 0,
+      amplification_timestamp: new Date(''),
       sequencing_method_id: 0,
       timestamp: new Date(''),
       base_calling_file: '',
-      primer_code: '',
-      sequence_length: '',
-      barcode: '',
-      primer_desc: '',
 
     },
     validate: {
-      base_calling_file: (value) => (value ? null : 'Invalid base calling file'),
-      primer_code: (value) => (value ? null : 'Invalid primer code'),
-      sequence_length: (value) => (value ? null : 'Invalid'),
-      barcode: (value) => (value ? null : 'Invalid barcode'),
-      primer_desc: (value) => (value ? null : 'Enter description'),
-
     },
 
   });
@@ -95,7 +86,8 @@ export default function NewSequencing() {
           onSubmit={form.onSubmit(
             async (values) => await postSequencing({
               sample_id: values.sample_id,
-              amplification_id: values.amplification_id,
+              amplification_method_id: values.amplification_method_id,
+              amplification_timestamp: values.amplification_timestamp,
               sequencing_method_id: values.sequencing_method_id,
               timestamp: values.timestamp,
               base_calling_file: values.base_calling_file,
@@ -119,20 +111,32 @@ export default function NewSequencing() {
               value={String(form.values.sample_id)}
               onChange={(v) => form.setValues({ ...form.values, sample_id: Number(v) })}
             />
+
             <Select
-              label="Amplification ID:"
+              label="Amplification method ID:"
               sx={{ width: 200 }}
-              data={state.amplifications.map(p => (
+              data={state.amplificationMethods.map(p => (
                 {
                   value: String(p.id),
-                  label: p.id
+                  label: p.name
                 }
               ))}
               withAsterisk
-              {...form.getInputProps('sequencing_method_id')}
-              value={String(form.values.sequencing_method_id)}
-              onChange={(v) => form.setValues({ ...form.values, sequencing_method_id: Number(v) })}
+              {...form.getInputProps('amplification_method_id')}
+              value={String(form.values.amplification_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, amplification_method_id: Number(v) })}
             />
+
+            <label htmlFor="sequencingtime">Amplification timestamp:</label>
+            <Group>
+              <input
+                type="datetime-local"
+                id="amplification_timestamp"
+                name="amplification_timestamp"
+                {...form.getInputProps('amplification_timestamp')}
+              />
+            </Group>
+
             <Select
               label="Sequencing method:"
               sx={{ width: 200 }}
