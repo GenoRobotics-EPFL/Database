@@ -11,14 +11,12 @@ import { useForm } from '@mantine/form';
 
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
 
 const useStyles = createStyles((theme) => ({
   app: {
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
   },
-
 }));
 
 export default function NewPlantIdentification() {
@@ -37,10 +35,8 @@ export default function NewPlantIdentification() {
       seq3_score: 0,
       seq4_score: 0,
     },
-
     validate: {
     },
-
   });
 
   const postPlantIdentification = async (data: Omit<API.PlantIdentification, "id">) => {
@@ -55,7 +51,6 @@ export default function NewPlantIdentification() {
   const { classes } = useStyles();
   const router = useRouter()
 
-
   return (
     <>
       <AppShell
@@ -64,9 +59,8 @@ export default function NewPlantIdentification() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader(false, false)}
+        header={<MyHeader homeState />}
         footer={MyFooter()}
-
       >
         <Title order={2} mt='md'>
           Add a new plant identification
@@ -110,7 +104,7 @@ export default function NewPlantIdentification() {
               data={state.sequencings.map(p => (
                 {
                   value: String(p.id),
-                  label: p.id
+                  label: String(p.id)
                 }
               ))}
               withAsterisk

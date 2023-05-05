@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { FC } from 'react';
 import {
   Header, Group, ActionIcon, useMantineColorScheme, Title, NavLink,
   Menu, createStyles, Burger, Text, Image, Button,
@@ -79,17 +79,17 @@ const data = [
 
 ];
 
-export const MyHeader = (home_state: boolean | false, table_state: boolean | false) => {
+export type MyHeaderProps = {
+  homeState?: boolean
+  tableState?: boolean
+}
+
+export const MyHeader: FC<MyHeaderProps> = (props) => {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [opened, { toggle, close }] = useDisclosure(false);
   const { classes, cx } = useStyles();
   const router = useRouter()
-
-  const links = [
-    { label: 'Home Page', disabled: home_state, link: '/' },
-    { label: 'See tables', disabled: table_state, link: '/posts/see_tables/' }
-  ]
 
   const navlinks = data.map((item) => (
     <NavLink
@@ -101,20 +101,6 @@ export const MyHeader = (home_state: boolean | false, table_state: boolean | fal
       color="dark"
       icon={<item.icon color={'green'} size={14} />}
     />
-  ));
-
-  const header_links = links.map((item) => (
-    <Button
-      key={item.label}
-      variant='subtle'
-      disabled={item.disabled}
-      className={cx(classes.link)}
-      onClick={() => {
-        router.push(item.link)
-      }}
-    >
-      {item.label}
-    </Button>
   ));
 
   return (
@@ -146,12 +132,32 @@ export const MyHeader = (home_state: boolean | false, table_state: boolean | fal
               <Text className={classes.pointer} onClick={() => router.push("/")}> GenoRobotics </Text>
             </Group>
           </Title>
-
         </Group>
 
         <Group spacing={50} >
           <Group>
-            {header_links}
+            {props.homeState &&
+              <Button
+                variant='subtle'
+                className={cx(classes.link)}
+                onClick={() => {
+                  router.push("/")
+                }}
+              >
+                {'Home Page'}
+              </Button>
+            }
+            {props.tableState &&
+              <Button
+                variant='subtle'
+                className={cx(classes.link)}
+                onClick={() => {
+                  router.push('/posts/see_tables/')
+                }}
+              >
+                {'See tables'}
+              </Button>
+            }
           </Group>
           <ActionIcon variant="default" onClick={() => toggleColorScheme()} size={30}
             sx={(theme) => ({
