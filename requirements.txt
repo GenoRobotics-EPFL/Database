@@ -6,3 +6,4 @@ python-dotenv
 psycopg2-binary
 boto3>=1.26.117
 pytest>=7.3.1
+pymysql

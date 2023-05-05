@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 if os.environ.get("USE_SQLITE") is not None:
     SQLALCHEMY_DATABASE_URL = "sqlite://"
 elif os.environ.get("USE_MYSQL") is not None:
-    ENGINE = "mysql+mysqldb"
+    ENGINE = "mysql+pymysql"
     USERNAME = os.environ["MYSQLUSER"]
     PASSWORD = os.environ["MYSQLPASSWORD"]
     HOST = os.environ["MYSQLHOST"]
