@@ -112,7 +112,7 @@ export default function SeeTables() {
         <item.icon color={theme.colors[item.color][6]} size={32} />
         <NavLink variant="subtle" color="dark"
           label='Open table'
-          onClick={() => router.push("/tables/" + item.page)}
+          onClick={() => router.push("/tables" + item.page)}
         />
       </Paper>
     </Carousel.Slide>

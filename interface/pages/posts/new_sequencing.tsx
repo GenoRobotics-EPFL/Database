@@ -6,15 +6,16 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 import { useDataState } from '../../utils/dataState';
-import Link from 'next/link'
 import { API } from '../../types';
 import React from 'react';
 
 import { useRouter } from 'next/router'
 import { Text, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { URL } from '../../utils/config';
+import { IconUpload, IconPhoto, IconX, IconCheck, IconAlertCircle } from '@tabler/icons';
+import { Dropzone } from '@mantine/dropzone';
+import { fileExists } from '../../utils/utilsS3';
+import { showNotification } from '@mantine/notifications';
+import useFileUploader from '../../utils/useFileUploader';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -31,6 +32,10 @@ const useStyles = createStyles((theme) => ({
 
 export default function NewSequencing() {
   const state = useDataState()
+  const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const router = useRouter()
+  const fileUploader = useFileUploader()
 
   const form = useForm({
     initialValues: {
@@ -59,9 +64,44 @@ export default function NewSequencing() {
     }
   }
 
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
-  const router = useRouter()
+  const uploadFile = async (file: File) => {
+    if (await fileExists(file.name)) {
+      showNotification({
+        title: 'Error',
+        message: `A file with name '${file.name}' already exists`,
+        color: "red",
+        icon: <IconAlertCircle />,
+      })
+      return
+    }
+    fileUploader.uploadFile(file)
+      .then(r => {
+        if (r.status == 200) {
+          form.setValues({ ...form.values, base_calling_file: file.name })
+          showNotification({
+            title: 'File upload',
+            message: `The file ${file.name} was successfully uploaded.`,
+            color: "teal",
+            icon: <IconCheck />,
+          })
+        } else {
+          showNotification({
+            title: 'Error',
+            message: `Code: ${r.status}`,
+            color: "red",
+            icon: <IconAlertCircle />,
+          })
+        }
+      })
+      .catch((e: Error) => {
+        showNotification({
+          title: 'Error',
+          message: e.message,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -72,7 +112,7 @@ export default function NewSequencing() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader(false, false)}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
 
@@ -160,22 +200,11 @@ export default function NewSequencing() {
                 {...form.getInputProps('timestamp')}
               />
             </Group>
-            <TextInput
-              placeholder="Base calling file"
-              label="Base calling file:"
-              sx={{ width: 200 }}
-              withAsterisk
-              {...form.getInputProps('base_calling_file')}
-            />
             <Group>
               <Dropzone
-                className={classes.dropzone}
-                onDrop={(files) => console.log('accepted files', files)}
+                maxFiles={1}
+                onDrop={(files) => uploadFile(files[0])}
                 onReject={(files) => console.log('rejected files', files)}
-                maxSize={3 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-
-              // {...props}
               >
                 <Group position="center" spacing="xl" style={{ minHeight: 50, pointerEvents: 'none' }}>
                   <Dropzone.Accept>
@@ -201,7 +230,7 @@ export default function NewSequencing() {
                       Upload base calling file
                     </Text>
                     <Text size="xs" color="dimmed" inline mt={7}>
-                      Drag or click to select files
+                      Attach one file
                     </Text>
                   </div>
                 </Group>
