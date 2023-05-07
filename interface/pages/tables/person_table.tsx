@@ -7,15 +7,33 @@ import { MyFooter } from '../../components/footer'
 
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
-import Link from 'next/link'
-import { API } from '../../types'
-import { URL } from '../../utils/config';
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { API } from '../../types';
 
 export default function PersonTable() {
   const router = useRouter()
   const state = useDataState()
 
-
+  const deletePerson = (element: API.Person) => {
+    state.deletePerson(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.name} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.name}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <AppShell
@@ -24,7 +42,7 @@ export default function PersonTable() {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
 
-      header={MyHeader(false, false)}
+      header={<MyHeader homeState tableState />}
       footer={MyFooter()}
     >
 
