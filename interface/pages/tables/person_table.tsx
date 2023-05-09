@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons';
 import { API } from '../../types';
+import { IconTrash } from '@tabler/icons';
 
 export default function PersonTable() {
   const router = useRouter()
@@ -56,6 +57,7 @@ export default function PersonTable() {
             <th>Person ID</th>
             <th>Full name</th>
             <th>Email</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -64,6 +66,7 @@ export default function PersonTable() {
               <td>{element.id}</td>
               <td>{element.name}</td>
               <td>{element.email}</td>
+              <td><IconTrash size={15} onClick={() => deletePerson(element)} style={{ cursor: 'pointer' }}></IconTrash></td>
             </tr>
           ))}
         </tbody>

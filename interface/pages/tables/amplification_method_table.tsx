@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Anchor, Title, Space, Table, } from '@mantine/core'
+import { AppShell, Anchor, Title, Space, Table, Button, } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
@@ -36,7 +36,7 @@ export default function AmplificationMethodTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader(false, false)}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
 
@@ -45,21 +45,26 @@ export default function AmplificationMethodTable() {
         </Title>
 
 
-        <Table mt='md' sx={{ maxWidth: 700 }} >
+        <Table mt='md' sx={{ maxWidth: 500 }} >
           <thead>
             <tr>
               <th>ID</th>
               <th>Name</th>
+              <th></th>
+
             </tr>
           </thead>
           <tbody>
             {amplification_methods.map((element) => (
-              <tr key={element.id}>
+              <tr key={element.id} >
                 <td>{element.id}</td>
                 <td>{element.name}</td>
+
               </tr>
             ))}
+
           </tbody>
+
         </Table>
 
         <Space h="xl" />

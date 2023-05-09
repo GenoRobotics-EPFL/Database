@@ -64,6 +64,13 @@ export default function NewSample() {
     const response = await state.postSample(data)
     if (response.status == 200) {
       console.log("POST /samples")
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /samples failed.")
     }

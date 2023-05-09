@@ -59,6 +59,12 @@ export default function NewSequencing() {
     if (response.status == 200) {
       console.log("POST /sequencings")
       form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /sequencings failed.")
     }

@@ -11,7 +11,6 @@ import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
 import { IconCheck, IconX } from '@tabler/icons';
-
 import { showNotification } from '@mantine/notifications';
 
 
@@ -21,13 +20,6 @@ const useStyles = createStyles((theme) => ({
     paddingRight: theme.spacing.md,
   },
 }));
-
-
-const validateForm = () => {
-  <Notification icon={<IconCheck size="1.1rem" />} color="teal" title="Teal notification">
-    This is teal notification with icon
-  </Notification>
-}
 
 
 export default function NewPerson() {
@@ -53,8 +45,16 @@ export default function NewPerson() {
     if (response.status == 200) {
       console.log("POST /persons")
       form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
+
     } else {
       console.log("POST /persons failed.")
+
     }
   }
 
@@ -66,7 +66,7 @@ export default function NewPerson() {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
 
-      header={MyHeader(false, false)}
+      header={<MyHeader homeState tableState />}
       footer={MyFooter()}
 
     >
@@ -102,13 +102,7 @@ export default function NewPerson() {
           />
 
           <Group mt="md" >
-            <Button type="submit" onClick={() =>
-              showNotification({
-                title: 'Notification',
-                message: 'Your form was successfully submitted! 🤥',
-                color: 'teal',
-                icon: <IconCheck />,
-              })}> Submit </Button>
+            <Button type="submit"> Submit </Button>
             <Button type="reset" onClick={form.reset}> Reset </Button>
           </Group>
 

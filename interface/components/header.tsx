@@ -63,14 +63,10 @@ const useStyles = createStyles((theme) => ({
 
 }));
 
-
-
-
 const data = [
   { title: 'Method', icon: IconLayoutGridAdd, page: '/new_method' },
   { title: 'Sample', icon: IconTestPipe, page: '/new_sample' },
   { title: 'Person', icon: IconUserPlus, page: '/new_person' },
-  // { title: 'Amplification', icon: IconTournament, page: '/new_amplification' },
   { title: 'Sequencing', icon: IconMap, page: '/new_sequencing' },
   { title: 'Location', icon: IconLocation, page: '/new_location' },
   { title: 'Plant identification', icon: IconPlant, page: '/new_plant_identification' },

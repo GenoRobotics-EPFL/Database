@@ -6,7 +6,8 @@ import { useRouter } from 'next/router'
 import { useDataState } from '../../utils/dataState'
 import { downloadFile } from '../../utils/utilsS3'
 import Link from 'next/link'
-
+import { IconTrash } from '@tabler/icons';
+import { deleteFile } from '../../utils/utilsS3'
 
 export default function SampleTable() {
 
@@ -28,7 +29,7 @@ export default function SampleTable() {
           Sample table
         </Title>
 
-        <Table mt='md' sx={{ maxWidth: 1100 }}>
+        <Table mt='md' sx={{ maxWidth: 1700 }}>
           <thead>
             <tr>
               <th>ID</th>
@@ -65,6 +66,8 @@ export default function SampleTable() {
                 </td>
                 <td>{element.image_timestamp.toString()}</td>
                 <td>{element.image_desc}</td>
+                <td><IconTrash size={15} onClick={() => deleteFile(element.image_url)} style={{ cursor: 'pointer' }}></IconTrash></td>
+
               </tr>
             ))}
           </tbody>

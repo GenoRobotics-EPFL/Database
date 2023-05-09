@@ -10,7 +10,8 @@ import { useForm } from '@mantine/form';
 import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -50,6 +51,12 @@ export default function NewConsensusSegment() {
     if (response.status == 200) {
       console.log("POST /consensus_segments")
       form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /consensus_segments failed.")
     }
@@ -63,7 +70,7 @@ export default function NewConsensusSegment() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader(false, false)}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
 
       >

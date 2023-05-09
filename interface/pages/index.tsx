@@ -27,7 +27,6 @@ const mockdata = [
   { title: 'New method', icon: IconLayoutGridAdd, color: 'violet', page: '/new_method' },
   { title: 'New sample', icon: IconTestPipe, color: 'indigo', page: '/new_sample' },
   { title: 'New person', icon: IconUserPlus, color: 'blue', page: '/new_person' },
-  // { title: 'New amplification', icon: IconTournament, color: 'green', page: '/new_amplification' },
   { title: 'New sequencing', icon: IconMap, color: 'teal', page: '/new_sequencing' },
   { title: 'New location', icon: IconLocation, color: 'cyan', page: '/new_location' },
   { title: 'New plant identification', icon: IconPlant, color: 'pink', page: '/new_plant_identification' },

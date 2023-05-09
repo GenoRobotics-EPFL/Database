@@ -9,7 +9,8 @@ import { useDataState } from '../../utils/dataState';
 import React from 'react';
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
-
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -74,6 +75,12 @@ export default function NewAmplificationMethod() {
     if (response.status == 200) {
       console.log("POST /amplification_methods")
       amplification_form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /amplification_methods failed.")
     }
@@ -85,6 +92,12 @@ export default function NewAmplificationMethod() {
     if (response.status == 200) {
       console.log("POST /identification_methods")
       identification_form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /identification_methods failed.")
     }
@@ -96,6 +109,12 @@ export default function NewAmplificationMethod() {
     if (response.status == 200) {
       console.log("POST /sequencing_methods")
       sequencing_form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /sequencing_methods failed.")
     }
@@ -114,7 +133,7 @@ export default function NewAmplificationMethod() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader(false, false)}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
         <Title order={2} mt='md'>

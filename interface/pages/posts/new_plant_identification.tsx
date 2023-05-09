@@ -11,6 +11,8 @@ import { useForm } from '@mantine/form';
 
 import { API } from '../../types';
 import React from 'react';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -43,6 +45,13 @@ export default function NewPlantIdentification() {
     const response = await state.postPlantIdentification(data)
     if (response.status == 200) {
       console.log("POST /plant_identifications")
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /plant_identifications failed.")
     }
