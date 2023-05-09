@@ -37,6 +37,7 @@ from models import (
 
 from crud import CRUD
 import s3
+import exceptions as exc
 import utils
 
 # Uncomment the following line to fill the database with mock data
@@ -132,7 +133,10 @@ def persons(body: PersonNoId, crud: CRUD = Depends(get_crud(Person))):
 
 @app.delete("/persons/{id}", response_model=Person)
 def persons(id: int, crud: CRUD = Depends(get_crud(Person))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -177,7 +181,10 @@ def sequencing_methods(
 
 @app.delete("/sequencing_methods/{id}", response_model=SequencingMethod)
 def sequencing_methods(id: int, crud: CRUD = Depends(get_crud(SequencingMethod))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -215,7 +222,10 @@ def samples(body: SampleNoId, crud: CRUD = Depends(get_crud(Sample))):
 
 @app.delete("/samples/{id}", response_model=Sample)
 def samples(id: int, crud: CRUD = Depends(get_crud(Sample))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -260,7 +270,10 @@ def consensus_segments(
 
 @app.delete("/consensus_segments/{id}", response_model=ConsensusSegment)
 def consensus_segments(id: int, crud: CRUD = Depends(get_crud(ConsensusSegment))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -302,7 +315,10 @@ def sequencings(body: SequencingNoId, crud: CRUD = Depends(get_crud(Sequencing))
 
 @app.delete("/sequencings/{id}", response_model=Sequencing)
 def sequencings(id: int, crud: CRUD = Depends(get_crud(Sequencing))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -347,7 +363,10 @@ def plant_identifications(
 
 @app.delete("/plant_identifications/{id}", response_model=PlantIdentification)
 def plant_identifications(id: int, crud: CRUD = Depends(get_crud(PlantIdentification))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -392,7 +411,10 @@ def amplification_methods(
 
 @app.delete("/amplification_methods/{id}", response_model=AmplificationMethod)
 def amplification_methods(id: int, crud: CRUD = Depends(get_crud(AmplificationMethod))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -441,7 +463,10 @@ def identification_method(
 def identification_method(
     id: int, crud: CRUD = Depends(get_crud(IdentificationMethod))
 ):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -479,7 +504,10 @@ def locations(body: LocationNoId, crud: CRUD = Depends(get_crud(Location))):
 
 @app.delete("/locations/{id}", response_model=Location)
 def locations(id: int, crud: CRUD = Depends(get_crud(Location))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
@@ -517,7 +545,10 @@ def taxonomies(body: TaxonomyNoId, crud: CRUD = Depends(get_crud(Taxonomy))):
 
 @app.delete("/taxonomies/{id}", response_model=Taxonomy)
 def taxonomies(id: int, crud: CRUD = Depends(get_crud(Taxonomy))):
-    item = crud.delete(id)
+    try:
+        item = crud.delete(id)
+    except exc.DeleteFailedException:
+        raise HTTPException(status_code=400, detail=f"Can't delete item {id}")
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item

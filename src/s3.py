@@ -82,7 +82,7 @@ def _create_bucket() -> None:
             "CORSRules": [
                 {
                     "AllowedHeaders": ["*"],
-                    "AllowedMethods": ["PUT", "POST", "DELETE"],
+                    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
                     "AllowedOrigins": ["*"],  # might be refined later
                     "ExposeHeaders": ["ETag"],
                 }

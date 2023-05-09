@@ -7,7 +7,7 @@ import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 
 import { Text, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, } from '@tabler/icons';
+import { IconUpload, IconPhoto, IconX, IconAlertCircle, IconCheck } from '@tabler/icons';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE, MIME_TYPES } from '@mantine/dropzone';
 
 import { API } from '../../types';
@@ -15,7 +15,7 @@ import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
 import useFileUploader from '../../utils/useFileUploader';
-import { IconCheck, IconX } from '@tabler/icons';
+import { fileExists } from '../../utils/utilsS3';
 import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
@@ -76,23 +76,42 @@ export default function NewSample() {
     }
   }
 
-  const uploadFile = (file: File) => {
+  const uploadFile = async (file: File) => {
+    if (await fileExists(file.name)) {
+      showNotification({
+        title: 'Error',
+        message: `A file with name '${file.name}' already exists`,
+        color: "red",
+        icon: <IconAlertCircle />,
+      })
+      return
+    }
     fileUploader.uploadFile(file)
       .then(r => {
         if (r.status == 200) {
           form.setValues({ ...form.values, image_url: file.name })
           showNotification({
-            title: 'Notification',
-            message: 'Your file was successfully uploaded!',
-            color: 'teal',
+            title: 'File upload',
+            message: `The file ${file.name} was successfully uploaded.`,
+            color: "teal",
             icon: <IconCheck />,
           })
         } else {
-          // failure
+          showNotification({
+            title: 'Error',
+            message: `Code: ${r.status}`,
+            color: "red",
+            icon: <IconAlertCircle />,
+          })
         }
       })
-      .catch(e => {
-        // failure
+      .catch((e: Error) => {
+        showNotification({
+          title: 'Error',
+          message: e.message,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
       })
   }
 
@@ -268,10 +287,10 @@ export default function NewSample() {
 
                 <div>
                   <Text size="lg" inline>
-                    Drag images here or click to select files
+                    Upload sample image
                   </Text>
                   <Text size="xs" color="dimmed" inline mt={7}>
-                    Attach as many files as you like, each file should not exceed 5mb
+                    Attach one file
                   </Text>
                 </div>
               </Group>

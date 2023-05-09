@@ -1,10 +1,12 @@
 from typing import Any, Type, Generator
 
 from sqlalchemy.orm import Session, DeclarativeBase
+from sqlalchemy.exc import DatabaseError
 from pydantic import BaseModel
 
 from database import SessionLocal
 import schemes
+from exceptions import DeleteFailedException
 
 
 class CRUD:
@@ -72,5 +74,8 @@ class CRUD:
         if item is None:
             return None
         self._session.delete(item)
-        self._session.commit()
+        try:
+            self._session.commit()
+        except DatabaseError:
+            raise DeleteFailedException()
         return item

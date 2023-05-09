@@ -1,29 +1,16 @@
-import { useState, useEffect } from 'react'
-
 import { AppShell, Anchor, Title, Space, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
+import { downloadFile } from '../../utils/utilsS3'
+import { useDataState } from '../../utils/dataState'
 
 export default function SequencingTable() {
-  const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const router = useRouter()
 
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/sequencings`)
-      const data = await response.json() as API.Sequencing[]
-      setSequencings(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
+  const state = useDataState()
+  const router = useRouter()
 
   return (
     <>
@@ -54,7 +41,7 @@ export default function SequencingTable() {
             </tr>
           </thead>
           <tbody>
-            {sequencings.map((element) => (
+            {state.sequencings.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.sample_id}</td>
@@ -62,7 +49,14 @@ export default function SequencingTable() {
                 <td>{element.amplification_timestamp.toString()}</td>
                 <td>{element.sequencing_method_id}</td>
                 <td>{element.timestamp.toString()}</td>
-                <td>{element.base_calling_file}</td>
+                <td>
+                  <a
+                    onClick={() => downloadFile(element.base_calling_file)}
+                    style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
+                  >
+                    {element.base_calling_file}
+                  </a>
+                </td>
               </tr>
             ))}
           </tbody>

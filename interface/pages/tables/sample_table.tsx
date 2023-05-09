@@ -1,29 +1,17 @@
 import { AppShell, Anchor, Title, Space, Divider, Table } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { useState, useEffect } from 'react'
-import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
+import { useDataState } from '../../utils/dataState'
+import { downloadFile } from '../../utils/utilsS3'
+import Link from 'next/link'
 
 
 export default function SampleTable() {
 
-  const [samples, setSamples] = useState<API.Sample[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/samples`)
-      const data = await response.json() as API.Sample[]
-      setSamples(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
+  const state = useDataState()
 
   return (
     <>
@@ -57,7 +45,7 @@ export default function SampleTable() {
             </tr>
           </thead>
           <tbody>
-            {samples.map((element) => (
+            {state.samples.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.name}</td>
@@ -67,7 +55,14 @@ export default function SampleTable() {
                 <td>{element.sex}</td>
                 <td>{element.lifestage}</td>
                 <td>{element.reproduction}</td>
-                <td>{element.image_url}</td>
+                <td>
+                  <a
+                    onClick={() => downloadFile(element.image_url)}
+                    style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
+                  >
+                    {element.image_url}
+                  </a>
+                </td>
                 <td>{element.image_timestamp.toString()}</td>
                 <td>{element.image_desc}</td>
               </tr>
