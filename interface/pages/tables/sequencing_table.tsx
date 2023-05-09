@@ -6,6 +6,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { downloadFile } from '../../utils/utilsS3'
 import { useDataState } from '../../utils/dataState'
+import { IconTrash } from '@tabler/icons';
+import { deleteFile } from '../../utils/utilsS3'
 
 export default function SequencingTable() {
 
@@ -28,7 +30,7 @@ export default function SequencingTable() {
           Sequencing table
         </Title>
 
-        <Table mt='md'>
+        <Table mt='md' sx={{ maxWidth: 1400 }}>
           <thead>
             <tr>
               <th>ID</th>
@@ -38,6 +40,7 @@ export default function SequencingTable() {
               <th>Sequencing method ID</th>
               <th>Time stamp</th>
               <th>Base calling file</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +60,8 @@ export default function SequencingTable() {
                     {element.base_calling_file}
                   </a>
                 </td>
+                <td><IconTrash size={15} onClick={() => deleteFile(element.base_calling_file)} style={{ cursor: 'pointer' }}></IconTrash></td>
+
               </tr>
             ))}
           </tbody>

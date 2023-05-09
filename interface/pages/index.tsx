@@ -108,10 +108,6 @@ const Home: NextPage = () => {
           },
         })}
 
-<<<<<<< HEAD
-        // header={<MyHeader />}
-=======
->>>>>>> b0864ed606c1f557c4dabff97510e4b3967bc5b5
         header={<MyHeader tableState />}
         footer={<MyFooter />}
       >
