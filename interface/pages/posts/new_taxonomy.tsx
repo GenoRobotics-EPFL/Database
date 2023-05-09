@@ -10,8 +10,8 @@ import { useDataState } from '../../utils/dataState';
 
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
-import { Id } from 'tabler-icons-react';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications'; import { Id } from 'tabler-icons-react';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -54,6 +54,12 @@ export default function NewTaxonomy() {
     if (response.status == 200) {
       console.log("POST /taxonomies")
       form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /taxonomies failed.")
     }

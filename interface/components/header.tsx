@@ -63,9 +63,6 @@ const useStyles = createStyles((theme) => ({
 
 }));
 
-
-
-
 const data = [
   { title: 'Method', icon: IconLayoutGridAdd, page: '/new_method' },
   { title: 'Sample', icon: IconTestPipe, page: '/new_sample' },

@@ -12,9 +12,10 @@ import React from 'react';
 
 import { useRouter } from 'next/router'
 import { Text, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
+import { IconUpload, IconPhoto, } from '@tabler/icons';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { URL } from '../../utils/config';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -54,6 +55,12 @@ export default function NewSequencing() {
     if (response.status == 200) {
       console.log("POST /sequencings")
       form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /sequencings failed.")
     }

@@ -7,7 +7,7 @@ import { MyFooter } from '../../components/footer'
 import { useForm } from '@mantine/form';
 
 import { Text, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
+import { IconUpload, IconPhoto, } from '@tabler/icons';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE, MIME_TYPES } from '@mantine/dropzone';
 
 import { API } from '../../types';
@@ -15,6 +15,8 @@ import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
 import useFileUploader from '../../utils/useFileUploader';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -62,6 +64,13 @@ export default function NewSample() {
     const response = await state.postSample(data)
     if (response.status == 200) {
       console.log("POST /samples")
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /samples failed.")
     }
@@ -72,7 +81,12 @@ export default function NewSample() {
       .then(r => {
         if (r.status == 200) {
           form.setValues({ ...form.values, image_url: file.name })
-          // success
+          showNotification({
+            title: 'Notification',
+            message: 'Your file was successfully uploaded!',
+            color: 'teal',
+            icon: <IconCheck />,
+          })
         } else {
           // failure
         }
