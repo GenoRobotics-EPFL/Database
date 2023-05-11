@@ -8,11 +8,36 @@ import { downloadFile } from '../../utils/utilsS3'
 import { useDataState } from '../../utils/dataState'
 import { IconTrash } from '@tabler/icons';
 import { deleteFile } from '../../utils/utilsS3'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { API } from '../../types';
 
 export default function SequencingTable() {
 
   const state = useDataState()
   const router = useRouter()
+
+
+  const deleteSequencing = (element: API.Sequencing) => {
+    state.deleteSequencing(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `Sequencing deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+        deleteFile(element.base_calling_file)
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete sequencing`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -60,8 +85,11 @@ export default function SequencingTable() {
                     {element.base_calling_file}
                   </a>
                 </td>
-                <td><IconTrash size={15} onClick={() => deleteFile(element.base_calling_file)} style={{ cursor: 'pointer' }}></IconTrash></td>
-
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteSequencing(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>

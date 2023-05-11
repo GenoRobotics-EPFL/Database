@@ -9,11 +9,15 @@ import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
 
 export default function PlantIdentificationTable() {
   const [persons, setSequencings] = useState<API.PlantIdentification[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const state = useDataState()
 
   useEffect(() => {
     const cb = async () => {
@@ -25,6 +29,26 @@ export default function PlantIdentificationTable() {
     }
     cb()
   }, [])
+
+  const deletePlantIdentification = (element: API.PlantIdentification) => {
+    state.deletePlantIdentification(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `Identification deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete identification`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -55,6 +79,7 @@ export default function PlantIdentificationTable() {
               <th>Sequence 2 score</th>
               <th>Sequence 3 score</th>
               <th>Sequence 4 score</th>
+              <th></th>
 
             </tr>
           </thead>
@@ -71,6 +96,11 @@ export default function PlantIdentificationTable() {
                 <td>{element.seq2_score}</td>
                 <td>{element.seq3_score}</td>
                 <td>{element.seq4_score}</td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deletePlantIdentification(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>

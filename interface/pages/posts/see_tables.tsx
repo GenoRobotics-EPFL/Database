@@ -75,7 +75,6 @@ const useStyles = createStyles((theme) => ({
 const data = [
   { title: 'Sample table', icon: IconTestPipe, color: 'indigo', page: '/sample_table' },
   { title: 'Person table', icon: IconUserPlus, color: 'blue', page: '/person_table' },
-  // { title: 'Amplification table', icon: IconTournament, color: 'green', page: '/amplification_table' },
   { title: 'Sequencing table', icon: IconMap, color: 'teal', page: '/sequencing_table' },
   { title: 'Location table', icon: IconLocation, color: 'cyan', page: '/location_table' },
   { title: 'Plant identification table', icon: IconPlant, color: 'pink', page: '/plant_identification_table' },

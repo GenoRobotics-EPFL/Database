@@ -8,6 +8,9 @@ import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
 
 
 
@@ -27,6 +30,28 @@ export default function ConsensusSegmentTable() {
     cb()
   }, [])
   const router = useRouter()
+  const state = useDataState()
+
+  const deleteConsensusSegment = (element: API.ConsensusSegment) => {
+    state.deleteConsensusSegment(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `Consensus segment deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete consensus segment`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
+
 
   return (
     <>
@@ -56,6 +81,7 @@ export default function ConsensusSegmentTable() {
               <th>Primer 2 description</th>
               <th>DNA region</th>
               <th>Sequence length</th>
+              <th></th>
 
             </tr>
           </thead>
@@ -70,6 +96,11 @@ export default function ConsensusSegmentTable() {
                 <td>{element.primer_rev_seq}</td>
                 <td>{element.DNA_region}</td>
                 <td>{element.sequence_length}</td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteConsensusSegment(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>

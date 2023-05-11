@@ -4,15 +4,22 @@ import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { API } from '../../types';
+import { IconTrash } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
+import { showNotification } from '@mantine/notifications';
+
 
 export default function SequencingMethodTable() {
   const [sequencing_methods, setSequencingMethods] = useState<API.SequencingMethod[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const state = useDataState()
+
 
   useEffect(() => {
     const cb = async () => {
@@ -24,6 +31,26 @@ export default function SequencingMethodTable() {
     }
     cb()
   }, [])
+
+  const deleteSequencingMethod = (element: API.SequencingMethod) => {
+    state.deletePerson(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.name} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.name}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -48,6 +75,7 @@ export default function SequencingMethodTable() {
               <th>Name</th>
               <th>Description</th>
               <th>Type</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +85,11 @@ export default function SequencingMethodTable() {
                 <td>{element.name}</td>
                 <td>{element.description}</td>
                 <td>{element.type}</td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteSequencingMethod(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>

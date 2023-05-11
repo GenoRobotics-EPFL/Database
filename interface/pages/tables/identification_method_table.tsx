@@ -8,12 +8,16 @@ import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
-
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
+import { IconTrash } from '@tabler/icons';
 
 export default function IdentificationMethodTable() {
   const [identification_methods, setIdentificationMethods] = useState<API.IdentificationMethod[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const state = useDataState()
 
   useEffect(() => {
     const cb = async () => {
@@ -25,6 +29,28 @@ export default function IdentificationMethodTable() {
     }
     cb()
   }, [])
+
+
+
+  const deleteIdentificationMethod = (element: API.IdentificationMethod) => {
+    state.deleteIdentificationMethod(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.name} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.name}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -50,6 +76,7 @@ export default function IdentificationMethodTable() {
               <th>Description</th>
               <th>Type</th>
               <th>Version</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -60,6 +87,11 @@ export default function IdentificationMethodTable() {
                 <td>{element.description}</td>
                 <td>{element.type}</td>
                 <td>{element.version}</td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteIdentificationMethod(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
 
               </tr>
             ))}

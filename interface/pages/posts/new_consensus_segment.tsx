@@ -168,7 +168,7 @@ export default function NewConsensusSegment() {
 
 
             <Group mt="md" >
-              <Button type="submit" > Submit</Button>
+              <Button type="submit"> Submit</Button>
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 

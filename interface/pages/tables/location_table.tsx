@@ -9,13 +9,33 @@ import { useRouter } from 'next/router';
 import Link from 'next/link'
 import { API } from '../../types'
 import { URL } from '../../utils/config';
-
+import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 export default function LocationTable() {
 
   const router = useRouter()
   const state = useDataState()
 
+  const deleteLocation = (element: API.Location) => {
+    state.deleteLocation(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `Location deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete location`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
 
 
@@ -41,6 +61,7 @@ export default function LocationTable() {
             <th>Collection area</th>
             <th>GPS</th>
             <th>Elevation</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +71,11 @@ export default function LocationTable() {
               <td>{element.collection_area}</td>
               <td>{element.gps}</td>
               <td>{element.elevation}</td>
+              <td><IconTrash
+                size={15}
+                onClick={() => deleteLocation(element)}
+                style={{ cursor: 'pointer' }}>
+              </IconTrash></td>
             </tr>
           ))}
         </tbody>

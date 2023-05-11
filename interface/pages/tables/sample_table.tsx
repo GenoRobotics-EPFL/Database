@@ -6,13 +6,37 @@ import { useRouter } from 'next/router'
 import { useDataState } from '../../utils/dataState'
 import { downloadFile } from '../../utils/utilsS3'
 import Link from 'next/link'
-import { IconTrash } from '@tabler/icons';
 import { deleteFile } from '../../utils/utilsS3'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { API } from '../../types';
+import { IconTrash } from '@tabler/icons';
 
 export default function SampleTable() {
 
   const router = useRouter()
   const state = useDataState()
+
+  const deleteSample = (element: API.Sample) => {
+    state.deleteSample(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.name} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+        deleteFile(element.image_url)
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.name}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -66,8 +90,11 @@ export default function SampleTable() {
                 </td>
                 <td>{element.image_timestamp.toString()}</td>
                 <td>{element.image_desc}</td>
-                <td><IconTrash size={15} onClick={() => deleteFile(element.image_url)} style={{ cursor: 'pointer' }}></IconTrash></td>
-
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteSample(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>

@@ -66,7 +66,11 @@ export default function PersonTable() {
               <td>{element.id}</td>
               <td>{element.name}</td>
               <td>{element.email}</td>
-              <td><IconTrash size={15} onClick={() => deletePerson(element)} style={{ cursor: 'pointer' }}></IconTrash></td>
+              <td><IconTrash
+                size={15}
+                onClick={() => deletePerson(element)}
+                style={{ cursor: 'pointer' }}>
+              </IconTrash></td>
             </tr>
           ))}
         </tbody>

@@ -8,12 +8,17 @@ import { API } from '../../types'
 import React from 'react'
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
-
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { IconTrash } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
 
 export default function TaxonomyTable() {
   const [taxonomies, setTaxonomy] = useState<API.Taxonomy[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const state = useDataState()
+
 
   useEffect(() => {
     const cb = async () => {
@@ -25,6 +30,27 @@ export default function TaxonomyTable() {
     }
     cb()
   }, [])
+
+  const deleteTaxonomy = (element: API.Taxonomy) => {
+    state.deleteTaxonomy(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.species} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.species}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
+
 
   return (
     <>
@@ -52,10 +78,11 @@ export default function TaxonomyTable() {
               <th>Class</th>
               <th>Family</th>
               <th>Species</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {taxonomies.map((element) => (
+            {state.taxonomies.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.domain}</td>
@@ -64,7 +91,11 @@ export default function TaxonomyTable() {
                 <td>{element.class_}</td>
                 <td>{element.family}</td>
                 <td>{element.species}</td>
-
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteTaxonomy(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>
