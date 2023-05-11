@@ -3,10 +3,9 @@ import type { NextPage } from 'next'
 import { MyHeader } from '../components/header'
 import { MyFooter } from '../components/footer'
 import {
-  AppShell, Title, Text, createStyles, Card, SimpleGrid, Container, Group, Button,
-  UnstyledButton, Blockquote, ActionIcon, useMantineColorScheme,
+  AppShell, Text, createStyles, Card, SimpleGrid, Container, UnstyledButton,
 } from '@mantine/core'
-import { IconSun, IconMoonStars, } from '@tabler/icons';
+import { useRouter } from 'next/router'
 import { useDisclosure } from '@mantine/hooks';
 
 import React from 'react'
@@ -24,19 +23,16 @@ import {
 } from '@tabler/icons';
 
 
-
 const mockdata = [
   { title: 'New method', icon: IconLayoutGridAdd, color: 'violet', page: '/new_method' },
   { title: 'New sample', icon: IconTestPipe, color: 'indigo', page: '/new_sample' },
   { title: 'New person', icon: IconUserPlus, color: 'blue', page: '/new_person' },
-  { title: 'New amplification', icon: IconTournament, color: 'green', page: '/new_amplification' },
   { title: 'New sequencing', icon: IconMap, color: 'teal', page: '/new_sequencing' },
   { title: 'New location', icon: IconLocation, color: 'cyan', page: '/new_location' },
   { title: 'New plant identification', icon: IconPlant, color: 'pink', page: '/new_plant_identification' },
   { title: 'New taxonomy', icon: IconPlant2, color: 'red', page: '/new_taxonomy' },
-  { title: 'See tables', icon: IconColumns, color: 'orange', page: '/see_tables' },
+  { title: 'New consensus segment', icon: IconColumns, color: 'orange', page: '/new_consensus_segment' },
 ];
-
 
 
 const useStyles = createStyles((theme) => ({
@@ -88,7 +84,7 @@ const Home: NextPage = () => {
   const { classes, theme } = useStyles();
 
   const items = mockdata.map((item) => (
-    <UnstyledButton key={item.title} className={classes.item} onClick={() => open('/posts/' + item.page, "_self")}>
+    <UnstyledButton key={item.title} className={classes.item} onClick={() => router.push('/posts/' + item.page)}>
       <item.icon color={theme.colors[item.color][6]} size={32} />
       <Text size="sm" mt={7}>
         {item.title}
@@ -98,6 +94,7 @@ const Home: NextPage = () => {
   ));
 
   const [opened, { toggle }] = useDisclosure(false);
+  const router = useRouter()
 
   return (
     <>
@@ -111,8 +108,8 @@ const Home: NextPage = () => {
           },
         })}
 
-        header={MyHeader()}
-        footer={MyFooter()}
+        header={<MyHeader tableState />}
+        footer={<MyFooter />}
       >
 
         <div className={classes.wrapper}>
@@ -127,11 +124,12 @@ const Home: NextPage = () => {
           </Container>
         </div>
 
-        <Card radius="md" className={classes.card}>
 
+        <Card radius="md" className={classes.card}>
           <SimpleGrid cols={3} mt="md">
             {items}
           </SimpleGrid>
+
 
         </Card>
 

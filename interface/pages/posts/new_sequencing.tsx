@@ -1,21 +1,21 @@
 import {
   AppShell, Title, Button, TextInput, createStyles,
-  Group, Textarea, Anchor, Stack, Divider,
+  Group, Textarea, Anchor, Stack, Divider, Select,
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 import { useForm } from '@mantine/form';
-
-import Link from 'next/link'
+import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
 
-
+import { useRouter } from 'next/router'
 import { Text, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { URL } from '../../utils/config';
+import { IconUpload, IconPhoto, IconX, IconCheck, IconAlertCircle } from '@tabler/icons';
+import { Dropzone } from '@mantine/dropzone';
+import { fileExists } from '../../utils/utilsS3';
+import { showNotification } from '@mantine/notifications';
+import useFileUploader from '../../utils/useFileUploader';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -31,54 +31,83 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewSequencing() {
+  const state = useDataState()
+  const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const router = useRouter()
+  const fileUploader = useFileUploader()
+
   const form = useForm({
     initialValues: {
       id: 0,
       sample_id: 0,
-      amplification_id: 0,
+      amplification_method_id: 0,
+      amplification_timestamp: new Date(''),
       sequencing_method_id: 0,
       timestamp: new Date(''),
       base_calling_file: '',
-      primer_code: '',
-      sequence_length: '',
-      barcode: '',
-      primer_desc: '',
 
     },
     validate: {
-      base_calling_file: (value) => (value ? null : 'Invalid base calling file'),
-      primer_code: (value) => (value ? null : 'Invalid primer code'),
-      sequence_length: (value) => (value ? null : 'Invalid'),
-      barcode: (value) => (value ? null : 'Invalid barcode'),
-      primer_desc: (value) => (value ? null : 'Enter description'),
-
     },
 
   });
 
 
   const postSequencing = async (data: Omit<API.Sequencing, "id">) => {
-    const response = await fetch(
-      `${URL}/sequencings/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const sequencing = await response.json()
+    const response = await state.postSequencing(data)
     if (response.status == 200) {
       console.log("POST /sequencings")
-      console.dir(sequencing)
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /sequencings failed.")
     }
   }
 
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
+  const uploadFile = async (file: File) => {
+    if (await fileExists(file.name)) {
+      showNotification({
+        title: 'Error',
+        message: `A file with name '${file.name}' already exists`,
+        color: "red",
+        icon: <IconAlertCircle />,
+      })
+      return
+    }
+    fileUploader.uploadFile(file)
+      .then(r => {
+        if (r.status == 200) {
+          form.setValues({ ...form.values, base_calling_file: file.name })
+          showNotification({
+            title: 'File upload',
+            message: `The file ${file.name} was successfully uploaded.`,
+            color: "teal",
+            icon: <IconCheck />,
+          })
+        } else {
+          showNotification({
+            title: 'Error',
+            message: `Code: ${r.status}`,
+            color: "red",
+            icon: <IconAlertCircle />,
+          })
+        }
+      })
+      .catch((e: Error) => {
+        showNotification({
+          title: 'Error',
+          message: e.message,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -89,7 +118,7 @@ export default function NewSequencing() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader()}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
 
@@ -103,20 +132,71 @@ export default function NewSequencing() {
           onSubmit={form.onSubmit(
             async (values) => await postSequencing({
               sample_id: values.sample_id,
-              amplification_id: values.amplification_id,
+              amplification_method_id: values.amplification_method_id,
+              amplification_timestamp: values.amplification_timestamp,
               sequencing_method_id: values.sequencing_method_id,
               timestamp: values.timestamp,
               base_calling_file: values.base_calling_file,
-              primer_code: values.primer_code,
-              sequence_length: values.sequence_length,
-              barcode: values.barcode,
-              primer_desc: values.primer_desc,
             })
           )}
         >
 
           <Stack spacing={20} mt="md">
 
+            <Select
+              label="Sample ID:"
+              sx={{ width: 200 }}
+              data={state.samples.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sample_id')}
+              value={String(form.values.sample_id)}
+              onChange={(v) => form.setValues({ ...form.values, sample_id: Number(v) })}
+            />
+
+            <Select
+              label="Amplification method ID:"
+              sx={{ width: 200 }}
+              data={state.amplificationMethods.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('amplification_method_id')}
+              value={String(form.values.amplification_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, amplification_method_id: Number(v) })}
+            />
+
+            <label htmlFor="sequencingtime">Amplification timestamp:</label>
+            <Group>
+              <input
+                type="datetime-local"
+                id="amplification_timestamp"
+                name="amplification_timestamp"
+                {...form.getInputProps('amplification_timestamp')}
+              />
+            </Group>
+
+            <Select
+              label="Sequencing method:"
+              sx={{ width: 200 }}
+              data={state.sequencingMethods.map(p => (
+                {
+                  value: String(p.id),
+                  label: p.name
+                }
+              ))}
+              withAsterisk
+              {...form.getInputProps('sequencing_method_id')}
+              value={String(form.values.sequencing_method_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequencing_method_id: Number(v) })}
+            />
             <label htmlFor="sequencingtime">Sequencing datatime:</label>
             <Group>
               <input
@@ -126,22 +206,11 @@ export default function NewSequencing() {
                 {...form.getInputProps('timestamp')}
               />
             </Group>
-            <TextInput
-              placeholder="Base calling file"
-              label="Base calling file:"
-              sx={{ width: 200 }}
-              withAsterisk
-              {...form.getInputProps('base_calling_file')}
-            />
             <Group>
               <Dropzone
-                className={classes.dropzone}
-                onDrop={(files) => console.log('accepted files', files)}
+                maxFiles={1}
+                onDrop={(files) => uploadFile(files[0])}
                 onReject={(files) => console.log('rejected files', files)}
-                maxSize={3 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-
-              // {...props}
               >
                 <Group position="center" spacing="xl" style={{ minHeight: 50, pointerEvents: 'none' }}>
                   <Dropzone.Accept>
@@ -167,44 +236,11 @@ export default function NewSequencing() {
                       Upload base calling file
                     </Text>
                     <Text size="xs" color="dimmed" inline mt={7}>
-                      Drag or click to select files
+                      Attach one file
                     </Text>
                   </div>
                 </Group>
               </Dropzone>
-            </Group>
-            <Group>
-              <TextInput
-                placeholder="Sequence length"
-                label="Sequence length:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('sequence_length')}
-              />
-              <TextInput
-                placeholder="Barcode"
-                label="Barcode:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('barcode')}
-              />
-            </Group>
-
-            <Group>
-              <TextInput
-                placeholder="Primer code"
-                label="Primer code:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('primer_code')}
-              />
-              <TextInput
-                placeholder="Primer description"
-                label="Primer description:"
-                sx={{ width: 200 }}
-                withAsterisk
-                {...form.getInputProps('primer_desc')}
-              />
             </Group>
 
             <Group mt="md" >
@@ -212,7 +248,7 @@ export default function NewSequencing() {
               <Button type="reset"  > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

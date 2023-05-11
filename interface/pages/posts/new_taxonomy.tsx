@@ -4,12 +4,14 @@ import {
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 import { useForm } from '@mantine/form';
+import { useRouter } from 'next/router'
+import { useDataState } from '../../utils/dataState';
 
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications'; import { Id } from 'tabler-icons-react';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -19,9 +21,14 @@ const useStyles = createStyles((theme) => ({
 
 }));
 export default function NewTaxonomy() {
+
+  const state = useDataState()
+
   const form = useForm({
     initialValues: {
       id: 0,
+      sample_id: 0,
+      identification_id: 0,
       domain: '',
       kingdom: '',
       phylum: '',
@@ -43,25 +50,23 @@ export default function NewTaxonomy() {
   });
 
   const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
-    const response = await fetch(
-      `${URL}/taxonomies/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const taxonomy = await response.json()
+    const response = await state.postTaxonomy(data)
     if (response.status == 200) {
       console.log("POST /taxonomies")
-      console.dir(taxonomy)
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /taxonomies failed.")
     }
   }
+
   const { classes } = useStyles();
+  const router = useRouter()
 
   return (
     <>
@@ -71,7 +76,7 @@ export default function NewTaxonomy() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader()}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
 
       >
@@ -142,7 +147,7 @@ export default function NewTaxonomy() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

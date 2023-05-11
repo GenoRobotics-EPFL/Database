@@ -1,28 +1,43 @@
-import { useState, useEffect } from 'react'
-
 import { AppShell, Anchor, Title, Space, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
-import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
+import { useRouter } from 'next/router'
+import { downloadFile } from '../../utils/utilsS3'
+import { useDataState } from '../../utils/dataState'
+import { IconTrash } from '@tabler/icons';
+import { deleteFile } from '../../utils/utilsS3'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { API } from '../../types';
 
 export default function SequencingTable() {
-  const [sequencings, setSequencings] = useState<API.Sequencing[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
 
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/sequencings`)
-      const data = await response.json() as API.Sequencing[]
-      setSequencings(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
+  const state = useDataState()
+  const router = useRouter()
+
+
+  const deleteSequencing = (element: API.Sequencing) => {
+    state.deleteSequencing(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `Sequencing deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+        deleteFile(element.base_calling_file)
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete sequencing`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
 
   return (
     <>
@@ -32,7 +47,7 @@ export default function SequencingTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader()}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
 
@@ -40,45 +55,52 @@ export default function SequencingTable() {
           Sequencing table
         </Title>
 
-        <Table mt='md'>
+        <Table mt='md' sx={{ maxWidth: 1400 }}>
           <thead>
             <tr>
               <th>ID</th>
               <th>Sample ID</th>
-              <th>Amplification ID</th>
+              <th>Amplification method ID</th>
+              <th>Amplification timestamp</th>
               <th>Sequencing method ID</th>
               <th>Time stamp</th>
               <th>Base calling file</th>
-              <th>Primer code</th>
-              <th>Sequence length</th>
-              <th>Barcode</th>
-              <th>Primer description</th>
-
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {sequencings.map((element) => (
+            {state.sequencings.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.sample_id}</td>
-                <td>{element.amplification_id}</td>
+                <td>{element.amplification_method_id}</td>
+                <td>{element.amplification_timestamp.toString()}</td>
                 <td>{element.sequencing_method_id}</td>
                 <td>{element.timestamp.toString()}</td>
-                <td>{element.base_calling_file}</td>
-                <td>{element.primer_code}</td>
-                <td>{element.sequence_length}</td>
-                <td>{element.barcode}</td>
-                <td>{element.primer_desc}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                <td>
+                  <a
+                    onClick={() => downloadFile(element.base_calling_file)}
+                    style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
+                  >
+                    {element.base_calling_file}
+                  </a>
+                </td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteSequencing(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
+              </tr >
+            ))
+            }
+          </tbody >
+        </Table >
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
-      </AppShell>
+      </AppShell >
     </>
   )
 }

@@ -6,23 +6,36 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
-
+import { useRouter } from 'next/router'
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { IconTrash } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
 
 export default function TaxonomyTable() {
-  const [taxonomies, setTaxonomy] = useState<API.Taxonomy[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
+  const state = useDataState()
 
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/taxonomy`)
-      const data = await response.json() as API.Taxonomy[]
-      setTaxonomy(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
+  const deleteTaxonomy = (element: API.Taxonomy) => {
+    state.deleteTaxonomy(element.id)
+      .then(() => {
+        showNotification({
+          title: 'Deletion',
+          message: `${element.species} deleted successfully.`,
+          color: "teal",
+          icon: <IconCheck />,
+        })
+      })
+      .catch(e => {
+        showNotification({
+          title: 'Error',
+          message: `Can't delete ${element.species}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
+  }
+
 
   return (
     <>
@@ -32,7 +45,7 @@ export default function TaxonomyTable() {
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
 
-        header={MyHeader()}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
       >
 
@@ -50,10 +63,11 @@ export default function TaxonomyTable() {
               <th>Class</th>
               <th>Family</th>
               <th>Species</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {taxonomies.map((element) => (
+            {state.taxonomies.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.domain}</td>
@@ -62,14 +76,18 @@ export default function TaxonomyTable() {
                 <td>{element.class_}</td>
                 <td>{element.family}</td>
                 <td>{element.species}</td>
-
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteTaxonomy(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
               </tr>
             ))}
           </tbody>
         </Table>
 
         <Space h="xl" />
-        <div><Anchor size={14} href="/posts/see_tables" target="_self">
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
       </AppShell>

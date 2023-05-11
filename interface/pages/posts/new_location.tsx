@@ -4,14 +4,15 @@ import {
 } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 
+import { useRouter } from 'next/router'
 import { useForm } from '@mantine/form';
 
-import Link from 'next/link'
+import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -22,6 +23,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NewLocation() {
+
+  const router = useRouter()
+  const state = useDataState()
+  const { classes } = useStyles();
   const form = useForm({
     initialValues: {
       id: 0,
@@ -40,26 +45,22 @@ export default function NewLocation() {
 
 
   const postLocation = async (data: Omit<API.Location, "id">) => {
-    const response = await fetch(
-      `${URL}/locations/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const location = await response.json()
+    const response = await state.postLocation(data)
     if (response.status == 200) {
       console.log("POST /locations")
-      console.dir(location)
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
     } else {
       console.log("POST /locations failed.")
     }
   }
 
-  const { classes } = useStyles();
+
 
   return (
     <>
@@ -69,7 +70,7 @@ export default function NewLocation() {
         styles={(theme) => ({
           main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
         })}
-        header={MyHeader()}
+        header={<MyHeader homeState tableState />}
         footer={MyFooter()}
 
       >
@@ -117,7 +118,7 @@ export default function NewLocation() {
               <Button type="reset" onClick={form.reset} > Reset</Button>
             </Group>
 
-            <Anchor size={14} href="/" target="_self">
+            <Anchor size={14} onClick={() => router.push('/')}>
               Back to home page
             </Anchor>
 

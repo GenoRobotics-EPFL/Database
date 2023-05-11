@@ -1,134 +1,124 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from .database import Base
+from datetime import datetime
+from typing import Optional
+from sqlalchemy import ForeignKey, String, DateTime
+from sqlalchemy.orm import relationship, mapped_column, Mapped, DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    type_annotation_map = {
+        str: String(100),
+    }
 
 
 class Person(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Person"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    email = Column(String(100))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str]
+    email: Mapped[str]
 
     samples = relationship("Sample", back_populates="person")
 
 
 class Location(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Location"
 
-    id = Column(Integer, primary_key=True, index=True)
-    collection_area = Column(String(500))
-    gps = Column(String(100))
-    elevation = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    collection_area: Mapped[str] = mapped_column(String(500))
+    gps: Mapped[str]
+    elevation: Mapped[int]
 
     samples = relationship("Sample", back_populates="location")
 
 
 class Sample(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Sample"
-    id = Column(Integer, primary_key=True, index=True)
-    person_id = Column(Integer, ForeignKey("Person.id"))
-    location_id = Column(Integer, ForeignKey("Location.id"))
-    timestamp = Column(DateTime(timezone=True))
-    image_url = Column(String(500))
-    image_timestamp = Column(DateTime(timezone=True))
-    image_desc: Column(String(500))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    person_id: Mapped[int] = mapped_column(ForeignKey("Person.id"))
+    location_id: Mapped[int] = mapped_column(ForeignKey("Location.id"))
+    name: Mapped[str]
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    sex: Mapped[Optional[str]]  # three: male, female, hermaphrodite
+    lifestage: Mapped[Optional[str]]
+    reproduction: Mapped[Optional[str]]
+    image_url: Mapped[str] = mapped_column(String(500))
+    image_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    image_desc: Mapped[str] = mapped_column(String(500))
 
     person = relationship("Person", back_populates="samples")
     location = relationship("Location", back_populates="samples")
 
-    amplifications = relationship("Amplification", back_populates="sample")
     sequencings = relationship("Sequencing", back_populates="sample")
     plant_identifications = relationship("PlantIdentification", back_populates="sample")
 
 
 class AmplificationMethod(Base):
-    __allow_unmapped__ = True
     __tablename__ = "AmplificationMethod"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str]
 
-    amplifications = relationship(
-        "Amplification", back_populates="amplification_method"
-    )
-
-
-class Amplification(Base):
-    __allow_unmapped__ = True
-    __tablename__ = "Amplification"
-    id = Column(Integer, primary_key=True, index=True)
-    sample_id = Column(Integer, ForeignKey("Sample.id"))
-    amplification_method_id = Column(Integer, ForeignKey("AmplificationMethod.id"))
-    timestamp = Column(DateTime(timezone=True))
-
-    sample = relationship("Sample", back_populates="amplifications")
-    amplification_method = relationship(
-        "AmplificationMethod", back_populates="amplifications"
-    )
-
-    sequencings = relationship("Sequencing", back_populates="amplification")
+    sequencings = relationship("Sequencing", back_populates="amplification_method")
 
 
 class ConsensusSegment(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Consensus_segment"
-    id = Column(Integer, primary_key=True, index=True)
-    sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
-    segment_sequence = Column(String(500))
-    primer_name = Column(String(100))
-    primer_desc = Column(String(500))
-    primer2_name = Column(String(100))
-    primer2_desc = Column(String(500))
-    DNA_region = Column(String(100))
-    sequence_length = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    sequencing_id: Mapped[int] = mapped_column(ForeignKey("Sequencing.id"))
+    segment_sequence: Mapped[str] = mapped_column(String(500))
+    primer_forw_name: Mapped[str]
+    primer_forw_seq: Mapped[str] = mapped_column(String(1000))
+    primer_rev_name: Mapped[str]
+    primer_rev_seq: Mapped[str] = mapped_column(String(1000))
+    DNA_region: Mapped[str]
+    sequence_length: Mapped[int]
 
 
 class SequencingMethod(Base):
-    __allow_unmapped__ = True
     __tablename__ = "SequencingMethod"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    description = Column(String(500))
-    type = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str]
+    description: Mapped[str] = mapped_column(String(500))
+    type: Mapped[str]
 
     sequencings = relationship("Sequencing", back_populates="sequencing_method")
 
 
 class Sequencing(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Sequencing"
-    id = Column(Integer, primary_key=True, index=True)
-    sample_id = Column(Integer, ForeignKey("Sample.id"))
-    amplification_id = Column(Integer, ForeignKey("Amplification.id"))
-    sequencing_method_id = Column(Integer, ForeignKey("SequencingMethod.id"))
-    timestamp = Column(DateTime(timezone=True))
-    base_calling_file = Column(String(100))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    sample_id: Mapped[int] = mapped_column(ForeignKey("Sample.id"))
+    amplification_method_id: Mapped[int] = mapped_column(
+        ForeignKey("AmplificationMethod.id")
+    )
+    amplification_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    sequencing_method_id: Mapped[int] = mapped_column(ForeignKey("SequencingMethod.id"))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    base_calling_file: Mapped[str]
 
     sample = relationship("Sample", back_populates="sequencings")
+    amplification_method = relationship(
+        "AmplificationMethod", back_populates="sequencings"
+    )
     sequencing_method = relationship("SequencingMethod", back_populates="sequencings")
-    amplification = relationship("Amplification", back_populates="sequencings")
-    # consensus_segment = relationship("ConsensusSegment", back_populates="sequencings")
     plant_identifications = relationship(
         "PlantIdentification", back_populates="sequencing"
     )
 
 
 class PlantIdentification(Base):
-    __allow_unmapped__ = True
     __tablename__ = "PlantIdentification"
-    id = Column(Integer, primary_key=True, index=True)
-    sample_id = Column(Integer, ForeignKey("Sample.id"))
-    sequencing_id = Column(Integer, ForeignKey("Sequencing.id"))
-    taxonomy_id = Column(Integer, ForeignKey("Taxonomy.id"))
-    identification_method_id = Column(Integer, ForeignKey("IdentificationMethod.id"))
-    timestamp = Column(DateTime(timezone=True))
-    sex = Column(String(100))
-    lifestage = Column(String(100))
-    reproduction = Column(String(100))
-
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    sample_id: Mapped[int] = mapped_column(ForeignKey("Sample.id"))
+    sequencing_id: Mapped[int] = mapped_column(ForeignKey("Sequencing.id"))
+    identification_method_id: Mapped[int] = mapped_column(
+        ForeignKey("IdentificationMethod.id")
+    )
+    taxonomy_id: Mapped[int] = mapped_column(ForeignKey("Taxonomy.id"))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    seq1_score: Mapped[float]
+    seq2_score: Mapped[float]
+    seq3_score: Mapped[float]
+    seq4_score: Mapped[float]
     sample = relationship("Sample", back_populates="plant_identifications")
     identification_method = relationship(
         "IdentificationMethod", back_populates="plant_identifications"
@@ -138,13 +128,12 @@ class PlantIdentification(Base):
 
 
 class IdentificationMethod(Base):
-    __allow_unmapped__ = True
     __tablename__ = "IdentificationMethod"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    description = Column(String(500))
-    type = Column(String(100))
-    version = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str]
+    description: Mapped[str] = mapped_column(String(500))
+    type: Mapped[str]
+    version: Mapped[int]
 
     plant_identifications = relationship(
         "PlantIdentification", back_populates="identification_method"
@@ -152,15 +141,14 @@ class IdentificationMethod(Base):
 
 
 class Taxonomy(Base):
-    __allow_unmapped__ = True
     __tablename__ = "Taxonomy"
-    id = Column(Integer, primary_key=True, index=True)
-    domain = Column(String(100))
-    kingdom = Column(String(100))
-    phylum = Column(String(100))
-    class_ = Column(String(100))
-    family = Column(String(100))
-    species = Column(String(100))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    domain: Mapped[str]
+    kingdom: Mapped[str]
+    phylum: Mapped[str]
+    class_: Mapped[str]
+    family: Mapped[str]
+    species: Mapped[str]
 
     plant_identifications = relationship(
         "PlantIdentification", back_populates="taxonomy"

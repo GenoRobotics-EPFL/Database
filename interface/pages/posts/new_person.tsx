@@ -1,16 +1,18 @@
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import { MyNavbar } from '../../components/navbar';
 import {
   AppShell, Title, Button, Stack, Group, Anchor, Divider,
-  createStyles, TextInput
+  createStyles, TextInput, Notification,
 } from '@mantine/core'
-
 
 import { useForm } from '@mantine/form';
 import { API } from '../../types';
 import React from 'react';
-import { URL } from '../../utils/config';
+import { useDataState } from '../../utils/dataState';
+import { useRouter } from 'next/router';
+import { IconCheck, IconX } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
+
 
 const useStyles = createStyles((theme) => ({
   app: {
@@ -19,7 +21,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+
 export default function NewPerson() {
+
+  const router = useRouter()
+  const state = useDataState()
+  const { classes } = useStyles();
 
   const form = useForm({
     initialValues: {
@@ -30,92 +37,85 @@ export default function NewPerson() {
     validate: {
       name: (value) => (value ? null : 'Invalid name'),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-
     },
-
   });
 
   const postPerson = async (data: Omit<API.Person, "id">) => {
-    const response = await fetch(
-      `${URL}/persons/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    const person = await response.json()
+    const response = await state.postPerson(data)
     if (response.status == 200) {
       console.log("POST /persons")
-      console.dir(person)
+      form.reset()
+      showNotification({
+        title: 'Notification',
+        message: 'Your form was successfully submitted!',
+        color: 'teal',
+        icon: <IconCheck />,
+      })
+
     } else {
       console.log("POST /persons failed.")
+
     }
   }
 
-  const { classes } = useStyles();
-
-
   return (
-    <>
-      <AppShell
-        className={classes.app}
-        padding="md"
-        styles={(theme) => ({
-          main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-        })}
+    <AppShell
+      className={classes.app}
+      padding="md"
+      styles={(theme) => ({
+        main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+      })}
 
-        header={MyHeader()}
-        footer={MyFooter()}
+      header={<MyHeader homeState tableState />}
+      footer={MyFooter()}
 
+    >
+      <Title order={2} mt="md" >
+        Add a new person
+      </Title>
+
+      <Divider mt="lg" />
+
+      <form
+        onSubmit={form.onSubmit(
+          async (values) => await postPerson({
+            name: values.name,
+            email: values.email,
+          })
+        )}
       >
-        <Title order={2} mt="md" >
-          Add a new person
-        </Title>
+        <Stack spacing={20} mt="md">
 
-        <Divider mt="lg" />
+          <TextInput
+            placeholder="Name Surname"
+            label="Full Name"
+            withAsterisk
+            sx={{ width: 300 }}
+            {...form.getInputProps('name')}
+          />
+          <TextInput
+            placeholder="Enter email"
+            label="Email"
+            withAsterisk
+            sx={{ width: 300 }}
+            {...form.getInputProps('email')}
+          />
 
-        <form
-          onSubmit={form.onSubmit(
-            async (values) => await postPerson({
-              name: values.name,
-              email: values.email,
-            })
-          )}
-        >
-          <Stack spacing={20} mt="md">
-            <TextInput
-              placeholder="Name Surname"
-              label="Full Name"
-              withAsterisk
-              sx={{ width: 400 }}
-              {...form.getInputProps('name')}
+          <Group mt="md" >
+            <Button type="submit"> Submit </Button>
+            <Button type="reset" onClick={form.reset}> Reset </Button>
+          </Group>
 
-            />
-            <TextInput
-              placeholder="Enter email"
-              label="Email"
-              withAsterisk
-              sx={{ width: 400 }}
-              {...form.getInputProps('email')}
-            />
+          <Anchor
+            size={14}
+            onClick={() => router.push("/")}
+          >
+            Back to home page
+          </Anchor>
+        </Stack>
 
-            <Group mt="md" >
-              <Button type="submit" >Submit</Button>
-              <Button type="reset"  > Reset</Button>
-            </Group>
+      </form>
 
-            <Anchor size={14} href="/" target="_self">
-              Back to home page
-            </Anchor>
-          </Stack>
-
-        </form>
-
-      </AppShell>
-
-    </>
+    </AppShell>
   )
 }

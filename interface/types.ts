@@ -1,6 +1,30 @@
-import internal from "stream"
+
+export namespace Core {
+  export type Identifiable = {
+    id: number
+  }
+}
 
 export namespace API {
+
+  export type S3UploadFileURL = {
+    url: string
+  }
+
+  export type S3UploadFileStart = {
+    upload_id: string
+    urls: string[]
+  }
+
+  export type S3UploadFilePart = {
+    part: number
+    etag: string
+  }
+
+  export type S3UploadFileEnd = {
+    upload_id: string
+    parts: S3UploadFilePart[]
+  }
 
   export type Person = {
     id: number
@@ -19,22 +43,19 @@ export namespace API {
     id: number
     person_id: number
     location_id: number
+    name: string
     timestamp: Date
+    sex: string | null
+    lifestage: string | null
+    reproduction: string | null
     image_url: string
     image_timestamp: Date
     image_desc: string
   }
 
   export type AmplificationMethod = {
-    id : number
-    name : string
-  }
-
-  export type Amplification = {
     id: number
-    sample_id: number
-    amplification_method_id: number
-    timestamp: Date
+    name: string
   }
 
   export type SequencingMethod = {
@@ -47,17 +68,23 @@ export namespace API {
   export type Sequencing = {
     id: number
     sample_id: number
-    amplification_id: number
+    amplification_method_id: number
+    amplification_timestamp: Date
     sequencing_method_id: number
     timestamp: Date
     base_calling_file: string
-  
-    //Store the location of the file
- 
-    primer_code: string
-    sequence_length: string
-    barcode: string
-    primer_desc: string
+  }
+
+  export type ConsensusSegment = {
+    id: number
+    sequencing_id: number
+    segment_sequence: string
+    primer_forw_name: string
+    primer_forw_seq: string
+    primer_rev_name: string
+    primer_rev_seq: string
+    DNA_region: string
+    sequence_length: number
   }
 
   export type PlantIdentification = {
@@ -67,9 +94,10 @@ export namespace API {
     taxonomy_id: number
     identification_method_id: number
     timestamp: Date
-    sex: string | null
-    lifestage: string | null
-    reproduction: string | null
+    seq1_score: number
+    seq2_score: number
+    seq3_score: number
+    seq4_score: number
   }
 
   export type IdentificationMethod = {
@@ -90,6 +118,9 @@ export namespace API {
     species: string
   }
 
-  }
+
+
+
+}
 
 

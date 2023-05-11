@@ -1,28 +1,27 @@
 import { useState, useEffect } from 'react'
 
-import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
+import { AppShell, Anchor, Title, Space, Table, } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
+import { API } from '../../types'
 import React from 'react'
 import { useRouter } from 'next/router'
-import { IconAlertCircle, IconCheck } from '@tabler/icons';
-import { API } from '../../types';
-import { IconTrash } from '@tabler/icons';
-import { useDataState } from '../../utils/dataState';
 import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
+import { useDataState } from '../../utils/dataState';
 
 
-export default function SequencingMethodTable() {
+export default function ConsensusSegmentTable() {
   const router = useRouter()
   const state = useDataState()
 
-  const deleteSequencingMethod = (element: API.SequencingMethod) => {
-    state.deletePerson(element.id)
+  const deleteConsensusSegment = (element: API.ConsensusSegment) => {
+    state.deleteConsensusSegment(element.id)
       .then(() => {
         showNotification({
           title: 'Deletion',
-          message: `${element.name} deleted successfully.`,
+          message: `Consensus segment deleted successfully.`,
           color: "teal",
           icon: <IconCheck />,
         })
@@ -30,12 +29,13 @@ export default function SequencingMethodTable() {
       .catch(e => {
         showNotification({
           title: 'Error',
-          message: `Can't delete ${element.name}`,
+          message: `Can't delete consensus segment`,
           color: "red",
           icon: <IconAlertCircle />,
         })
       })
   }
+
 
   return (
     <>
@@ -50,40 +50,50 @@ export default function SequencingMethodTable() {
       >
 
         <Title mt='md' order={2}>
-          Sequencing method table
+          Consensus segment table
         </Title>
 
-        <Table mt='md' sx={{ maxWidth: 700 }}>
+
+        <Table mt='md' sx={{ maxWidth: 1100 }} >
           <thead>
             <tr>
               <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Type</th>
+              <th>Segment ID</th>
+              <th>Primer name</th>
+              <th>Primer description</th>
+              <th>Primer 2 name</th>
+              <th>Primer 2 description</th>
+              <th>DNA region</th>
+              <th>Sequence length</th>
               <th></th>
+
             </tr>
           </thead>
           <tbody>
-            {state.sequencingMethods.map((element) => (
+            {state.consensusSements.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
-                <td>{element.name}</td>
-                <td>{element.description}</td>
-                <td>{element.type}</td>
+                <td>{element.sequencing_id}</td>
+                <td>{element.primer_forw_name}</td>
+                <td>{element.primer_forw_seq}</td>
+                <td>{element.primer_rev_name}</td>
+                <td>{element.primer_rev_seq}</td>
+                <td>{element.DNA_region}</td>
+                <td>{element.sequence_length}</td>
                 <td><IconTrash
                   size={15}
-                  onClick={() => deleteSequencingMethod(element)}
+                  onClick={() => deleteConsensusSegment(element)}
                   style={{ cursor: 'pointer' }}>
                 </IconTrash></td>
               </tr>
             ))}
           </tbody>
         </Table>
+
         <Space h="xl" />
         <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
           See tables
         </Anchor></div>
-
       </AppShell>
     </>
   )
