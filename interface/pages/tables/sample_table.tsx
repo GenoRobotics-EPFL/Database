@@ -6,11 +6,11 @@ import { useRouter } from 'next/router'
 import { useDataState } from '../../utils/dataState'
 import { downloadFile } from '../../utils/utilsS3'
 import Link from 'next/link'
+import { IconTrash } from '@tabler/icons';
 import { deleteFile } from '../../utils/utilsS3'
 import { showNotification } from '@mantine/notifications';
-import { IconAlertCircle, IconCheck } from '@tabler/icons';
 import { API } from '../../types';
-import { IconTrash } from '@tabler/icons';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
 
 export default function SampleTable() {
 

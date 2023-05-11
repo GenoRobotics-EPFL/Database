@@ -8,9 +8,12 @@ import { downloadFile } from '../../utils/utilsS3'
 import { useDataState } from '../../utils/dataState'
 import { IconTrash } from '@tabler/icons';
 import { deleteFile } from '../../utils/utilsS3'
+<<<<<<< HEAD
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons';
 import { API } from '../../types';
+=======
+>>>>>>> d7083d587949a61c116cc78f49cf48440ae18643
 
 export default function SequencingTable() {
 
@@ -85,11 +88,16 @@ export default function SequencingTable() {
                     {element.base_calling_file}
                   </a>
                 </td>
+<<<<<<< HEAD
                 <td><IconTrash
                   size={15}
                   onClick={() => deleteSequencing(element)}
                   style={{ cursor: 'pointer' }}>
                 </IconTrash></td>
+=======
+                <td><IconTrash size={15} onClick={() => deleteFile(element.base_calling_file)} style={{ cursor: 'pointer' }}></IconTrash></td>
+
+>>>>>>> d7083d587949a61c116cc78f49cf48440ae18643
               </tr>
             ))}
           </tbody>
