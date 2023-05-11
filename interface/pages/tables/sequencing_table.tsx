@@ -56,51 +56,50 @@ export default function SequencingTable() {
         </Title>
 
         <Table mt='md' sx={{ maxWidth: 1400 }}>
-          <Table mt='md' sx={{ maxWidth: 1400 }}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Sample ID</th>
-                <th>Amplification method ID</th>
-                <th>Amplification timestamp</th>
-                <th>Sequencing method ID</th>
-                <th>Time stamp</th>
-                <th>Base calling file</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {state.sequencings.map((element) => (
-                <tr key={element.id}>
-                  <td>{element.id}</td>
-                  <td>{element.sample_id}</td>
-                  <td>{element.amplification_method_id}</td>
-                  <td>{element.amplification_timestamp.toString()}</td>
-                  <td>{element.sequencing_method_id}</td>
-                  <td>{element.timestamp.toString()}</td>
-                  <td>
-                    <a
-                      onClick={() => downloadFile(element.base_calling_file)}
-                      style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
-                    >
-                      {element.base_calling_file}
-                    </a>
-                  </td>
-                  <td><IconTrash
-                    size={15}
-                    onClick={() => deleteSequencing(element)}
-                    style={{ cursor: 'pointer' }}>
-                  </IconTrash></td>
-                </tr >
-              ))
-              }
-            </tbody >
-          </Table >
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sample ID</th>
+              <th>Amplification method ID</th>
+              <th>Amplification timestamp</th>
+              <th>Sequencing method ID</th>
+              <th>Time stamp</th>
+              <th>Base calling file</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.sequencings.map((element) => (
+              <tr key={element.id}>
+                <td>{element.id}</td>
+                <td>{element.sample_id}</td>
+                <td>{element.amplification_method_id}</td>
+                <td>{element.amplification_timestamp.toString()}</td>
+                <td>{element.sequencing_method_id}</td>
+                <td>{element.timestamp.toString()}</td>
+                <td>
+                  <a
+                    onClick={() => downloadFile(element.base_calling_file)}
+                    style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
+                  >
+                    {element.base_calling_file}
+                  </a>
+                </td>
+                <td><IconTrash
+                  size={15}
+                  onClick={() => deleteSequencing(element)}
+                  style={{ cursor: 'pointer' }}>
+                </IconTrash></td>
+              </tr >
+            ))
+            }
+          </tbody >
+        </Table >
 
-          <Space h="xl" />
-          <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
-            See tables
-          </Anchor></div>
+        <Space h="xl" />
+        <div><Anchor size={14} onClick={() => router.push('/posts/see_tables')}>
+          See tables
+        </Anchor></div>
       </AppShell >
     </>
   )
