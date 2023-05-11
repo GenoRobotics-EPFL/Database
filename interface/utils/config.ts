@@ -1,4 +1,4 @@
-export const FLAG_DEPLOY = false
+export const FLAG_DEPLOY = true
 
 export const DEV_URL = "http://localhost:8000"
 export const PROD_URL = "https://database-production-2c9f.up.railway.app"

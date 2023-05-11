@@ -58,13 +58,6 @@ export namespace API {
     name: string
   }
 
-  // export type Amplification = {
-  //   id: number
-  //   sample_id: number
-  //   amplification_method_id: number
-  //   timestamp: Date
-  // }
-
   export type SequencingMethod = {
     id: number
     name: string
@@ -84,7 +77,7 @@ export namespace API {
 
   export type ConsensusSegment = {
     id: number
-    sequence_id: number
+    sequencing_id: number
     segment_sequence: string
     primer_forw_name: string
     primer_forw_seq: string

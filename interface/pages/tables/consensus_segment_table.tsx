@@ -6,29 +6,13 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
 import { useDataState } from '../../utils/dataState';
 
 
-
-
 export default function ConsensusSegmentTable() {
-  const [consensus_segments, setConsensusSegments] = useState<API.ConsensusSegment[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/consensus_segments`)
-      const data = await response.json() as API.ConsensusSegment[]
-      setConsensusSegments(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
   const router = useRouter()
   const state = useDataState()
 
@@ -86,10 +70,10 @@ export default function ConsensusSegmentTable() {
             </tr>
           </thead>
           <tbody>
-            {consensus_segments.map((element) => (
+            {state.consensusSements.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
-                <td>{element.sequence_id}</td>
+                <td>{element.sequencing_id}</td>
                 <td>{element.primer_forw_name}</td>
                 <td>{element.primer_forw_seq}</td>
                 <td>{element.primer_rev_name}</td>

@@ -5,7 +5,6 @@ import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
 import { IconAlertCircle, IconCheck } from '@tabler/icons';
 import { API } from '../../types';
@@ -15,22 +14,8 @@ import { showNotification } from '@mantine/notifications';
 
 
 export default function SequencingMethodTable() {
-  const [sequencing_methods, setSequencingMethods] = useState<API.SequencingMethod[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const state = useDataState()
-
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/sequencing_methods`)
-      const data = await response.json() as API.SequencingMethod[]
-      setSequencingMethods(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
 
   const deleteSequencingMethod = (element: API.SequencingMethod) => {
     state.deletePerson(element.id)
@@ -79,7 +64,7 @@ export default function SequencingMethodTable() {
             </tr>
           </thead>
           <tbody>
-            {sequencing_methods.map((element) => (
+            {state.sequencingMethods.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.name}</td>

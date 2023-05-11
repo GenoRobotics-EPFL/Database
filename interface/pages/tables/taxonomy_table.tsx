@@ -6,7 +6,6 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons';
@@ -14,22 +13,8 @@ import { IconTrash } from '@tabler/icons';
 import { useDataState } from '../../utils/dataState';
 
 export default function TaxonomyTable() {
-  const [taxonomies, setTaxonomy] = useState<API.Taxonomy[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const state = useDataState()
-
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/taxonomy`)
-      const data = await response.json() as API.Taxonomy[]
-      setTaxonomy(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
 
   const deleteTaxonomy = (element: API.Taxonomy) => {
     state.deleteTaxonomy(element.id)

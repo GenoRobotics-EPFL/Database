@@ -14,19 +14,6 @@ import { showNotification } from '@mantine/notifications';
 
 
 export default function AmplificationMethodTable() {
-  const [amplification_methods, setAmplificationMethods] = useState<API.AmplificationMethod[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/amplification_methods`)
-      const data = await response.json() as API.AmplificationMethod[]
-      setAmplificationMethods(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
   const router = useRouter()
   const state = useDataState()
 
@@ -78,7 +65,7 @@ export default function AmplificationMethodTable() {
             </tr>
           </thead>
           <tbody>
-            {amplification_methods.map((element) => (
+            {state.amplificationMethods.map((element) => (
               <tr key={element.id} >
                 <td>{element.id}</td>
                 <td>{element.name}</td>

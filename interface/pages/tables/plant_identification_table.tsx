@@ -4,31 +4,16 @@ import { AppShell, Anchor, Title, Space, Footer, Table } from '@mantine/core'
 
 import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
-import Link from 'next/link'
 import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck, IconTrash, } from '@tabler/icons';
 import { useDataState } from '../../utils/dataState';
 
 export default function PlantIdentificationTable() {
-  const [persons, setSequencings] = useState<API.PlantIdentification[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const state = useDataState()
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/plant_identifications`)
-      const data = await response.json() as API.PlantIdentification[]
-      setSequencings(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
 
   const deletePlantIdentification = (element: API.PlantIdentification) => {
     state.deletePlantIdentification(element.id)
@@ -84,7 +69,7 @@ export default function PlantIdentificationTable() {
             </tr>
           </thead>
           <tbody>
-            {persons.map((element) => (
+            {state.plantIdentifications.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.sample_id}</td>

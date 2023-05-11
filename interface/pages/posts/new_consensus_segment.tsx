@@ -27,10 +27,10 @@ export default function NewConsensusSegment() {
   const state = useDataState()
   const { classes } = useStyles();
 
-  const form = useForm({
+  const form = useForm<API.ConsensusSegment>({
     initialValues: {
       id: 0,
-      sequence_id: 0,
+      sequencing_id: 0,
       segment_sequence: '',
       primer_forw_name: '',
       primer_forw_seq: '',
@@ -39,11 +39,9 @@ export default function NewConsensusSegment() {
       DNA_region: '',
       sequence_length: 0,
     },
-
     validate: {
 
     },
-
   });
 
   const postConsensusSegment = async (data: Omit<API.ConsensusSegment, "id">) => {
@@ -83,7 +81,7 @@ export default function NewConsensusSegment() {
         <form
           onSubmit={form.onSubmit(
             async (values) => await postConsensusSegment({
-              sequence_id: values.sequence_id,
+              sequencing_id: values.sequencing_id,
               segment_sequence: values.segment_sequence,
               primer_forw_name: values.primer_forw_name,
               primer_forw_seq: values.primer_forw_seq,
@@ -101,13 +99,13 @@ export default function NewConsensusSegment() {
               data={state.sequencings.map(p => (
                 {
                   value: String(p.id),
-                  label: p.id
+                  label: String(p.id)
                 }
               ))}
               withAsterisk
-              {...form.getInputProps('sequence_id')}
-              value={String(form.values.sequence_id)}
-              onChange={(v) => form.setValues({ ...form.values, sequence_id: Number(v) })}
+              {...form.getInputProps('sequencing_id')}
+              value={String(form.values.sequencing_id)}
+              onChange={(v) => form.setValues({ ...form.values, sequencing_id: Number(v) })}
             />
 
             <TextInput
@@ -123,7 +121,7 @@ export default function NewConsensusSegment() {
               label="Forward primer name:"
               sx={{ width: 200 }}
               withAsterisk
-              {...form.getInputProps('primer_name')}
+              {...form.getInputProps('primer_forw_name')}
             />
 
             <TextInput
@@ -131,7 +129,7 @@ export default function NewConsensusSegment() {
               label="Forward primer sequence:"
               sx={{ width: 300 }}
               withAsterisk
-              {...form.getInputProps('primer_desc')}
+              {...form.getInputProps('primer_forw_seq')}
             />
 
             <TextInput
@@ -139,7 +137,7 @@ export default function NewConsensusSegment() {
               label="Reverse primer name:"
               sx={{ width: 200 }}
               withAsterisk
-              {...form.getInputProps('primer2_name')}
+              {...form.getInputProps('primer_rev_name')}
             />
 
             <TextInput
@@ -147,7 +145,7 @@ export default function NewConsensusSegment() {
               label="Reverse primer sequence:"
               sx={{ width: 300 }}
               withAsterisk
-              {...form.getInputProps('primer2_desc')}
+              {...form.getInputProps('primer_rev_seq')}
             />
 
             <TextInput

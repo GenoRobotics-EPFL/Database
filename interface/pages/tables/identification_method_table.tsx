@@ -6,7 +6,6 @@ import { MyHeader } from '../../components/header'
 import { MyFooter } from '../../components/footer'
 import { API } from '../../types'
 import React from 'react'
-import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons';
@@ -14,23 +13,8 @@ import { useDataState } from '../../utils/dataState';
 import { IconTrash } from '@tabler/icons';
 
 export default function IdentificationMethodTable() {
-  const [identification_methods, setIdentificationMethods] = useState<API.IdentificationMethod[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const state = useDataState()
-
-  useEffect(() => {
-    const cb = async () => {
-      setLoading(true)
-      const response = await fetch(`${URL}/identification_methods`)
-      const data = await response.json() as API.IdentificationMethod[]
-      setIdentificationMethods(data)
-      setLoading(false)
-    }
-    cb()
-  }, [])
-
-
 
   const deleteIdentificationMethod = (element: API.IdentificationMethod) => {
     state.deleteIdentificationMethod(element.id)
@@ -80,7 +64,7 @@ export default function IdentificationMethodTable() {
             </tr>
           </thead>
           <tbody>
-            {identification_methods.map((element) => (
+            {state.identificationMethods.map((element) => (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.name}</td>
