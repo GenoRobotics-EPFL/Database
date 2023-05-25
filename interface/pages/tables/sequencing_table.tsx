@@ -27,7 +27,7 @@ export default function SequencingTable() {
           color: "teal",
           icon: <IconCheck />,
         })
-        deleteFile(element.base_calling_file)
+        deleteFile(element.base_calling_file, state.apiKey)
       })
       .catch(e => {
         showNotification({
@@ -79,7 +79,7 @@ export default function SequencingTable() {
                 <td>{element.timestamp.toString()}</td>
                 <td>
                   <a
-                    onClick={() => downloadFile(element.base_calling_file)}
+                    onClick={() => downloadFile(element.base_calling_file, state.apiKey)}
                     style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
                   >
                     {element.base_calling_file}

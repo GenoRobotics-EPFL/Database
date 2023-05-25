@@ -26,7 +26,7 @@ export default function SampleTable() {
           color: "teal",
           icon: <IconCheck />,
         })
-        deleteFile(element.image_url)
+        deleteFile(element.image_url, state.apiKey)
       })
       .catch(e => {
         showNotification({
@@ -82,7 +82,7 @@ export default function SampleTable() {
                 <td>{element.reproduction}</td>
                 <td>
                   <a
-                    onClick={() => downloadFile(element.image_url)}
+                    onClick={() => downloadFile(element.image_url, state.apiKey)}
                     style={{ cursor: "pointer", fontWeight: "bold", textDecoration: "underline" }}
                   >
                     {element.image_url}

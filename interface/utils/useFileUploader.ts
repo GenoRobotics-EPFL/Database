@@ -17,28 +17,33 @@ export type FileUploader = {
   loading: boolean
   /** Value in [0, 1] */
   progress: number
-  uploadFile: (file: File) => Promise<Response>
+  uploadFile: (file: File, apiKey: string | null) => Promise<Response>
 }
 
 function useFileUploader(): FileUploader {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0.0)
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (file: File, apiKey: string | null) => {
     setLoading(true)
     setProgress(0.0)
     let r
     if (file.size <= FILE_SIZE_THRESHOLD) {
-      r = await uploadSmallFile(file)
+      r = await uploadSmallFile(file, apiKey)
     } else {
-      r = await uploadLargeFile(file)
+      r = await uploadLargeFile(file, apiKey)
     }
     setLoading(false)
     return r
   }
 
-  const uploadSmallFile = async (file: File) => {
-    const resUrl = await fetch(`${URL}/files/upload/url/${file.name}`)
+  const uploadSmallFile = async (file: File, apiKey: string | null) => {
+    const resUrl = await fetch(
+      `${URL}/files/upload/url/${file.name}`, {
+      headers: {
+        ...(apiKey ? { 'Api-Key': apiKey } : {})
+      }
+    })
     const dataUrl = await resUrl.json() as API.S3UploadFileURL
     return await fetch(
       dataUrl.url,
@@ -63,13 +68,16 @@ function useFileUploader(): FileUploader {
     return res
   }
 
-  const uploadLargeFile = async (file: File) => {
+  const uploadLargeFile = async (file: File, apiKey: string | null) => {
     const nParts = Math.ceil(file.size / CHUNK_SIZE)
 
     const resStart = await fetch(
       `${URL}/files/upload/large-start/${file.name}?n_parts=${nParts}`,
       {
         method: 'POST',
+        headers: {
+          ...(apiKey ? { 'Api-Key': apiKey } : {})
+        }
       },
     )
     if (resStart.status != 200) { return resStart }
@@ -100,6 +108,7 @@ function useFileUploader(): FileUploader {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(apiKey ? { 'Api-Key': apiKey } : {})
         },
         body: JSON.stringify({
           upload_id: dataStart.upload_id,

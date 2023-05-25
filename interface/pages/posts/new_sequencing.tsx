@@ -78,7 +78,7 @@ export default function NewSequencing() {
   }
 
   const uploadFile = async (file: File) => {
-    if (await fileExists(file.name)) {
+    if (await fileExists(file.name, state.apiKey)) {
       showNotification({
         title: 'Error',
         message: `A file with name '${file.name}' already exists`,
@@ -87,7 +87,7 @@ export default function NewSequencing() {
       })
       return
     }
-    fileUploader.uploadFile(file)
+    fileUploader.uploadFile(file, state.apiKey)
       .then(r => {
         if (r.status == 200) {
           form.setValues({ ...form.values, base_calling_file: file.name })

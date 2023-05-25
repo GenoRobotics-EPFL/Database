@@ -83,7 +83,7 @@ export default function NewSample() {
   }
 
   const uploadFile = async (file: File) => {
-    if (await fileExists(file.name)) {
+    if (await fileExists(file.name, state.apiKey)) {
       showNotification({
         title: 'Error',
         message: `A file with name '${file.name}' already exists`,
@@ -92,7 +92,7 @@ export default function NewSample() {
       })
       return
     }
-    fileUploader.uploadFile(file)
+    fileUploader.uploadFile(file, state.apiKey)
       .then(r => {
         if (r.status == 200) {
           form.setValues({ ...form.values, image_url: file.name })
