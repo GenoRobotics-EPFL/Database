@@ -59,21 +59,27 @@ export default function NewSample() {
   });
 
 
-
   const postSample = async (data: Omit<API.Sample, "id">) => {
-    const response = await state.postSample(data)
-    if (response.status == 200) {
-      console.log("POST /samples")
-      form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postSample(data)
+      .then(response => {
+        console.log("POST /samples")
+        form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /samples failed.")
-    }
+      .catch(response => {
+        console.log("POST /samples failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
   const uploadFile = async (file: File) => {

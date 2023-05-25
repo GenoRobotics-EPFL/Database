@@ -10,7 +10,7 @@ import { useForm } from '@mantine/form';
 import { useDataState } from '../../utils/dataState';
 import { API } from '../../types';
 import React from 'react';
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
@@ -45,19 +45,26 @@ export default function NewConsensusSegment() {
   });
 
   const postConsensusSegment = async (data: Omit<API.ConsensusSegment, "id">) => {
-    const response = await state.postConsensusSegment(data)
-    if (response.status == 200) {
-      console.log("POST /consensus_segments")
-      form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postConsensusSegment(data)
+      .then(response => {
+        console.log("POST /consensus_segments")
+        form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /consensus_segments failed.")
-    }
+      .catch(response => {
+        console.log("POST /consensus_segments failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
   return (
