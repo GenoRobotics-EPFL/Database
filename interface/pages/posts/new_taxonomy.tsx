@@ -10,7 +10,7 @@ import { useDataState } from '../../utils/dataState';
 
 import { API } from '../../types';
 import React from 'react';
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications'; import { Id } from 'tabler-icons-react';
 
 const useStyles = createStyles((theme) => ({
@@ -50,19 +50,26 @@ export default function NewTaxonomy() {
   });
 
   const postTaxonomy = async (data: Omit<API.Taxonomy, "id">) => {
-    const response = await state.postTaxonomy(data)
-    if (response.status == 200) {
-      console.log("POST /taxonomies")
-      form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postTaxonomy(data)
+      .then(response => {
+        console.log("POST /taxonomies")
+        form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /taxonomies failed.")
-    }
+      .catch(response => {
+        console.log("POST /taxonomies failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
   const { classes } = useStyles();

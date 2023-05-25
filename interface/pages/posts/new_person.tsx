@@ -10,7 +10,7 @@ import { API } from '../../types';
 import React from 'react';
 import { useDataState } from '../../utils/dataState';
 import { useRouter } from 'next/router';
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
 
 
@@ -41,21 +41,26 @@ export default function NewPerson() {
   });
 
   const postPerson = async (data: Omit<API.Person, "id">) => {
-    const response = await state.postPerson(data)
-    if (response.status == 200) {
-      console.log("POST /persons")
-      form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postPerson(data)
+      .then(response => {
+        console.log("POST /persons")
+        form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-
-    } else {
-      console.log("POST /persons failed.")
-
-    }
+      .catch(response => {
+        console.log("POST /persons failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
   return (

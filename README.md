@@ -24,6 +24,14 @@
     pip3 install -r requirements.txt
     ```
 
+### Authentification
+
+The prod API authentificates requests via an API key. To enable this behaviour on
+the dev setup, Set in the `.env` file:
+```
+API_KEY="your test api key"
+``` 
+
 ### Database
 
 The API supports several types of SQL databases.  

@@ -9,7 +9,7 @@ import { useDataState } from '../../utils/dataState';
 import React from 'react';
 import { URL } from '../../utils/config';
 import { useRouter } from 'next/router'
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons';
 import { showNotification } from '@mantine/notifications';
 
 const useStyles = createStyles((theme) => ({
@@ -71,53 +71,74 @@ export default function NewAmplificationMethod() {
   });
 
   const postAmplificationMethod = async (data: Omit<API.AmplificationMethod, "id">) => {
-    const response = await state.postAmplificationMethod(data)
-    if (response.status == 200) {
-      console.log("POST /amplification_methods")
-      amplification_form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postAmplificationMethod(data)
+      .then(response => {
+        console.log("POST /amplification_methods")
+        amplification_form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /amplification_methods failed.")
-    }
+      .catch(response => {
+        console.log("POST /amplification_methods failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
 
   const postIdentificationMethod = async (data: Omit<API.IdentificationMethod, "id">) => {
-    const response = await state.postIdentificationMethod(data)
-    if (response.status == 200) {
-      console.log("POST /identification_methods")
-      identification_form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postIdentificationMethod(data)
+      .then(response => {
+        console.log("POST /identification_methods")
+        identification_form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /identification_methods failed.")
-    }
+      .catch(response => {
+        console.log("POST /identification_methods failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
 
   const postSequencingMethod = async (data: Omit<API.SequencingMethod, "id">) => {
-    const response = await state.postSequencingMethod(data)
-    if (response.status == 200) {
-      console.log("POST /sequencing_methods")
-      sequencing_form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postSequencingMethod(data)
+      .then(response => {
+        console.log("POST /sequencing_methods")
+        sequencing_form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /sequencing_methods failed.")
-    }
+      .catch(response => {
+        console.log("POST /sequencing_methods failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
 

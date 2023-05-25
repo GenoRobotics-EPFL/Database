@@ -55,19 +55,26 @@ export default function NewSequencing() {
 
 
   const postSequencing = async (data: Omit<API.Sequencing, "id">) => {
-    const response = await state.postSequencing(data)
-    if (response.status == 200) {
-      console.log("POST /sequencings")
-      form.reset()
-      showNotification({
-        title: 'Notification',
-        message: 'Your form was successfully submitted!',
-        color: 'teal',
-        icon: <IconCheck />,
+    state.postSequencing(data)
+      .then(response => {
+        console.log("POST /sequencings")
+        form.reset()
+        showNotification({
+          title: 'Notification',
+          message: 'Your form was successfully submitted!',
+          color: 'teal',
+          icon: <IconCheck />,
+        })
       })
-    } else {
-      console.log("POST /sequencings failed.")
-    }
+      .catch(response => {
+        console.log("POST /sequencings failed.")
+        showNotification({
+          title: 'Error',
+          message: `Code: ${response.status}`,
+          color: "red",
+          icon: <IconAlertCircle />,
+        })
+      })
   }
 
   const uploadFile = async (file: File) => {

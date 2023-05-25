@@ -1,7 +1,7 @@
 import os
-from typing import Type
+from typing import Annotated, Type
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -40,6 +40,8 @@ import s3
 import exceptions as exc
 import utils
 
+API_KEY = os.environ.get("API_KEY")
+
 # Uncomment the following line to fill the database with mock data
 # Note: this should only be done once and NOT on the prod db
 # utils.fill_db()
@@ -54,7 +56,14 @@ def get_crud(model: Type[BaseModel]) -> CRUD:
     return inner
 
 
-app = FastAPI()
+def auth_password(api_key: Annotated[str | None, Header()] = None):
+    if API_KEY is None:
+        return
+    if API_KEY != api_key:
+        raise HTTPException(status_code=401, detail="Api-Key header invalid.")
+
+
+app = FastAPI(dependencies=[Depends(auth_password)])
 
 app.add_middleware(
     CORSMiddleware,

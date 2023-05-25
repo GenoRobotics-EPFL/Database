@@ -1,27 +1,24 @@
-
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import {
   Header, Group, ActionIcon, useMantineColorScheme, Title, NavLink,
-  Menu, createStyles, Burger, Text, Image, Button,
+  Menu, createStyles, Burger, Text, Image, Button, Modal, TextInput, Tooltip, useMantineTheme,
 } from '@mantine/core';
 import {
   IconMap, IconLayoutGridAdd, IconUserPlus, IconTestPipe, IconLocation,
-  IconPlant, IconTournament, IconPlant2, IconSun, IconMoonStars, IconColumns,
+  IconPlant, IconLock, IconLockOff, IconPlant2, IconSun, IconMoonStars, IconColumns,
 } from '@tabler/icons';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/router'
+import { useDataState } from '../utils/dataState';
 
 const useStyles = createStyles((theme) => ({
-  header: {
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-  },
-
   inner: {
     height: 56,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
   },
 
   root: {
@@ -84,8 +81,18 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [opened, { toggle, close }] = useDisclosure(false);
+  const [openedAK, ak] = useDisclosure(false);
+  const [apiKey, setApiKey] = useState("")
   const { classes, cx } = useStyles();
   const router = useRouter()
+  const state = useDataState()
+  const theme = useMantineTheme()
+
+  const onSubmitApiKey = () => {
+    state.setApiKey(apiKey)
+    setApiKey("")
+    ak.close()
+  }
 
   const navlinks = data.map((item) => (
     <NavLink
@@ -100,7 +107,7 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
   ));
 
   return (
-    <Header height={56} className={classes.header} mb={120}>
+    <Header height={56} mb={120}>
       <div className={classes.inner}>
         <Group>
           <Menu shadow="md" width={200}>
@@ -130,7 +137,7 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
           </Title>
         </Group>
 
-        <Group spacing={50} >
+        <Group spacing={10} >
           <Group>
             {props.homeState &&
               <Button
@@ -155,6 +162,17 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
               </Button>
             }
           </Group>
+          <Tooltip label="Authentification" withArrow>
+            <ActionIcon variant="filled" onClick={ak.toggle} size={30}
+              color={state.apiKey ? "green" : "red"}
+            >
+              {state.apiKey ?
+                <IconLock size={16} />
+                :
+                <IconLockOff size={16} />
+              }
+            </ActionIcon>
+          </Tooltip>
           <ActionIcon variant="default" onClick={() => toggleColorScheme()} size={30}
             sx={(theme) => ({
               backgroundColor:
@@ -166,6 +184,26 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
 
         </Group>
       </div>
+      {!state.apiKey &&
+        <div style={{ backgroundColor: theme.colors.red[6] }}>
+          <Text fs="italic" fz="md" align='center' color="white" pt={4}>
+            You are not authentificated.
+          </Text>
+        </div>
+      }
+      <Modal opened={openedAK} onClose={ak.close} title="Authentication">
+        <TextInput
+          placeholder="Enter API Key"
+          label="API Key"
+          withAsterisk
+          sx={{ width: 300 }}
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+        />
+        <Group mt={10} position="right">
+          <Button onClick={onSubmitApiKey}> Submit </Button>
+        </Group>
+      </Modal>
     </Header>
 
   );
