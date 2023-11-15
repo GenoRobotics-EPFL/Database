@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Union
 
 
 class S3FileURL(BaseModel):
@@ -54,9 +55,9 @@ class SampleNoId(ParentModel):
     location_id: int
     name: str
     timestamp: datetime
-    sex: str | None
-    lifestage: str | None
-    reproduction: str | None
+    sex: Union[str, None]
+    lifestage: Union[str, None]
+    reproduction: Union[str, None]
     image_url: str
     image_timestamp: datetime
     image_desc: str

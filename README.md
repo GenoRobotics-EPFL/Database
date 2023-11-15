@@ -18,6 +18,10 @@
 
 > **Recommended**  
 > Setup a virtual environment ([doc](https://docs.python.org/3.10/library/venv.html))
+    ```
+    python -m venv env
+    source env/bin/activate
+    ```
 
 * Install the dependencies
     ```
@@ -96,7 +100,6 @@ To connect to AWS:
 
 > **Note**  
 > Once started, documentation is auto-generated and accessible at [http://localhost:8000/docs](http://localhost:8000/docs)
-
 To run directly:
 ```bash
 uvicorn app:app --app-dir src
@@ -107,8 +110,13 @@ uvicorn app:app
 ```
 
 To start via docker (need [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/)):
+> **Deprecated (since July 2023 docker compose V1 is deprecated)**  
 ```
 docker-compose up --build
+```
+> **Please use this command instead**  
+```
+docker compose up --build
 ```
 
 ## Interface
