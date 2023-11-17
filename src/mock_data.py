@@ -12,7 +12,7 @@ PERSON_NO_ID = models.PersonNoId(
 
 PERSON = models.Person(
     id=1,
-    **PERSON_NO_ID.dict(),
+    **PERSON_NO_ID.model_dump(),
 )
 
 LOCATION_NO_ID = models.LocationNoId(
@@ -23,7 +23,7 @@ LOCATION_NO_ID = models.LocationNoId(
 
 LOCATION = models.Location(
     id=1,
-    **LOCATION_NO_ID.dict(),
+    **LOCATION_NO_ID.model_dump(),
 )
 
 SAMPLE_NO_ID = models.SampleNoId(
@@ -41,7 +41,7 @@ SAMPLE_NO_ID = models.SampleNoId(
 
 SAMPLE = models.Sample(
     id=1,
-    **SAMPLE_NO_ID.dict(),
+    **SAMPLE_NO_ID.model_dump(),
 )
 
 AMPLIFICATION_METHOD_NO_ID = models.AmplificationMethodNoId(
@@ -50,7 +50,7 @@ AMPLIFICATION_METHOD_NO_ID = models.AmplificationMethodNoId(
 
 AMPLIFICATION_METHOD = models.AmplificationMethod(
     id=1,
-    **AMPLIFICATION_METHOD_NO_ID.dict(),
+    **AMPLIFICATION_METHOD_NO_ID.model_dump(),
 )
 
 SEQUENCING_METHOD_NO_ID = models.SequencingMethodNoId(
@@ -61,7 +61,7 @@ SEQUENCING_METHOD_NO_ID = models.SequencingMethodNoId(
 
 AMPLIFICATION_METHOD = models.AmplificationMethod(
     id=1,
-    **AMPLIFICATION_METHOD_NO_ID.dict(),
+    **AMPLIFICATION_METHOD_NO_ID.model_dump(),
 )
 
 SEQUENCING_NO_ID = models.SequencingNoId(
@@ -75,7 +75,7 @@ SEQUENCING_NO_ID = models.SequencingNoId(
 
 SEQUENCING = models.Sequencing(
     id=1,
-    **SEQUENCING_NO_ID.dict(),
+    **SEQUENCING_NO_ID.model_dump(),
 )
 
 CONSENSUS_SEGMENT_NO_ID = models.ConsensusSegmentNoId(
@@ -91,7 +91,7 @@ CONSENSUS_SEGMENT_NO_ID = models.ConsensusSegmentNoId(
 
 CONSENSUS_SEGMENT = models.ConsensusSegment(
     id=1,
-    **CONSENSUS_SEGMENT_NO_ID.dict(),
+    **CONSENSUS_SEGMENT_NO_ID.model_dump(),
 )
 
 PLANT_IDENTIFICATION_NO_ID = models.PlantIdentificationNoId(
@@ -108,7 +108,7 @@ PLANT_IDENTIFICATION_NO_ID = models.PlantIdentificationNoId(
 
 PLANT_IDENTIFICATION = models.PlantIdentification(
     id=1,
-    **PLANT_IDENTIFICATION_NO_ID.dict(),
+    **PLANT_IDENTIFICATION_NO_ID.model_dump(),
 )
 
 IDENTIFICATION_METHOD_NO_ID = models.IdentificationMethodNoId(
@@ -120,7 +120,7 @@ IDENTIFICATION_METHOD_NO_ID = models.IdentificationMethodNoId(
 
 IDENTIFICATION_METHOD = models.IdentificationMethod(
     id=1,
-    **IDENTIFICATION_METHOD_NO_ID.dict(),
+    **IDENTIFICATION_METHOD_NO_ID.model_dump(),
 )
 
 TAXONOMY_NO_ID = models.TaxonomyNoId(
@@ -136,5 +136,5 @@ TAXONOMY_NO_ID = models.TaxonomyNoId(
 
 TAXONOMY = models.Taxonomy(
     id=1,
-    **TAXONOMY_NO_ID.dict(),
+    **TAXONOMY_NO_ID.model_dump(),
 )

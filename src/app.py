@@ -1,10 +1,11 @@
 import os
-from typing import Annotated, Type
+from typing import Annotated, Type, Union
 
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+import database
 
 load_dotenv()
 
@@ -42,10 +43,6 @@ import utils
 
 API_KEY = os.environ.get("API_KEY")
 
-# Uncomment the following line to fill the database with mock data
-# Note: this should only be done once and NOT on the prod db
-# utils.fill_db()
-
 s3.assert_bucket_exist()
 
 
@@ -56,7 +53,7 @@ def get_crud(model: Type[BaseModel]) -> CRUD:
     return inner
 
 
-def auth_password(api_key: Annotated[str | None, Header()] = None):
+def auth_password(api_key: Annotated[Union[str, None], Header()] = None):
     if API_KEY is None:
         return
     if API_KEY != api_key:
@@ -65,11 +62,18 @@ def auth_password(api_key: Annotated[str | None, Header()] = None):
 
 app = FastAPI(dependencies=[Depends(auth_password)])
 
+database.create_database()
+
+# Uncomment the following line to fill the database with mock data
+# Note: this should only be done once and NOT on the prod db
+utils.fill_db()
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://genorobotics.vercel.app",
+        # "https://genorobotics.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -561,3 +565,4 @@ def taxonomies(id: int, crud: CRUD = Depends(get_crud(Taxonomy))):
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
+

@@ -28,7 +28,7 @@ class S3UploadFileEnd(BaseModel):
 
 class ParentModel(BaseModel):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PersonNoId(ParentModel):
@@ -39,6 +39,9 @@ class PersonNoId(ParentModel):
 class Person(PersonNoId):
     id: int
 
+    class Config:
+        from_attributes = True
+
 
 class LocationNoId(ParentModel):
     collection_area: str
@@ -48,6 +51,9 @@ class LocationNoId(ParentModel):
 
 class Location(LocationNoId):
     id: int
+
+    class Config:
+        from_attributes = True
 
 
 class SampleNoId(ParentModel):
@@ -66,6 +72,9 @@ class SampleNoId(ParentModel):
 class Sample(SampleNoId):
     id: int
 
+    class Config:
+        from_attributes = True
+
 
 class AmplificationMethodNoId(ParentModel):
     name: str
@@ -73,6 +82,9 @@ class AmplificationMethodNoId(ParentModel):
 
 class AmplificationMethod(AmplificationMethodNoId):
     id: int
+
+    class Config:
+        from_attributes = True
 
 
 class SequencingMethodNoId(ParentModel):
@@ -83,6 +95,9 @@ class SequencingMethodNoId(ParentModel):
 
 class SequencingMethod(SequencingMethodNoId):
     id: int
+
+    class Config:
+        from_attributes = True
 
 
 class SequencingNoId(ParentModel):
@@ -100,6 +115,9 @@ class SequencingNoId(ParentModel):
 class Sequencing(SequencingNoId):
     id: int
 
+    class Config:
+        from_attributes = True
+
 
 class ConsensusSegmentNoId(ParentModel):
     sequencing_id: int
@@ -114,6 +132,9 @@ class ConsensusSegmentNoId(ParentModel):
 
 class ConsensusSegment(ConsensusSegmentNoId):
     id: int
+
+    class Config:
+        from_attributes = True    
 
 
 class PlantIdentificationNoId(ParentModel):
@@ -131,6 +152,8 @@ class PlantIdentificationNoId(ParentModel):
 class PlantIdentification(PlantIdentificationNoId):
     id: int
 
+    class Config:
+        from_attributes = True
 
 class IdentificationMethodNoId(ParentModel):
     name: str
@@ -142,6 +165,8 @@ class IdentificationMethodNoId(ParentModel):
 class IdentificationMethod(IdentificationMethodNoId):
     id: int
 
+    class Config:
+        from_attributes = True
 
 class TaxonomyNoId(ParentModel):
     domain: str
@@ -154,3 +179,7 @@ class TaxonomyNoId(ParentModel):
 
 class Taxonomy(TaxonomyNoId):
     id: int
+
+
+    class Config:
+        from_attributes = True

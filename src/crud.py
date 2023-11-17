@@ -1,4 +1,4 @@
-from typing import Any, Type, Generator
+from typing import Any, Type, Generator, Union
 
 from sqlalchemy.orm import Session, DeclarativeBase
 from sqlalchemy.exc import DatabaseError
@@ -28,7 +28,7 @@ class CRUD:
         finally:
             session.close()
 
-    def get(self, id: int) -> Any | None:
+    def get(self, id: int) -> Union[Any, None]:
         """
         Return the item with `id` or None if not found
         """
@@ -48,7 +48,7 @@ class CRUD:
 
         Return the new item
         """
-        item = self._scheme(**data.dict())
+        item = self._scheme(**data.model_dump())
         self._session.add(item)
         self._session.commit()
         self._session.refresh(item)
@@ -60,11 +60,11 @@ class CRUD:
 
         Return if the item could be updated
         """
-        count = self._session.query(self._scheme).filter_by(id=id).update(data.dict())
+        count = self._session.query(self._scheme).filter_by(id=id).update(data.model_dump())
         self._session.commit()
         return count == 1
 
-    def delete(self, id: int) -> Any | None:
+    def delete(self, id: int) -> Union[Any, None]:
         """
         Delete an item with `id`
 
