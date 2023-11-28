@@ -65,12 +65,13 @@ app = FastAPI(dependencies=[Depends(auth_password)])
 
 # Uncomment the following line to fill the database with mock data
 # Note: this should only be done once and NOT on the prod db
-# if database.database_is_empty():  
-database.create_database()
-utils.fill_db()
-# else:
-#     use_existing_data()
 
+if __name__ == "__main__":
+    db_file = 'data/test.db'
+
+    if not os.path.exists(db_file):
+        database.create_database()
+        utils.fill_db()
 
 
 app.add_middleware(
