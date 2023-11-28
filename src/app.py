@@ -62,11 +62,15 @@ def auth_password(api_key: Annotated[Union[str, None], Header()] = None):
 
 app = FastAPI(dependencies=[Depends(auth_password)])
 
-database.create_database()
 
 # Uncomment the following line to fill the database with mock data
 # Note: this should only be done once and NOT on the prod db
+# if database.database_is_empty():  
+database.create_database()
 utils.fill_db()
+# else:
+#     use_existing_data()
+
 
 
 app.add_middleware(

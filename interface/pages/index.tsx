@@ -81,6 +81,8 @@ const useStyles = createStyles((theme) => ({
 
 const Home: NextPage = () => {
 
+
+  const router = useRouter()
   const { classes, theme } = useStyles();
 
   const items = mockdata.map((item) => (
@@ -94,7 +96,7 @@ const Home: NextPage = () => {
   ));
 
   const [opened, { toggle }] = useDisclosure(false);
-  const router = useRouter()
+
 
   return (
     <>

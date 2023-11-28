@@ -11,6 +11,8 @@ services:
       - PORT=8000
     env_file:
       - .env
+    volumes:
+      - db-data:/code/data
   frontend:
     build:
       context: ./interface  
@@ -19,3 +21,7 @@ services:
       - "3000:3000"
     depends_on:
       - api
+
+volumes:
+  db-data:
+    driver: local

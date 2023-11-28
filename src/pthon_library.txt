@@ -1,0 +1,53 @@
+# warpper class
+import requests
+
+class FastAPIClient:
+    def __init__(self, base_url):
+        self.base_url = base_url.rstrip('/')
+
+    def get_person(self, person_id):
+        url = f"{self.base_url}/persons/{person_id}"
+        response = requests.get(url)
+        return response.json()
+
+    def create_person(self, data):
+        url = f"{self.base_url}/persons/"
+        response = requests.post(url, json=data)
+        return response.json()
+
+    def update_person(self, person_id, data):
+        url = f"{self.base_url}/persons/{person_id}"
+        response = requests.put(url, json=data)
+        return response.json()
+
+    def delete_person(self, person_id):
+        url = f"{self.base_url}/persons/{person_id}"
+        response = requests.delete(url)
+        return response.json()
+    
+
+
+#usage
+from fastapi_client import FastAPIClient
+
+fastapi_client = FastAPIClient("http://localhost:8000")
+
+person_data = {
+    "name": "John Doe",
+    "age": 30,
+    "email": "johndoe@example.com"
+}
+
+created_person = fastapi_client.create_person(person_data)
+print("Created Person:", created_person)
+
+person_id = 1  
+person = fastapi_client.get_person(person_id)
+print("Retrieved Person:", person)
+
+updated_data = {"age": 32}
+updated_person = fastapi_client.update_person(person_id, updated_data)
+print("Updated Person:", updated_person)
+
+deleted_person = fastapi_client.delete_person(person_id)
+print("Deleted Person:", deleted_person)

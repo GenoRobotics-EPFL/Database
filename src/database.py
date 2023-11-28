@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from schemes import Base
 import logging
@@ -11,7 +11,7 @@ logging.basicConfig(
 )
 
 if os.environ.get("USE_SQLITE") is not None:
-    SQLALCHEMY_DATABASE_URL = "sqlite:///test.db"
+    SQLALCHEMY_DATABASE_URL = "sqlite:///data/test.db"
 elif os.environ.get("USE_MYSQL") is not None:
     ENGINE = "mysql+pymysql"
     USERNAME = os.environ["MYSQLUSER"]
@@ -45,3 +45,4 @@ def create_database():
     except SQLAlchemyError as e:
         logging.error(f"Error occurred during database creation: {e}")
         raise
+
