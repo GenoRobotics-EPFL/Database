@@ -14,16 +14,16 @@ load_dotenv()
 
 os.environ["USE_SQLITE"] = "true"
 
-import schemes
-import models
+import sqlalchemy_database
+import pydantic_schemas
 
 
 # extract all schemes
 SCHEMES: list[tuple[str, Type[DeclarativeBase]]] = []
-for key, item in schemes.__dict__.items():
+for key, item in sqlalchemy_database.__dict__.items():
     if key == "Base":
         continue
-    if inspect.isclass(item) and issubclass(item, schemes.Base):
+    if inspect.isclass(item) and issubclass(item, sqlalchemy_database.Base):
         SCHEMES.append((key, item))
 
 
@@ -34,7 +34,7 @@ def test_scheme_model_db_match(name: str, scheme: Type[DeclarativeBase]):
     i.e. the model fields must match the scheme ones
     """
     model_name = f"{name}NoId"
-    model: Type[BaseModel] = models.__dict__.get(model_name, None)
+    model: Type[BaseModel] = pydantic_schemas.__dict__.get(model_name, None)
     assert model is not None, f"Model not found: {model_name}"
 
     scheme_anns = {}

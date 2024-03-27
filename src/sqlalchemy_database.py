@@ -1,7 +1,26 @@
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import ForeignKey, String, DateTime
-from sqlalchemy.orm import relationship, mapped_column, Mapped, DeclarativeBase
+import logging
+
+from sqlalchemy import ForeignKey, String, DateTime, create_engine
+from sqlalchemy.orm import relationship, mapped_column, Mapped, sessionmaker, DeclarativeBase
+from sqlalchemy.ext.declarative import declarative_base
+
+
+logger = logging.getLogger("uvicorn")
+
+ENGINE = create_engine("sqlite:///data/test.db")
+
+
+# SessionLocal()
+
+# # class Base(DeclarativeBase):
+# #     type_annotation_map = {
+# #         str: String(100),
+# #     }
+# Base.metadata.create_all(engine)
+SESSION_LOCAL = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
+logging.info("Created database engine and session")
 
 
 class Base(DeclarativeBase):

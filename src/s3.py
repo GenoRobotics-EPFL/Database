@@ -3,7 +3,7 @@ from boto3 import Session
 from botocore.exceptions import ClientError
 from botocore.config import Config
 
-from models import S3UploadFileStart, S3UploadFileEnd
+from pydantic_schemas import S3UploadFileStart, S3UploadFileEnd
 
 # template
 # https://github.com/T-Tmnr/aws_s3_multipartupload_with_presigned_url/blob/927685c378c4e929ce606dbec735304a3e49a0bd/aws-multipart-upload.py

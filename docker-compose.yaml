@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api:
     build:
@@ -12,16 +10,12 @@ services:
     env_file:
       - .env
     volumes:
-      - db-data:/code/data
-  frontend:
-    build:
-      context: ./interface  
-      dockerfile: Dockerfile  
-    ports:
-      - "3000:3000"
-    depends_on:
-      - api
-
-volumes:
-  db-data:
-    driver: local
+      - ./data:/code/data
+  # frontend:
+  #   build:
+  #     context: ./interface  
+  #     dockerfile: Dockerfile  
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - api

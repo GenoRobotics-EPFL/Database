@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session, DeclarativeBase
 from sqlalchemy.exc import DatabaseError
 from pydantic import BaseModel
 
-from database import SessionLocal
-import schemes
+import sqlalchemy_database
 from exceptions import DeleteFailedException
 
+SessionLocal = sqlalchemy_database.SESSION_LOCAL
 
 class CRUD:
     def __init__(self, session: Session, scheme: Type[DeclarativeBase]) -> None:
@@ -19,9 +19,9 @@ class CRUD:
         """
         Yield a new instance of the CRUD class
         """
-        if not hasattr(schemes, model.__name__):
+        if not hasattr(sqlalchemy_database, model.__name__):
             raise NameError(f"Scheme '{model.__name__}' not found.")
-        scheme = getattr(schemes, model.__name__)
+        scheme = getattr(sqlalchemy_database, model.__name__)
         session = SessionLocal()
         try:
             yield cls(session, scheme)
